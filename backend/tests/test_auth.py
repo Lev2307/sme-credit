@@ -7,6 +7,7 @@ from django.core.management import call_command
 from rest_framework.test import APIClient
 
 from apps.accounts.models import Company, User
+from apps.common.choices import LegalFormChoices, TaxRegimeChoices  # ПРАВКА: choices переехали в common
 from apps.accounts.serializers import AccessTokenSerializer
 
 LOGIN = "/api/v1/auth/login"
@@ -31,8 +32,8 @@ def client_user(db):
         inn="7700000001",
         ogrn="1027700000001",
         name="ООО Ромашка",
-        legal_form=Company.LegalForm.OOO,
-        tax_regime="USN",
+        legal_form=LegalFormChoices.OOO,
+        tax_regime=TaxRegimeChoices.USN_INCOME,
         registered_at=date(2020, 1, 1),
     )
     return user
