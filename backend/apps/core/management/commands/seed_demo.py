@@ -1,6 +1,6 @@
 from decimal import Decimal
 
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 from django.shortcuts import get_object_or_404
 from django.http import Http404
 
@@ -9,7 +9,7 @@ from apps.common.choices import TaxRegimeChoices as TR
 from apps.common.choices import LegalFormChoices as LF
 from apps.catalog.models import Product, DocumentRequirement
 
-DT = DocumentRequirement.DocTypeChoices
+from apps.common.choices import DocTypeChoices as DT  # ПРАВКА: типы документов переехали в common
 
 CLIENTS = [
     {

@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'drf_spectacular',
 
     'apps.accounts',
+    'apps.applications',
     'apps.core',
     'apps.catalog',
 ]

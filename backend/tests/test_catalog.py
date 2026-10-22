@@ -9,7 +9,7 @@ from apps.catalog.models import DocumentRequirement, Product
 from apps.common.choices import LegalFormChoices as LF
 from apps.common.choices import TaxRegimeChoices as TR
 
-DocType = DocumentRequirement.DocTypeChoices
+from apps.common.choices import DocTypeChoices as DocType  # ПРАВКА: типы документов переехали в common
 
 PRODUCTS = "/api/v1/products"
 CALCULATOR = "/api/v1/calculator"
