@@ -7,8 +7,10 @@ from rest_framework.views import APIView
 from rest_framework.viewsets import ReadOnlyModelViewSet
 
 from .calculator import annuity_payment
-from .models import Product, DocumentRequirement
+from .models import Product
 from .serializers import ProductSerializer, DocumentRequirementSerializer, DocumentsQuerySerializer, CalculatorInputSerializer, CalculatorResultSerializer
+from .services import required_documents
+
 
 # Create your views here.
 class ProductViewSet(ReadOnlyModelViewSet):
@@ -25,11 +27,7 @@ class ProductViewSet(ReadOnlyModelViewSet):
         legal_form = query.validated_data["legal_form"]
         tax_regime = query.validated_data["tax_regime"]
 
-        docs = DocumentRequirement.objects.filter(
-            Q(product=product) | Q(product__isnull=True),
-            Q(legal_form=legal_form) | Q(legal_form=""),
-            Q(tax_regime=tax_regime) | Q(tax_regime=""),
-        )
+        docs = required_documents(product, legal_form, tax_regime)
         return Response(DocumentRequirementSerializer(docs, many=True).data)
 
 class CalculatorView(APIView):

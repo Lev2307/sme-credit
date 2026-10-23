@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from apps.common.choices import LegalFormChoices, TaxRegimeChoices
+from .services import check_limits
 from .models import DocumentRequirement, Product
 
 
@@ -29,15 +30,9 @@ class CalculatorInputSerializer(serializers.Serializer):
     term_months = serializers.IntegerField(min_value=1)
 
     def validate(self, attrs):
-        product = attrs["product"]
-        if not product.min_amount <= attrs["amount"] <= product.max_amount:
-            raise serializers.ValidationError(
-                {"amount": f"Для этого продукта сумма от {product.min_amount} до {product.max_amount} ₽"}
-            )
-        if attrs["term_months"] > product.max_term_months:
-            raise serializers.ValidationError(
-                {"term_months": f"Максимальный срок для этого продукта — {product.max_term_months} мес."}
-            )
+        errors = check_limits(attrs["product"], attrs["amount"], attrs["term_months"])
+        if errors:
+            raise serializers.ValidationError(errors)
         return attrs
 
 class CalculatorResultSerializer(serializers.Serializer):
