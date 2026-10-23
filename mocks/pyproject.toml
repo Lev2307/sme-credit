@@ -1,0 +1,18 @@
+[project]
+name = "mocks"
+version = "0.1.0"
+description = "Моки внешних сервисов: ЕГРЮЛ/ЕГРИП, «Прозрачный бизнес», БКИ"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "django>=5.2,<5.3",
+    "djangorestframework>=3.16",
+    "drf-spectacular>=0.28",
+    "python-dotenv>=1.0",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8",
+    "pytest-django>=4.9",
+]

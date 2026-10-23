@@ -45,7 +45,7 @@ docker compose up --build
 
 ## Стек
 
-Django + Django REST Framework, PostgreSQL, Celery + Redis, FastAPI для моков внешних сервисов, React + TypeScript на фронтенде. Подробности и обоснование в [docs/04-architecture.md](docs/04-architecture.md), лицензии сторонних компонентов в [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+Django + Django REST Framework, PostgreSQL, Celery + Redis, отдельный сервис на Django + DRF для моков внешних сервисов, React + TypeScript на фронтенде. Подробности и обоснование в [docs/04-architecture.md](docs/04-architecture.md), лицензии сторонних компонентов в [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
 ## Ограничения
 

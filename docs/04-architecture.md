@@ -11,7 +11,7 @@
 | Авторизация | djangorestframework-simplejwt | Access- и refresh-токены |
 | База | PostgreSQL 16 | Транзакции, `JSONB` для сырых ответов внешних сервисов и снимков решений |
 | Фоновые задачи | Celery + Redis | Конвейер не блокирует запрос клиента, а сбой внешнего сервиса ведёт к повтору, а не к ошибке |
-| Моки | FastAPI | Маленький отдельный сервис со своей OpenAPI-схемой |
+| Моки | Django + DRF, drf-spectacular | Отдельный маленький сервис со своей OpenAPI-схемой. Тот же стек, что у бэкенда, поэтому второй фреймворк учить не нужно. Базы у него нет, данные лежат в JSON |
 | Фронтенд | React 18, TypeScript, Vite, React Router, TanStack Query, react-hook-form + zod | TanStack Query закрывает опрос статуса, zod — проверку полей анкеты |
 | UI-библиотека | Mantine или MUI | Выберем по опыту команды |
 | Клиент API на фронте | orval | Типы и функции запросов генерируются из OpenAPI бэкенда |
@@ -31,7 +31,7 @@ flowchart LR
         frontend["frontend<br/>nginx + сборка React"]
         backend["backend<br/>Django + DRF"]
         worker["worker<br/>Celery"]
-        mocks["mocks<br/>FastAPI"]
+        mocks["mocks<br/>Django + DRF"]
         postgres[(postgres)]
         redis[(redis)]
         media[/том media/]
@@ -53,7 +53,7 @@ flowchart LR
 | `frontend` | nginx отдаёт собранный React и проксирует `/api` и `/admin` на бэкенд. Фронт и API живут на одном адресе, поэтому CORS не нужен | `localhost:8080` |
 | `backend` | REST API, админка, авторизация. При старте применяет миграции и загружает демо-данные | нет |
 | `worker` | Тот же образ, что у бэкенда, но запускает Celery. Выполняет конвейер и симуляцию выдачи | нет |
-| `mocks` | ЕГРЮЛ/ЕГРИП, «Прозрачный бизнес», БКИ. Данные из JSON-файлов, ключ — ИНН | `localhost:8090/docs` для просмотра контрактов |
+| `mocks` | ЕГРЮЛ/ЕГРИП, «Прозрачный бизнес», БКИ. Данные из JSON-файла, ключ — ИНН. Доступ по ключу в заголовке `X-Api-Key` | `localhost:8090/docs/` для просмотра контрактов |
 | `postgres` | Основная база | нет |
 | `redis` | Брокер задач Celery | нет |
 
@@ -93,7 +93,9 @@ flowchart LR
 │   ├── Dockerfile
 │   ├── pyproject.toml
 │   ├── uv.lock
-│   ├── app/main.py
+│   ├── manage.py
+│   ├── config/                   # settings, urls
+│   ├── apps/                     # common, egrul, transparent_business, bki
 │   └── data/companies.json       # синтетические компании
 └── frontend/
     ├── Dockerfile                # сборка + nginx
@@ -297,7 +299,7 @@ erDiagram
 | `GET /transparent-business/{inn}` | Налоговый режим, налоговый долг и его сумма, отчётность, флаги (массовый адрес, дисквалификация) |
 | `GET /bki/{inn}` | Текущие кредиты, ежемесячные платежи, просрочки с датами |
 
-Неизвестный ИНН — `404`. Для одной тестовой компании мок БКИ отвечает с задержкой или ошибкой, чтобы показать повторы и уход к андеррайтеру.
+Каждый запрос несёт заголовок `X-Api-Key` (`MOCKS_API_KEY` в `.env`), без него ответ — `403`. Неизвестный ИНН — `404`. Для одной тестовой компании («Капризная») мок БКИ отвечает ошибкой `503` или с задержкой (поле `bki.failure` в `companies.json`), чтобы показать повторы и уход к андеррайтеру. Тестовые компании и их ИНН перечислены в [mocks/README.md](../mocks/README.md).
 
 ## Как работает конвейер
 

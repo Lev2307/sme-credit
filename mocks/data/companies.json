@@ -1,0 +1,258 @@
+{
+  "9901000010": {
+    "scenario": "Надёжная → одобрение. Больше 3 лет, действует, без налогового долга, кредит обслуживается без просрочек, нагрузка низкая",
+    "egrul": {
+      "ogrn": "1189900000014",
+      "name": "ООО «Надёжная пекарня»",
+      "legal_form": "OOO",
+      "address": "г. Тестовск, ул. Хлебная, д. 12",
+      "director_name": "Голубочкин Иван Сергеевич",
+      "okved": "10.71",
+      "okved_name": "Производство хлеба и мучных кондитерских изделий недлительного хранения",
+      "registered_at": "2018-03-15",
+      "status": "ACTIVE"
+    },
+    "transparent_business": {
+      "data_as_of": "2026-10-01",
+      "tax_regime": "USN_INCOME_EXPENSES",
+      "tax_debt_amount": 0,
+      "director_disqualified": false,
+      "mass_address": false,
+      "financials": [
+        {"year": 2024, "revenue": 52000000, "expenses": 44000000},
+        {"year": 2025, "revenue": 60000000, "expenses": 50500000}
+      ]
+    },
+    "bki": {
+      "report_date": "2026-10-01",
+      "subject_type": "COMPANY",
+      "failure": null,
+      "loans": [
+        {
+          "lender": "Банк «Тестовый»",
+          "opened_at": "2021-04-01",
+          "closed_at": "2023-06-30",
+          "amount": 2000000,
+          "balance": 0,
+          "monthly_payment": 0,
+          "delinquencies": []
+        },
+        {
+          "lender": "Банк «Тестовый»",
+          "opened_at": "2025-02-10",
+          "closed_at": null,
+          "amount": 6000000,
+          "balance": 3900000,
+          "monthly_payment": 210000,
+          "delinquencies": []
+        }
+      ]
+    }
+  },
+
+  "990100000285": {
+    "scenario": "Амбициозная → контрпредложение. ИП на патенте, чистая история, но просит много относительно выручки (выручку указывает в анкете, у ИП на патенте отчётности нет)",
+    "egrul": {
+      "ogrn": "321990000000024",
+      "name": "ИП Дуров Павел Андреевич",
+      "legal_form": "IP",
+      "address": "г. Тестовск, пр. Торговый, д. 5, кв. 40",
+      "director_name": "Дуров Павел Андреевич",
+      "okved": "47.71",
+      "okved_name": "Торговля розничная одеждой в специализированных магазинах",
+      "registered_at": "2021-05-20",
+      "status": "ACTIVE"
+    },
+    "transparent_business": {
+      "data_as_of": "2026-10-01",
+      "tax_regime": "PSN",
+      "tax_debt_amount": 0,
+      "director_disqualified": false,
+      "mass_address": false,
+      "financials": []
+    },
+    "bki": {
+      "report_date": "2026-10-01",
+      "subject_type": "PERSON",
+      "failure": null,
+      "loans": [
+        {
+          "lender": "Банк «Учебный»",
+          "opened_at": "2019-08-12",
+          "closed_at": "2022-08-12",
+          "amount": 400000,
+          "balance": 0,
+          "monthly_payment": 0,
+          "delinquencies": []
+        },
+        {
+          "lender": "Банк «Учебный», кредитная карта",
+          "opened_at": "2024-03-01",
+          "closed_at": null,
+          "amount": 150000,
+          "balance": 40000,
+          "monthly_payment": 8000,
+          "delinquencies": []
+        }
+      ]
+    }
+  },
+
+  "9901000034": {
+    "scenario": "Неточная → дозапрос. ООО, выручка по отчётности около 12 млн, а в анкете клиент укажет заметно больше (расхождение больше 30%)",
+    "egrul": {
+      "ogrn": "1209900000034",
+      "name": "ООО «Неточная отделка»",
+      "legal_form": "OOO",
+      "address": "г. Тестовск, ул. Строителей, д. 7, офис 3",
+      "director_name": "Темнов Артём Игоревич",
+      "okved": "43.39",
+      "okved_name": "Производство прочих отделочных и завершающих работ",
+      "registered_at": "2020-09-01",
+      "status": "ACTIVE"
+    },
+    "transparent_business": {
+      "data_as_of": "2026-10-01",
+      "tax_regime": "USN_INCOME_EXPENSES",
+      "tax_debt_amount": 0,
+      "director_disqualified": false,
+      "mass_address": false,
+      "financials": [
+        {"year": 2024, "revenue": 9500000, "expenses": 8400000},
+        {"year": 2025, "revenue": 11800000, "expenses": 10300000}
+      ]
+    },
+    "bki": {
+      "report_date": "2026-10-01",
+      "subject_type": "COMPANY",
+      "failure": null,
+      "loans": [
+        {
+          "lender": "Банк «Тестовый»",
+          "opened_at": "2025-06-01",
+          "closed_at": null,
+          "amount": 2500000,
+          "balance": 1700000,
+          "monthly_payment": 90000,
+          "delinquencies": []
+        }
+      ]
+    }
+  },
+
+  "990100000422": {
+    "scenario": "Пограничная → андеррайтер. ИП около 2 лет, кредитной истории нет, налоговый долг больше 10% месячной выручки → ограничитель ставит класс не выше C",
+    "egrul": {
+      "ogrn": "324990000000045",
+      "name": "ИП Светлов Никита Олегович",
+      "legal_form": "IP",
+      "address": "г. Тестовск, ул. Кофейная, д. 3",
+      "director_name": "Светлов Никита Олегович",
+      "okved": "56.10",
+      "okved_name": "Деятельность ресторанов и услуги по доставке продуктов питания",
+      "registered_at": "2024-07-15",
+      "status": "ACTIVE"
+    },
+    "transparent_business": {
+      "data_as_of": "2026-10-01",
+      "tax_regime": "USN_INCOME",
+      "tax_debt_amount": 180000,
+      "director_disqualified": false,
+      "mass_address": false,
+      "financials": []
+    },
+    "bki": {
+      "report_date": "2026-10-01",
+      "subject_type": "PERSON",
+      "failure": null,
+      "loans": []
+    }
+  },
+
+  "9901000059": {
+    "scenario": "Проблемная → отказ. Компания ликвидируется и есть текущая просрочка — два стоп-фактора сразу. Плюс массовый адрес и крупный налоговый долг",
+    "egrul": {
+      "ogrn": "1199900000057",
+      "name": "ООО «Проблемная логистика»",
+      "legal_form": "OOO",
+      "address": "г. Тестовск, ул. Складская, д. 1, офис 101",
+      "director_name": "Буров Марк Евгеньевич",
+      "okved": "49.41",
+      "okved_name": "Деятельность автомобильного грузового транспорта",
+      "registered_at": "2019-04-10",
+      "status": "LIQUIDATING"
+    },
+    "transparent_business": {
+      "data_as_of": "2026-10-01",
+      "tax_regime": "OSNO",
+      "tax_debt_amount": 1250000,
+      "director_disqualified": false,
+      "mass_address": true,
+      "financials": [
+        {"year": 2024, "revenue": 24000000, "expenses": 23100000},
+        {"year": 2025, "revenue": 18000000, "expenses": 21000000}
+      ]
+    },
+    "bki": {
+      "report_date": "2026-10-01",
+      "subject_type": "COMPANY",
+      "failure": null,
+      "loans": [
+        {
+          "lender": "Банк «Тестовый»",
+          "opened_at": "2023-02-01",
+          "closed_at": null,
+          "amount": 8000000,
+          "balance": 5200000,
+          "monthly_payment": 320000,
+          "delinquencies": [
+            {"started_at": "2024-11-05", "resolved_at": "2024-12-02", "max_days_overdue": 27},
+            {"started_at": "2026-08-15", "resolved_at": null, "max_days_overdue": 47}
+          ]
+        }
+      ]
+    }
+  },
+
+  "9901000066": {
+    "scenario": "Капризная → андеррайтер с причиной SOURCE_UNAVAILABLE. Данные хорошие, но БКИ отвечает ошибкой 503. Поменяйте failure на \"timeout\", чтобы показать таймаут, или на null, чтобы БКИ ответило",
+    "egrul": {
+      "ogrn": "1219900000066",
+      "name": "ООО «Капризная мастерская»",
+      "legal_form": "OOO",
+      "address": "г. Тестовск, ул. Мастеровая, д. 9",
+      "director_name": "Капустин Олег Викторович",
+      "okved": "95.29",
+      "okved_name": "Ремонт прочих предметов личного потребления и бытовых товаров",
+      "registered_at": "2017-11-01",
+      "status": "ACTIVE"
+    },
+    "transparent_business": {
+      "data_as_of": "2026-10-01",
+      "tax_regime": "USN_INCOME",
+      "tax_debt_amount": 0,
+      "director_disqualified": false,
+      "mass_address": false,
+      "financials": [
+        {"year": 2024, "revenue": 14000000, "expenses": 11500000},
+        {"year": 2025, "revenue": 15500000, "expenses": 12600000}
+      ]
+    },
+    "bki": {
+      "report_date": "2026-10-01",
+      "subject_type": "COMPANY",
+      "failure": "error",
+      "loans": [
+        {
+          "lender": "Банк «Учебный»",
+          "opened_at": "2022-03-01",
+          "closed_at": "2025-03-01",
+          "amount": 3000000,
+          "balance": 0,
+          "monthly_payment": 0,
+          "delinquencies": []
+        }
+      ]
+    }
+  }
+}
