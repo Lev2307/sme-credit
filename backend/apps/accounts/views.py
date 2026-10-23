@@ -1,10 +1,13 @@
 from django.conf import settings
+from django.db import IntegrityError
 
-from drf_spectacular.utils import extend_schema
+from drf_spectacular.utils import OpenApiParameter, OpenApiResponse, extend_schema
 
 from rest_framework.views import APIView
 from rest_framework.generics import RetrieveAPIView
+from rest_framework import status
 from rest_framework.response import Response
+from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import AllowAny
 from rest_framework.throttling import ScopedRateThrottle
 
@@ -13,7 +16,14 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
 
-from .serializers import AccessTokenSerializer, MeSerializer
+from apps.common.exceptions import Conflict
+from .models import Company
+from .permissions import IsClient
+from .serializers import (
+    AccessTokenSerializer, MeSerializer, CompanySerializer, CompanyCreateSerializer, CompanyLookupSerializer,
+    InnQuerySerializer,
+)
+from .services import fetch_company_info
 
 REFRESH_COOKIE = "refresh"
 REFRESH_COOKIE_PATH = "/api/v1/auth/"
@@ -78,3 +88,85 @@ class MeView(RetrieveAPIView):
 
     def get_object(self):
         return self.request.user
+
+
+class CompanyLookupView(APIView):
+    """Автозаполнение на первом шаге заявки: данные компании по ИНН и быстрые стоп-факторы."""
+
+    @extend_schema(
+        parameters=[OpenApiParameter("inn", str, required=True, description="10 цифр у ООО, 12 у ИП")],
+        responses={
+            200: CompanyLookupSerializer,
+            400: OpenApiResponse(description="Неверный формат ИНН"),
+            404: OpenApiResponse(description="ИНН не найден в ЕГРЮЛ/ЕГРИП"),
+            503: OpenApiResponse(description="ЕГРЮЛ недоступен"),
+        },
+    )
+    def get(self, request):
+        query = InnQuerySerializer(data=request.query_params)
+        query.is_valid(raise_exception=True)
+        info = fetch_company_info(query.validated_data["inn"])
+
+        e = info.egrul
+        data = {
+            "inn": e.inn,
+            "name": e.name,
+            "ogrn": e.ogrn,
+            "legal_form": e.legal_form,
+            "registered_at": e.registered_at,
+            "address": e.address,
+            "director_name": e.director_name,
+            "okved_name": e.okved_name,
+            "tax_regime": info.tax.tax_regime if info.tax else None,
+            "stop_factors": info.stop_factors,
+        }
+        return Response(CompanyLookupSerializer(data).data)
+
+
+class CompanyCreateView(APIView):
+    """Привязать компанию к клиенту.
+
+    Данные компании сервер берёт сам из ЕГРЮЛ и «Прозрачного бизнеса», запросу не доверяет.
+    tax_regime из запроса нужен, только если «Прозрачный бизнес» не ответил.
+    """
+
+    permission_classes = [IsClient]
+
+    @extend_schema(
+        request=CompanyCreateSerializer,
+        responses={
+            201: CompanySerializer,
+            400: OpenApiResponse(description="Неверный ИНН или не указан налоговый режим"),
+            404: OpenApiResponse(description="ИНН не найден в ЕГРЮЛ/ЕГРИП"),
+            409: OpenApiResponse(description="У пользователя уже есть компания или ИНН занят"),
+            503: OpenApiResponse(description="ЕГРЮЛ недоступен"),
+        },
+    )
+    def post(self, request):
+        if Company.objects.filter(owner=request.user).exists():
+            raise Conflict("У вас уже есть компания")
+
+        s = CompanyCreateSerializer(data=request.data)
+        s.is_valid(raise_exception=True)
+        inn = s.validated_data["inn"]
+        if Company.objects.filter(inn=inn).exists():
+            raise Conflict("Компания с этим ИНН уже привязана к другому пользователю")
+
+        info = fetch_company_info(inn)
+        tax_regime = info.tax.tax_regime if info.tax else s.validated_data.get("tax_regime")
+        if not tax_regime:
+            raise ValidationError({"tax_regime": "Не удалось получить налоговый режим из ФНС, укажите его сами"})
+
+        try:
+            company = Company.objects.create(
+                owner=request.user,
+                inn=inn,
+                ogrn=info.egrul.ogrn,
+                name=info.egrul.name,
+                legal_form=info.egrul.legal_form,
+                tax_regime=tax_regime,
+                registered_at=info.egrul.registered_at,
+            )
+        except IntegrityError:  # гонка: компанию или ИНН заняли между проверкой и созданием
+            raise Conflict("У вас уже есть компания или ИНН занят")
+        return Response(CompanySerializer(company).data, status=status.HTTP_201_CREATED)

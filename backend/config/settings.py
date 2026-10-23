@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'apps.applications',
     'apps.core',
     'apps.catalog',
+    'apps.integrations',
 ]
 
 MIDDLEWARE = [
@@ -118,6 +119,12 @@ SIMPLE_JWT = {
 }
 
 AUTH_COOKIE_SECURE = 0
+
+# Внешние сервисы (моки ЕГРЮЛ, «Прозрачного бизнеса» и БКИ)
+MOCKS_BASE_URL = os.environ.get("MOCKS_BASE_URL", "http://localhost:8090")
+MOCKS_API_KEY = os.environ.get("MOCKS_API_KEY", "")
+MOCKS_TIMEOUT_SECONDS = float(os.environ.get("MOCKS_TIMEOUT_SECONDS", "3"))
+MOCKS_RETRIES = int(os.environ.get("MOCKS_MAX_RETRIES", "3"))
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators

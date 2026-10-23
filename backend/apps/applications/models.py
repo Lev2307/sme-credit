@@ -244,4 +244,49 @@ class ApplicationEvent(models.Model):
     def delete(self, *args, **kwargs):
         raise ValueError("Событие журнала нельзя удалить")
 
+
+class EnrichmentResult(models.Model):
+    """Ответ внешнего источника (ЕГРЮЛ, «Прозрачный бизнес», БКИ) по заявке.
+
+    Храним сырой ответ целиком: если формат источника поменяется, старые заявки
+    всё равно можно разобрать заново. Записи только добавляются — после ответа
+    на дозапрос конвейер опросит источники ещё раз, и появятся новые строки.
+    """
+
+    class Source(models.TextChoices):
+        EGRUL = "EGRUL", "ЕГРЮЛ/ЕГРИП"
+        TB = "TB", "Прозрачный бизнес"
+        BKI = "BKI", "БКИ"
+
+    class ResultStatus(models.TextChoices):
+        OK = "OK", "Получено"
+        NOT_FOUND = "NOT_FOUND", "Не найдено"
+        UNAVAILABLE = "UNAVAILABLE", "Источник недоступен"
+
+    application = models.ForeignKey(
+        Application, on_delete=models.PROTECT, related_name="enrichment_results", verbose_name="заявка"
+    )
+    source = models.CharField(max_length=8, choices=Source.choices, verbose_name="источник")
+    status = models.CharField(
+        max_length=12,
+        choices=ResultStatus.choices,
+        verbose_name="результат запроса",
+        help_text="UNAVAILABLE — источник не ответил после всех повторов",
+    )
+    payload = models.JSONField(
+        null=True,
+        blank=True,
+        verbose_name="ответ источника",
+        help_text="Сырой JSON как есть. Пусто, если ответа нет",
+    )
+    error = models.TextField(blank=True, verbose_name="ошибка", help_text="Текст ошибки, если статус не OK")
+    fetched_at = models.DateTimeField(auto_now_add=True, verbose_name="получено")
+
+    class Meta:
+        ordering = ["fetched_at", "id"]
+
+    def __str__(self):
+        return f"{self.get_source_display()} · {self.get_status_display()}"
+
+
 ApplicationStatus = Application.Status
