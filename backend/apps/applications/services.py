@@ -1,0 +1,47 @@
+from .models import Application
+
+from apps.catalog.services import check_limits, required_documents
+
+
+def check_completeness(app: Application) -> dict:
+    """Что мешает отправить заявку. Пустой словарь — можно отправлять.
+
+    Ответ разбит на три части, чтобы фронт мог нарисовать чек-лист:
+    missing_fields — незаполненные поля, errors — поля с неверными значениями,
+    missing_documents — обязательные документы, которые ещё не загружены.
+    """
+    missing_fields = {}
+    if app.amount is None:
+        missing_fields["amount"] = "Укажите сумму кредита"
+    if app.term_months is None:
+        missing_fields["term_months"] = "Укажите срок кредита"
+    if app.annual_revenue is None:
+        missing_fields["annual_revenue"] = "Укажите выручку за год"
+    if app.existing_monthly_payments is None:
+        missing_fields["existing_monthly_payments"] = "Укажите платежи по другим кредитам, 0 — если их нет"
+    if not app.purpose.strip():
+        missing_fields["purpose"] = "Опишите, на что нужны деньги"
+    if app.product.requires_collateral:
+        if not app.collateral_type:
+            missing_fields["collateral_type"] = "Укажите вид залога"
+        if app.collateral_value is None:
+            missing_fields["collateral_value"] = "Укажите стоимость залога"
+    if app.consent_given_at is None:
+        missing_fields["consent"] = "Дайте согласие на запрос кредитной истории и обработку данных"
+
+    problems = {}
+    if missing_fields:
+        problems["missing_fields"] = missing_fields
+
+    if app.amount is not None and app.term_months is not None:
+        errors = check_limits(app.product, app.amount, app.term_months)
+        if errors:
+            problems["errors"] = errors
+
+    needed = required_documents(app.product, app.company.legal_form, app.company.tax_regime).filter(is_required=True)
+    uploaded = set(app.documents.values_list("doc_type", flat=True))  # ПРАВКА: опечатка doct_type
+    missing = [{"doc_type": r.doc_type, "name": r.name} for r in needed if r.doc_type not in uploaded]
+    if missing:
+        problems["missing_documents"] = missing
+
+    return problems

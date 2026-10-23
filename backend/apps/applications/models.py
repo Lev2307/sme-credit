@@ -243,3 +243,5 @@ class ApplicationEvent(models.Model):
 
     def delete(self, *args, **kwargs):
         raise ValueError("Событие журнала нельзя удалить")
+
+ApplicationStatus = Application.Status

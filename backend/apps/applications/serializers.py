@@ -1,10 +1,15 @@
+import pathlib
+
 from django.utils import timezone
 from rest_framework import serializers
 
+from apps.catalog.services import required_documents
 from apps.catalog.models import Product
-from .models import Application
+from .models import Application, ApplicationDocument, ApplicationEvent
 
 S = Application.Status
+
+MB10 = 10 * 1024 * 1024
 
 NEXT_ACTIONS = {
     S.DRAFT: "Заполните анкету и загрузите документы, затем отправьте заявку",
@@ -19,16 +24,25 @@ FORM_FIELDS = (
     "collateral_type", "collateral_value",
 )
 
+class ApplicationDocumentSerializer(serializers.ModelSerializer):
+    """Сведения о загруженном документе для ответа клиенту (без самого файла)."""
+
+    class Meta:
+        model = ApplicationDocument
+        fields = ("id", "doc_type", "original_name", "size", "uploaded_at")
+        read_only_fields = fields
 
 class ApplicationRetrieveSerializer(serializers.ModelSerializer):
     status_display = serializers.CharField(source="get_status_display", read_only=True)
     next_action = serializers.SerializerMethodField()
+    documents = ApplicationDocumentSerializer(many=True, read_only=True)
 
     class Meta:
         model = Application
         fields = (
             "id", "product", "status", "status_display", "next_action", *FORM_FIELDS,
             "consent_given_at", "version", "created_at", "updated_at", "submitted_at",
+            "documents"
         )
         read_only_fields = fields
 
@@ -70,7 +84,7 @@ class ApplicationPatchSerializer(serializers.ModelSerializer):
         elif consent is False:
             instance.consent_given_at = None
 
-        # проверка чтобы лишний раз неперезаисать status, который загрузили в начале запроса
+        # проверка чтобы лишний раз неперезаписать status, который загрузили в начале запроса
         for field, value in validated_data.items():
             setattr(instance, field, value)
         instance.save(update_fields=[*validated_data, "consent_given_at", "updated_at"])
@@ -78,3 +92,62 @@ class ApplicationPatchSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         return ApplicationRetrieveSerializer(instance, context=self.context).data
+
+
+class ApplicationDocumentUploadSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ApplicationDocument
+        fields = ("id", "doc_type", "file", "original_name", "size", "uploaded_at")
+        read_only_fields = ("id", "original_name", "size", "uploaded_at")
+        extra_kwargs = {"file": {"write_only": True}}  # сам файл в ответ не отдаём, только сведения о нём
+
+
+    def validate_file(self, file):
+        if file.size > MB10:
+            raise serializers.ValidationError("Размер документа не может быть больше 10МБ")
+
+        ext = pathlib.Path(file.name).suffix.lower() 
+        if ext not in [".pdf", ".jpg", ".png", ".jpeg"]:
+            raise serializers.ValidationError(f"Не подходящее расширение файла - {ext}, возможно, у него просто сменили расширение")
+        else:
+            # проверка сигнатур
+            sign = file.read(8)
+            file.seek(0)
+
+            if ext == ".pdf" and not sign.startswith(b"%PDF-"):
+                raise serializers.ValidationError(f"Файл с расширением .pdf не является им")
+            if ext == ".png" and not sign.startswith(b"\x89PNG\r\n\x1a\n"):
+                raise serializers.ValidationError(f"Файл с расширением .png не является им")
+            if ext in (".jpg", ".jpeg") and not sign.startswith(b"\xff\xd8\xff"):
+                raise serializers.ValidationError(f"Файл с расширением .jpeg не является им")
+            
+        return file
+
+    def validate_doc_type(self, doc_type):
+        app = self.context["application"]  # передаёт вьюха
+        needed = required_documents(app.product, app.company.legal_form, app.company.tax_regime)
+        if not needed.filter(doc_type=doc_type).exists():
+            raise serializers.ValidationError("Этот документ для вашей заявки не нужен")
+        return doc_type
+
+    def create(self, validated_data):
+        file = validated_data["file"]
+        return ApplicationDocument.objects.create(
+            application=self.context["application"],
+            uploaded_by=self.context["request"].user,
+            original_name=file.name[:255],
+            size=file.size,
+            **validated_data,
+        )
+
+class ApplicationEventSerializer(serializers.ModelSerializer):
+    from_status_display = serializers.CharField(source="get_from_status_display", read_only=True)
+    to_status_display = serializers.CharField(source="get_to_status_display", read_only=True)
+
+    class Meta:
+        model = ApplicationEvent
+        fields = (
+            "id", "created_at", "action", "actor_type", "from_status", "from_status_display",
+            "to_status", "to_status_display", "reason_code",
+        )
+        read_only_fields = fields
