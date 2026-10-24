@@ -1,6 +1,6 @@
 import pathlib
-
 from django.utils import timezone
+from django.conf import settings
 from rest_framework import serializers
 
 from apps.catalog.services import required_documents
@@ -9,7 +9,7 @@ from .models import Application, ApplicationDocument, ApplicationEvent
 
 S = Application.Status
 
-MB10 = 10 * 1024 * 1024
+MBMAX = settings.UPLOAD_MAX_SIZE_MB * 1024 * 1024
 
 NEXT_ACTIONS = {
     S.DRAFT: "Заполните анкету и загрузите документы, затем отправьте заявку",
@@ -103,7 +103,7 @@ class ApplicationDocumentUploadSerializer(serializers.ModelSerializer):
 
 
     def validate_file(self, file):
-        if file.size > MB10:
+        if file.size > MBMAX:
             raise serializers.ValidationError("Размер документа не может быть больше 10МБ")
 
         ext = pathlib.Path(file.name).suffix.lower() 

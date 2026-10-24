@@ -48,7 +48,7 @@ INSTALLED_APPS = [
     'apps.applications',
     'apps.core',
     'apps.catalog',
-    'apps.integrations',
+    'apps.decisioning'
 ]
 
 MIDDLEWARE = [
@@ -168,3 +168,5 @@ MEDIA_ROOT = BASE_DIR / "media"
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+UPLOAD_MAX_SIZE_MB = int(os.environ.get("UPLOAD_MAX_SIZE_MB", "10"))
