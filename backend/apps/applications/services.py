@@ -1,6 +1,11 @@
-from .models import Application
+import random
+
+from django.db import transaction
+from django.utils import timezone
 
 from apps.catalog.services import check_limits, required_documents
+from .models import Application, Agreement
+from .transitions import transition
 
 
 def check_completeness(app: Application) -> dict:
@@ -51,3 +56,13 @@ def missing_required_documents(app: Application) -> list:
     needed = required_documents(app.product, app.company.legal_form, app.company.tax_regime).filter(is_required=True)
     uploaded = set(app.documents.values_list("doc_type", flat=True))
     return [r for r in needed if r.doc_type not in uploaded]
+
+
+def disburse(app_id):
+    """Симуляция зачисления денег: DISBURSING → DISBURSED."""
+    app = Application.objects.get(pk=app_id)
+    if app.status != Application.Status.DISBURSING:
+        return  # уже выдано или задачу прислали дважды
+    with transaction.atomic():
+        Agreement.objects.filter(application=app).update(disbursed_at=timezone.now())
+        transition(app, Application.Status.DISBURSED, action="DISBURSED")  # без actor - система

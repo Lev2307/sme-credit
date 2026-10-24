@@ -139,7 +139,7 @@ def test_upload_rejects_other_formats(api, app, name):
     r = upload(api, app, name=name)
 
     assert r.status_code == 400
-    assert "file" in r.data
+    assert "file" in r.data["details"]
     assert not ApplicationDocument.objects.exists()
 
 
@@ -156,14 +156,14 @@ def test_upload_rejects_renamed_files(api, app, name, content):
     r = upload(api, app, name=name, content=content)
 
     assert r.status_code == 400
-    assert "file" in r.data
+    assert "file" in r.data["details"]
 
 
 def test_upload_rejects_file_over_10_mb(api, app):
     r = upload(api, app, content=PDF + b"0" * (10 * 1024 * 1024))
 
     assert r.status_code == 400
-    assert "file" in r.data
+    assert "file" in r.data["details"]
 
 
 def test_upload_accepts_file_of_exactly_10_mb(api, app):
@@ -175,7 +175,7 @@ def test_upload_rejects_document_this_application_does_not_need(api, app):
     r = upload(api, app, doc_type=DT.PATENT)
 
     assert r.status_code == 400
-    assert "doc_type" in r.data
+    assert "doc_type" in r.data["details"]
 
 
 def test_upload_outside_draft_is_conflict(api, client_user, make_app):

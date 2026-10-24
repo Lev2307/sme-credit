@@ -98,7 +98,7 @@ def test_lookup_rejects_bad_inn(api, mocks, inn):
     r = api.get(LOOKUP, {"inn": inn})
 
     assert r.status_code == 400
-    assert "inn" in r.data
+    assert "inn" in r.data["details"]
     assert mocks["_requests"] == []
 
 
@@ -191,7 +191,7 @@ def test_create_company_requires_tax_regime_when_tb_unavailable(api, mocks):
     r = api.post(COMPANIES, {"inn": INN}, format="json")
 
     assert r.status_code == 400
-    assert "tax_regime" in r.data
+    assert "tax_regime" in r.data["details"]
     assert not Company.objects.exists()
 
 

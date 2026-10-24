@@ -5,7 +5,7 @@ from rest_framework import serializers
 
 from apps.catalog.services import required_documents
 from apps.catalog.models import Product
-from .models import Application, ApplicationDocument, ApplicationEvent
+from .models import Application, ApplicationDocument, ApplicationEvent, Agreement, InfoRequested
 
 S = Application.Status
 
@@ -24,6 +24,19 @@ FORM_FIELDS = (
     "collateral_type", "collateral_value",
 )
 
+class OfferSerializer(serializers.Serializer):
+    amount = serializers.DecimalField(max_digits=14, decimal_places=2)
+    term_months = serializers.IntegerField()
+    rate = serializers.DecimalField(max_digits=5, decimal_places=2)
+    monthly_payment = serializers.DecimalField(max_digits=14, decimal_places=2)
+    reason_codes = serializers.ListField(child=serializers.CharField())
+
+class AgreementSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Agreement
+        fields = ("number", "amount", "term_months", "rate", "monthly_payment", "signed_at", "disbursed_at")
+
+
 class ApplicationDocumentSerializer(serializers.ModelSerializer):
     """Сведения о загруженном документе для ответа клиенту (без самого файла)."""
 
@@ -32,17 +45,29 @@ class ApplicationDocumentSerializer(serializers.ModelSerializer):
         fields = ("id", "doc_type", "original_name", "size", "uploaded_at")
         read_only_fields = fields
 
+class OpenInfoRequestSerializer(serializers.ModelSerializer):
+    """Вопрос банка, который клиент видит в заявке."""
+
+    class Meta:
+        model = InfoRequested
+        fields = ("id", "asked_by", "question", "doc_types", "created_at")
+        read_only_fields = fields
+
+
 class ApplicationRetrieveSerializer(serializers.ModelSerializer):
     status_display = serializers.CharField(source="get_status_display", read_only=True)
     next_action = serializers.SerializerMethodField()
     documents = ApplicationDocumentSerializer(many=True, read_only=True)
+    offer = OfferSerializer(source="current_offer", read_only=True, allow_null=True)
+    agreement = AgreementSerializer(source="agreement_or_none", read_only=True, allow_null=True)
+    open_info_request = OpenInfoRequestSerializer(read_only=True, allow_null=True)
 
     class Meta:
         model = Application
         fields = (
             "id", "product", "status", "status_display", "next_action", *FORM_FIELDS,
             "consent_given_at", "version", "created_at", "updated_at", "submitted_at",
-            "documents"
+            "documents", "offer", "agreement", "open_info_request"
         )
         read_only_fields = fields
 
@@ -151,3 +176,14 @@ class ApplicationEventSerializer(serializers.ModelSerializer):
             "to_status", "to_status_display", "reason_code",
         )
         read_only_fields = fields
+
+class InfoRequestedSerializer(serializers.Serializer):
+    """Тело ответа клиента на дозапрос. Цифры анкеты — только если клиент их исправляет."""
+
+    answer = serializers.CharField(help_text="Ответ на вопрос банка")
+    annual_revenue = serializers.DecimalField(
+        max_digits=14, decimal_places=2, min_value=1, required=False, help_text="Исправленная выручка за год"
+    )
+    existing_monthly_payments = serializers.DecimalField(
+        max_digits=14, decimal_places=2, min_value=0, required=False, help_text="Исправленные платежи по другим кредитам"
+    )

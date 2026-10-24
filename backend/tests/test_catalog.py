@@ -118,13 +118,13 @@ def test_documents_depend_on_product_form_and_tax_regime(api, code, legal_form, 
 def test_documents_require_both_params(api):
     r = api.get(f"{product_url('EXPRESS')}/documents?legal_form=IP")
     assert r.status_code == 400
-    assert "tax_regime" in r.data
+    assert "tax_regime" in r.data["details"]
 
 @pytest.mark.usefixtures("catalog")
 def test_documents_reject_unknown_values(api):
     r = api.get(documents_url("EXPRESS", "ZAO", TR.OSNO))
     assert r.status_code == 400
-    assert "legal_form" in r.data
+    assert "legal_form" in r.data["details"]
 
 @pytest.mark.usefixtures("catalog")
 def test_documents_of_inactive_product_not_found(api):
@@ -165,7 +165,7 @@ def test_calculator_returns_payment(api):
 def test_calculator_rejects_amount_outside_product_limits(api, amount):
     r = calc(api, amount=amount)
     assert r.status_code == 400
-    assert "amount" in r.data
+    assert "amount" in r.data["details"]
 
 @pytest.mark.usefixtures("catalog")
 def test_calculator_accepts_amount_on_the_boundary(api):
@@ -176,7 +176,7 @@ def test_calculator_accepts_amount_on_the_boundary(api):
 def test_calculator_rejects_term_longer_than_product_allows(api):
     r = calc(api, term_months=25)
     assert r.status_code == 400
-    assert "term_months" in r.data
+    assert "term_months" in r.data["details"]
 
 
 @pytest.mark.parametrize("code", ["NOPE", "HIDDEN"])
@@ -184,4 +184,4 @@ def test_calculator_rejects_term_longer_than_product_allows(api):
 def test_calculator_rejects_unknown_or_inactive_product(api, code):
     r = calc(api, product_code=code)
     assert r.status_code == 400
-    assert "product_code" in r.data
+    assert "product_code" in r.data["details"]

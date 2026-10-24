@@ -48,7 +48,8 @@ INSTALLED_APPS = [
     'apps.applications',
     'apps.core',
     'apps.catalog',
-    'apps.decisioning'
+    'apps.decisioning',
+    'apps.underwriting'
 ]
 
 MIDDLEWARE = [
@@ -103,12 +104,19 @@ REST_FRAMEWORK = {
     ],
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "DEFAULT_THROTTLE_RATES": {"login": "10/min"},
+    # единый формат ошибок {"code", "message", "details"} — см. apps/common/exceptions.py
+    "EXCEPTION_HANDLER": "apps.common.exceptions.api_exception_handler",
 }
 
 SPECTACULAR_SETTINGS = {
     "TITLE": "SME Credit API",
     "VERSION": "1.0.0",
-    "ENUM_NAME_OVERRIDES": {"ApplicationStatusEnum": "apps.applications.models.ApplicationStatus"},
+    "ENUM_NAME_OVERRIDES": {
+        "ApplicationStatusEnum": "apps.applications.models.ApplicationStatus",
+        # одинаковые наборы значений в разных моделях — одно имя в схеме и в типах фронта
+        "DecisionMakerEnum": "apps.applications.models.InfoRequested.AskedByChoices",
+        "DocTypeEnum": "apps.common.choices.DocTypeChoices",
+    },
 }
 
 SIMPLE_JWT = {
@@ -148,7 +156,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ru'  # стандартные сообщения DRF и Django — по-русски: их видит пользователь
 
 TIME_ZONE = 'UTC'
 

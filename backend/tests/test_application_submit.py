@@ -153,11 +153,11 @@ def test_submit_empty_draft_lists_everything_missing(api, client_user, make_app,
 
     assert r.status_code == 400
     # missing_fields может быть списком или словарём «поле → текст» — проверяем только имена полей
-    assert set(r.data["missing_fields"]) >= {
+    assert set(r.data["details"]["missing_fields"]) >= {
         "amount", "term_months", "purpose", "annual_revenue", "existing_monthly_payments", "consent",
     }
-    assert {d["doc_type"] for d in r.data["missing_documents"]} == REQUIRED_DOCS
-    assert all(d["name"] for d in r.data["missing_documents"])  # у документа есть название для чек-листа
+    assert {d["doc_type"] for d in r.data["details"]["missing_documents"]} == REQUIRED_DOCS
+    assert all(d["name"] for d in r.data["details"]["missing_documents"])  # у документа есть название для чек-листа
 
     app.refresh_from_db()
     assert app.status == S.DRAFT
@@ -175,8 +175,8 @@ def test_submit_requires_each_form_field(api, client_user, make_app, missing):
     r = api.post(url(app, "submit"))
 
     assert r.status_code == 400
-    assert set(r.data["missing_fields"]) == {missing}
-    assert "missing_documents" not in r.data
+    assert set(r.data["details"]["missing_fields"]) == {missing}
+    assert "missing_documents" not in r.data["details"]
 
 
 def test_submit_requires_purpose(api, client_user, make_app):
@@ -185,7 +185,7 @@ def test_submit_requires_purpose(api, client_user, make_app):
     r = api.post(url(app, "submit"))
 
     assert r.status_code == 400
-    assert set(r.data["missing_fields"]) == {"purpose"}
+    assert set(r.data["details"]["missing_fields"]) == {"purpose"}
 
 
 def test_submit_requires_consent(api, client_user, make_app):
@@ -194,7 +194,7 @@ def test_submit_requires_consent(api, client_user, make_app):
     r = api.post(url(app, "submit"))
 
     assert r.status_code == 400
-    assert set(r.data["missing_fields"]) == {"consent"}
+    assert set(r.data["details"]["missing_fields"]) == {"consent"}
 
 
 def test_zero_payments_on_other_loans_is_a_valid_answer(api, client_user, make_app):
@@ -210,7 +210,7 @@ def test_submit_requires_each_mandatory_document(api, client_user, make_app):
     r = api.post(url(app, "submit"))
 
     assert r.status_code == 400
-    assert [d["doc_type"] for d in r.data["missing_documents"]] == [DT.USN_RETURN]
+    assert [d["doc_type"] for d in r.data["details"]["missing_documents"]] == [DT.USN_RETURN]
 
 
 def test_collateral_is_required_for_product_with_collateral(api, client_user, make_app):
@@ -219,7 +219,7 @@ def test_collateral_is_required_for_product_with_collateral(api, client_user, ma
     r = api.post(url(app, "submit"))
 
     assert r.status_code == 400
-    assert set(r.data["missing_fields"]) == {"collateral_type", "collateral_value"}
+    assert set(r.data["details"]["missing_fields"]) == {"collateral_type", "collateral_value"}
 
 
 def test_collateral_is_not_required_for_product_without_it(api, client_user, make_app):
@@ -238,7 +238,7 @@ def test_submit_checks_product_limits(api, client_user, make_app, field, value):
     r = api.post(url(app, "submit"))
 
     assert r.status_code == 400
-    assert field in r.data["errors"]
+    assert field in r.data["details"]["errors"]
 
 
 def test_submit_twice_is_conflict(api, client_user, make_app):

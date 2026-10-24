@@ -99,7 +99,7 @@ def test_create_requires_company(products):
     r = api_for(user).post(APPLICATIONS, {"product_code": "EXPRESS"}, format="json")
 
     assert r.status_code == 400
-    assert "company" in r.data
+    assert "company" in r.data["details"]
     assert not Application.objects.exists()
 
 
@@ -108,7 +108,7 @@ def test_create_rejects_unknown_or_inactive_product(api, products, code):
     r = api.post(APPLICATIONS, {"product_code": code}, format="json")
 
     assert r.status_code == 400
-    assert "product_code" in r.data
+    assert "product_code" in r.data["details"]
 
 
 def test_several_drafts_on_same_product_are_allowed(api, products):
@@ -261,7 +261,7 @@ def test_patch_rejects_invalid_values(api, client_user, make_app, field, value):
     r = api.patch(app_url(app), {field: value}, format="json")
 
     assert r.status_code == 400
-    assert field in r.data
+    assert field in r.data["details"]
 
 
 def test_patch_outside_draft_is_conflict(api, client_user, make_app):

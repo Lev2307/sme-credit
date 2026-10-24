@@ -133,6 +133,16 @@ class Application(models.Model):
         null=True, blank=True, verbose_name="подана", help_text="Когда клиент первый раз отправил заявку"
     )
 
+    assigned_to = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name="assigned_applications",
+        verbose_name="андеррайтер",
+        help_text="Кто взял заявку в работу. Пусто — заявка в общей очереди",
+    )
+
     class Meta:
         ordering = ["-created_at"]
         constraints = [
@@ -145,6 +155,30 @@ class Application(models.Model):
 
     def __str__(self):
         return f"{self.product_id} · {self.get_status_display()} · {self.id}"
+
+    @property
+    def current_offer(self):
+        """Оффер из последнего решения или None, если предложения нет (черновик, дозапрос, отказ)."""
+        decision = self.decisions.last()
+        if decision is None or decision.offer_amount is None:
+            return None
+        return {
+            "amount": decision.offer_amount,
+            "term_months": decision.offer_term_months,
+            "rate": decision.offer_rate,
+            "monthly_payment": decision.offer_monthly_payment,
+            "reason_codes": decision.reason_codes,  # почему сумма другая — у контрпредложения
+        }
+
+    @property
+    def open_info_request(self):
+        """Дозапрос, на который клиент ещё не ответил, или None."""
+        return self.info_requests.filter(answered_at__isnull=True).last()
+
+    @property
+    def agreement_or_none(self):
+        """Договор, если клиент уже подписал. Обычное app.agreement падает, пока договора нет."""
+        return getattr(self, "agreement", None)
 
 
 def document_upload_to(instance, filename):
@@ -338,3 +372,74 @@ class Decision(models.Model):
 
     def delete(self, *args, **kwargs):
         raise ValueError("Итоговое решение нельзя удалить")
+
+class Agreement(models.Model):
+    """Кредитный договор. Создаётся, когда клиент подписывает оффер (подписание — симуляция).
+
+    Условия копируются из оффера последнего решения: если банк потом изменит параметры,
+    подписанный договор останется прежним.
+    """
+
+    application = models.OneToOneField(
+        Application, on_delete=models.PROTECT, related_name="agreement", verbose_name="заявка"
+    )
+    number = models.CharField(
+        max_length=32, unique=True, verbose_name="номер договора", help_text="Например, КД-20261024-3F9A1C"
+    )
+    amount = models.DecimalField(max_digits=14, decimal_places=2, verbose_name="сумма кредита, ₽")
+    term_months = models.PositiveSmallIntegerField(verbose_name="срок, мес.")
+    rate = models.DecimalField(max_digits=5, decimal_places=2, verbose_name="ставка, % годовых")
+    monthly_payment = models.DecimalField(max_digits=14, decimal_places=2, verbose_name="платёж в месяц, ₽")
+    signed_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="signed_agreements", verbose_name="кто подписал"
+    )
+    signed_at = models.DateTimeField(auto_now_add=True, verbose_name="подписан")
+    disbursed_at = models.DateTimeField(
+        null=True, blank=True, verbose_name="деньги зачислены", help_text="Пусто, пока идёт выдача"
+    )
+
+    def __str__(self):
+        return self.number
+
+class InfoRequested(models.Model):
+    """Дозапрос: банк просит клиента уточнить данные или приложить документ.
+
+    Создаёт его тот, кто принимает решение: конвейер (расхождение выручки, нет документа)
+    или андеррайтер. Клиент отвечает в кабинете, и заявка возвращается к тому, кто спрашивал.
+    """
+
+    class AskedByChoices(models.TextChoices):
+        SYSTEM = "SYSTEM", "Система"
+        UNDERWRITER = "UNDERWRITER", "Андеррайтер"
+
+    application = models.ForeignKey(
+        Application, on_delete=models.PROTECT, related_name="info_requests", verbose_name="заявка"
+    )
+    asked_by = models.CharField(
+        max_length=12,
+        choices=AskedByChoices.choices,
+        verbose_name="кто спросил",
+        help_text="После ответа заявка вернётся к нему: системе — на пересчёт, андеррайтеру — в очередь",
+    )
+    underwriter = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        null=True,
+        blank=True,
+        on_delete=models.PROTECT,
+        related_name="asked_info_requests",
+        verbose_name="андеррайтер",
+        help_text="Пусто, если спрашивала система",
+    )
+    question = models.TextField(verbose_name="вопрос", help_text="Что банк просит уточнить — простыми словами")
+    doc_types = models.JSONField(
+        default=list, blank=True, verbose_name="какие документы приложить", help_text="Коды из DocTypeChoices"
+    )
+    answer = models.TextField(blank=True, verbose_name="ответ клиента")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="спросили")
+    answered_at = models.DateTimeField(null=True, blank=True, verbose_name="ответили", help_text="Пусто, пока ответа нет")
+
+    class Meta:
+        ordering = ["created_at", "id"]
+
+    def __str__(self):
+        return f"{self.get_asked_by_display()}: {self.question[:40]}"

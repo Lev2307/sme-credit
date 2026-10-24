@@ -14,7 +14,7 @@ from apps.integrations.transparent_business import fetch_tax, parse_tax
 from apps.integrations.bki import fetch_bki, parse_bki, CreditReport
 from apps.integrations.exceptions import CompanyNotFound, IntegrationError
 from apps.catalog.models import ScoringConfig
-from .models import EnrichmentResult, Application, ApplicationEvent, Decision
+from .models import EnrichmentResult, Application, ApplicationEvent, Decision, InfoRequested
 from .transitions import transition, InvalidTransition
 from .services import missing_required_documents
 
@@ -97,6 +97,27 @@ def build_input(app: Application, data: dict, as_of: date) -> DecisionInput:
         credit=data[EnrichmentResult.Source.BKI],
     )
 
+# Что спросить у клиента по каждой причине дозапроса
+QUESTION_BY_REASON = {
+    "REVENUE_MISMATCH": (
+        "Выручка в анкете сильно отличается от данных налоговой. "
+        "Проверьте цифру и исправьте её или объясните расхождение и приложите подтверждение"
+    ),
+    "MISSING_DOCUMENTS": "Приложите недостающие документы из списка",
+}
+
+
+def ask_client(app: Application, reasons, missing_documents):
+    """Создать дозапрос от системы: вопрос по причинам и список недостающих документов."""
+    question = "\n".join(QUESTION_BY_REASON[r] for r in reasons if r in QUESTION_BY_REASON)
+    return InfoRequested.objects.create(
+        application=app,
+        asked_by=InfoRequested.AskedByChoices.SYSTEM,
+        question=question or "Уточните данные заявки",
+        doc_types=list(missing_documents),
+    )
+
+
 def log_event(app: Application, action: str):
     """Зарегестрировать событие в журнале"""
     ApplicationEvent.objects.create(
@@ -140,6 +161,7 @@ def process_application(app_id: UUID):
             )
             if result.outcome == Outcome.INFO_REQUEST:
                 Application.objects.filter(id=app_id).update(info_request_rounds=F("info_request_rounds") + 1)
+                ask_client(app, result.reasons, inp.missing_documents)
             transition(app, STATUS_BY_OUTCOME[result.outcome], action="DECIDED", reason_code=result.reasons[0] if result.reasons else "")
     except InvalidTransition:
         return # клиент отменил заявку, пока мы считали: решение откатится вместе с транзакцией
