@@ -1,0 +1,55 @@
+info:
+  name: applications_create
+  type: http
+  seq: 2
+  tags:
+    - applications
+
+http:
+  method: POST
+  url: "{{baseUrl}}/api/v1/applications"
+  body:
+    type: json
+    data: |-
+      {
+        "product_code": ""
+      }
+  auth:
+    type: bearer
+    token: "{{token}}"
+
+runtime:
+  scripts:
+    - type: after-response
+      code: bru.setEnvVar("appId", res.body.id);
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false
+
+examples:
+  - name: 201 Response
+    request:
+      url: "{{baseUrl}}/api/v1/applications"
+      method: POST
+      body:
+        type: json
+        data: |-
+          {
+            "product_code": ""
+          }
+    response:
+      status: 201
+      statusText: Created
+      headers:
+        - name: Content-Type
+          value: application/json
+      body:
+        type: json
+        data: |-
+          {
+            "product_code": ""
+          }

@@ -1,0 +1,8 @@
+name: local
+variables:
+  - name: baseUrl
+    value: http://localhost:8000
+  - name: token
+    value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzkyODgyMzg1LCJpYXQiOjE3OTI4ODE0ODUsImp0aSI6ImYxZWUyZDM5MGUyNDQzMjE5NmYzNmQ5MzZhNGE2MTc0IiwidXNlcl9pZCI6IjMifQ.lNQAIVnaPvV1LQ-rDgvOrDJFVZTBPgzg2qo0t9Jbj3U
+  - name: appId
+    value: 97f00afe-7ff1-4b72-9705-0f9c5e87f277

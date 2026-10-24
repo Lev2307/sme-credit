@@ -1,0 +1,6 @@
+info:
+  name: applications
+  type: folder
+
+request:
+  auth: inherit

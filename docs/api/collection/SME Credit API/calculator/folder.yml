@@ -1,0 +1,6 @@
+info:
+  name: calculator
+  type: folder
+
+request:
+  auth: inherit

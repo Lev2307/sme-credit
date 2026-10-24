@@ -1,0 +1,207 @@
+info:
+  name: products_documents_list
+  type: http
+  seq: 3
+  tags:
+    - products
+
+http:
+  method: GET
+  url: "{{baseUrl}}/api/v1/products/:code/documents"
+  params:
+    - name: code
+      value: ""
+      type: path
+    - name: legal_form
+      value: IP
+      type: query
+      description: |-
+        * `IP` - ИП
+        * `OOO` - ООО
+    - name: legal_form
+      value: OOO
+      type: query
+      description: |-
+        * `IP` - ИП
+        * `OOO` - ООО
+      disabled: true
+    - name: tax_regime
+      value: OSNO
+      type: query
+      description: |-
+        * `OSNO` - ОСНО
+        * `USN_INCOME` - УСН «Доходы»
+        * `USN_INCOME_EXPENSES` - УСН «Доходы минус расходы»
+        * `PSN` - Патент (только ИП)
+        * `ESHN` - ЕСХН
+        * `AUSN` - АУСН
+    - name: tax_regime
+      value: USN_INCOME
+      type: query
+      description: |-
+        * `OSNO` - ОСНО
+        * `USN_INCOME` - УСН «Доходы»
+        * `USN_INCOME_EXPENSES` - УСН «Доходы минус расходы»
+        * `PSN` - Патент (только ИП)
+        * `ESHN` - ЕСХН
+        * `AUSN` - АУСН
+      disabled: true
+    - name: tax_regime
+      value: USN_INCOME_EXPENSES
+      type: query
+      description: |-
+        * `OSNO` - ОСНО
+        * `USN_INCOME` - УСН «Доходы»
+        * `USN_INCOME_EXPENSES` - УСН «Доходы минус расходы»
+        * `PSN` - Патент (только ИП)
+        * `ESHN` - ЕСХН
+        * `AUSN` - АУСН
+      disabled: true
+    - name: tax_regime
+      value: PSN
+      type: query
+      description: |-
+        * `OSNO` - ОСНО
+        * `USN_INCOME` - УСН «Доходы»
+        * `USN_INCOME_EXPENSES` - УСН «Доходы минус расходы»
+        * `PSN` - Патент (только ИП)
+        * `ESHN` - ЕСХН
+        * `AUSN` - АУСН
+      disabled: true
+    - name: tax_regime
+      value: ESHN
+      type: query
+      description: |-
+        * `OSNO` - ОСНО
+        * `USN_INCOME` - УСН «Доходы»
+        * `USN_INCOME_EXPENSES` - УСН «Доходы минус расходы»
+        * `PSN` - Патент (только ИП)
+        * `ESHN` - ЕСХН
+        * `AUSN` - АУСН
+      disabled: true
+    - name: tax_regime
+      value: AUSN
+      type: query
+      description: |-
+        * `OSNO` - ОСНО
+        * `USN_INCOME` - УСН «Доходы»
+        * `USN_INCOME_EXPENSES` - УСН «Доходы минус расходы»
+        * `PSN` - Патент (только ИП)
+        * `ESHN` - ЕСХН
+        * `AUSN` - АУСН
+      disabled: true
+  auth:
+    type: bearer
+    token: "{{token}}"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false
+
+examples:
+  - name: 200 Response
+    request:
+      url: "{{baseUrl}}/api/v1/products/:code/documents"
+      method: GET
+      params:
+        - name: code
+          value: ""
+          type: path
+        - name: legal_form
+          value: IP
+          type: query
+          description: |-
+            * `IP` - ИП
+            * `OOO` - ООО
+        - name: legal_form
+          value: OOO
+          type: query
+          description: |-
+            * `IP` - ИП
+            * `OOO` - ООО
+          disabled: true
+        - name: tax_regime
+          value: OSNO
+          type: query
+          description: |-
+            * `OSNO` - ОСНО
+            * `USN_INCOME` - УСН «Доходы»
+            * `USN_INCOME_EXPENSES` - УСН «Доходы минус расходы»
+            * `PSN` - Патент (только ИП)
+            * `ESHN` - ЕСХН
+            * `AUSN` - АУСН
+        - name: tax_regime
+          value: USN_INCOME
+          type: query
+          description: |-
+            * `OSNO` - ОСНО
+            * `USN_INCOME` - УСН «Доходы»
+            * `USN_INCOME_EXPENSES` - УСН «Доходы минус расходы»
+            * `PSN` - Патент (только ИП)
+            * `ESHN` - ЕСХН
+            * `AUSN` - АУСН
+          disabled: true
+        - name: tax_regime
+          value: USN_INCOME_EXPENSES
+          type: query
+          description: |-
+            * `OSNO` - ОСНО
+            * `USN_INCOME` - УСН «Доходы»
+            * `USN_INCOME_EXPENSES` - УСН «Доходы минус расходы»
+            * `PSN` - Патент (только ИП)
+            * `ESHN` - ЕСХН
+            * `AUSN` - АУСН
+          disabled: true
+        - name: tax_regime
+          value: PSN
+          type: query
+          description: |-
+            * `OSNO` - ОСНО
+            * `USN_INCOME` - УСН «Доходы»
+            * `USN_INCOME_EXPENSES` - УСН «Доходы минус расходы»
+            * `PSN` - Патент (только ИП)
+            * `ESHN` - ЕСХН
+            * `AUSN` - АУСН
+          disabled: true
+        - name: tax_regime
+          value: ESHN
+          type: query
+          description: |-
+            * `OSNO` - ОСНО
+            * `USN_INCOME` - УСН «Доходы»
+            * `USN_INCOME_EXPENSES` - УСН «Доходы минус расходы»
+            * `PSN` - Патент (только ИП)
+            * `ESHN` - ЕСХН
+            * `AUSN` - АУСН
+          disabled: true
+        - name: tax_regime
+          value: AUSN
+          type: query
+          description: |-
+            * `OSNO` - ОСНО
+            * `USN_INCOME` - УСН «Доходы»
+            * `USN_INCOME_EXPENSES` - УСН «Доходы минус расходы»
+            * `PSN` - Патент (только ИП)
+            * `ESHN` - ЕСХН
+            * `AUSN` - АУСН
+          disabled: true
+    response:
+      status: 200
+      statusText: OK
+      headers:
+        - name: Content-Type
+          value: application/json
+      body:
+        type: json
+        data: |-
+          [
+            {
+              "doc_type": "",
+              "name": "",
+              "hint": "",
+              "is_required": false
+            }
+          ]

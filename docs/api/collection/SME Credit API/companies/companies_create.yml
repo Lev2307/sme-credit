@@ -1,0 +1,135 @@
+info:
+  name: companies_create
+  type: http
+  seq: 1
+  tags:
+    - companies
+
+http:
+  method: POST
+  url: "{{baseUrl}}/api/v1/companies"
+  body:
+    type: json
+    data: |-
+      {
+        "inn": "9901000010"
+      }
+  auth:
+    type: bearer
+    token: "{{token}}"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false
+
+examples:
+  - name: 201 Response
+    request:
+      url: "{{baseUrl}}/api/v1/companies"
+      method: POST
+      body:
+        type: json
+        data: |-
+          {
+            "inn": "",
+            "tax_regime": ""
+          }
+    response:
+      status: 201
+      statusText: Created
+      headers:
+        - name: Content-Type
+          value: application/json
+      body:
+        type: json
+        data: |-
+          {
+            "id": 0,
+            "inn": "",
+            "ogrn": "",
+            "name": "",
+            "legal_form": "",
+            "tax_regime": "",
+            "registered_at": ""
+          }
+  - name: 400 Response
+    description: Неверный ИНН или не указан налоговый режим
+    request:
+      url: "{{baseUrl}}/api/v1/companies"
+      method: POST
+      body:
+        type: json
+        data: |-
+          {
+            "inn": "",
+            "tax_regime": ""
+          }
+    response:
+      status: 400
+      statusText: Bad Request
+      body:
+        type: text
+        data: ""
+  - name: 404 Response
+    description: ИНН не найден в ЕГРЮЛ/ЕГРИП
+    request:
+      url: "{{baseUrl}}/api/v1/companies"
+      method: POST
+      body:
+        type: json
+        data: |-
+          {
+            "inn": "",
+            "tax_regime": ""
+          }
+    response:
+      status: 404
+      statusText: Not Found
+      body:
+        type: text
+        data: ""
+  - name: 409 Response
+    description: У пользователя уже есть компания или ИНН занят
+    request:
+      url: "{{baseUrl}}/api/v1/companies"
+      method: POST
+      body:
+        type: json
+        data: |-
+          {
+            "inn": "",
+            "tax_regime": ""
+          }
+    response:
+      status: 409
+      statusText: Conflict
+      body:
+        type: text
+        data: ""
+  - name: 503 Response
+    description: ЕГРЮЛ недоступен
+    request:
+      url: "{{baseUrl}}/api/v1/companies"
+      method: POST
+      body:
+        type: json
+        data: |-
+          {
+            "inn": "",
+            "tax_regime": ""
+          }
+    response:
+      status: 503
+      statusText: Service Unavailable
+      body:
+        type: text
+        data: ""
+
+docs: |-
+  Привязать компанию к клиенту.
+
+  Данные компании сервер берёт сам из ЕГРЮЛ и «Прозрачного бизнеса», запросу не доверяет.
+  tax_regime из запроса нужен, только если «Прозрачный бизнес» не ответил.

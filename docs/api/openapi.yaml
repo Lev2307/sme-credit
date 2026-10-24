@@ -1,0 +1,2386 @@
+openapi: 3.0.3
+info:
+  title: SME Credit API
+  version: 1.0.0
+paths:
+  /api/v1/applications:
+    get:
+      operationId: applications_list
+      tags:
+      - applications
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ApplicationRetrieve'
+          description: ''
+    post:
+      operationId: applications_create
+      tags:
+      - applications
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApplicationCreate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ApplicationCreate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ApplicationCreate'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationCreate'
+          description: ''
+  /api/v1/applications/{id}:
+    get:
+      operationId: applications_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+          title: Номер заявки
+          description: UUID, чтобы номера заявок нельзя было подобрать перебором
+        required: true
+      tags:
+      - applications
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationRetrieve'
+          description: ''
+    patch:
+      operationId: applications_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+          title: Номер заявки
+          description: UUID, чтобы номера заявок нельзя было подобрать перебором
+        required: true
+      tags:
+      - applications
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedApplicationPatch'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedApplicationPatch'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedApplicationPatch'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationPatch'
+          description: ''
+  /api/v1/applications/{id}/cancel:
+    post:
+      operationId: applications_cancel_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+          title: Номер заявки
+          description: UUID, чтобы номера заявок нельзя было подобрать перебором
+        required: true
+      tags:
+      - applications
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationRetrieve'
+          description: ''
+  /api/v1/applications/{id}/documents:
+    post:
+      operationId: applications_documents_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+          title: Номер заявки
+          description: UUID, чтобы номера заявок нельзя было подобрать перебором
+        required: true
+      tags:
+      - applications
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApplicationDocumentUpload'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ApplicationDocumentUpload'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ApplicationDocumentUpload'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationDocumentUpload'
+          description: ''
+  /api/v1/applications/{id}/documents/{doc_id}:
+    delete:
+      operationId: applications_documents_destroy
+      parameters:
+      - in: path
+        name: doc_id
+        schema:
+          type: string
+          pattern: ^\d+$
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+          title: Номер заявки
+          description: UUID, чтобы номера заявок нельзя было подобрать перебором
+        required: true
+      tags:
+      - applications
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/applications/{id}/documents/{doc_id}/file:
+    get:
+      operationId: applications_documents_file_retrieve
+      parameters:
+      - in: path
+        name: doc_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - applications
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+          description: ''
+  /api/v1/applications/{id}/events:
+    get:
+      operationId: applications_events_list
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+          title: Номер заявки
+          description: UUID, чтобы номера заявок нельзя было подобрать перебором
+        required: true
+      tags:
+      - applications
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ApplicationEvent'
+          description: ''
+  /api/v1/applications/{id}/info-requests/{info_id}/answer:
+    post:
+      operationId: applications_info_requests_answer_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+          title: Номер заявки
+          description: UUID, чтобы номера заявок нельзя было подобрать перебором
+        required: true
+      - in: path
+        name: info_id
+        schema:
+          type: string
+          pattern: ^\d+$
+        required: true
+      tags:
+      - applications
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InfoRequested'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/InfoRequested'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/InfoRequested'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationRetrieve'
+          description: ''
+  /api/v1/applications/{id}/offer/accept:
+    post:
+      operationId: applications_offer_accept_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+          title: Номер заявки
+          description: UUID, чтобы номера заявок нельзя было подобрать перебором
+        required: true
+      tags:
+      - applications
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationRetrieve'
+          description: ''
+  /api/v1/applications/{id}/offer/decline:
+    post:
+      operationId: applications_offer_decline_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+          title: Номер заявки
+          description: UUID, чтобы номера заявок нельзя было подобрать перебором
+        required: true
+      tags:
+      - applications
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationRetrieve'
+          description: ''
+  /api/v1/applications/{id}/sign:
+    post:
+      operationId: applications_sign_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+          title: Номер заявки
+          description: UUID, чтобы номера заявок нельзя было подобрать перебором
+        required: true
+      tags:
+      - applications
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationRetrieve'
+          description: ''
+  /api/v1/applications/{id}/submit:
+    post:
+      operationId: applications_submit_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+          title: Номер заявки
+          description: UUID, чтобы номера заявок нельзя было подобрать перебором
+        required: true
+      tags:
+      - applications
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationRetrieve'
+          description: ''
+  /api/v1/auth/login:
+    post:
+      operationId: auth_login_create
+      description: |-
+        Takes a set of user credentials and returns an access and refresh JSON web
+        token pair to prove the authentication of those credentials.
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenObtainPair'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenObtainPair'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TokenObtainPair'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccessToken'
+          description: ''
+  /api/v1/auth/logout:
+    post:
+      operationId: auth_logout_create
+      tags:
+      - auth
+      security:
+      - {}
+      responses:
+        '204':
+          description: No response body
+  /api/v1/auth/refresh:
+    post:
+      operationId: auth_refresh_create
+      description: |-
+        Takes a refresh type JSON web token and returns an access type JSON web
+        token if the refresh token is valid.
+      tags:
+      - auth
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccessToken'
+          description: ''
+  /api/v1/calculator:
+    post:
+      operationId: calculator_create
+      tags:
+      - calculator
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CalculatorInput'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CalculatorInput'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CalculatorInput'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CalculatorResult'
+          description: ''
+  /api/v1/companies:
+    post:
+      operationId: companies_create
+      description: |-
+        Привязать компанию к клиенту.
+
+        Данные компании сервер берёт сам из ЕГРЮЛ и «Прозрачного бизнеса», запросу не доверяет.
+        tax_regime из запроса нужен, только если «Прозрачный бизнес» не ответил.
+      tags:
+      - companies
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CompanyCreate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CompanyCreate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CompanyCreate'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Company'
+          description: ''
+        '400':
+          description: Неверный ИНН или не указан налоговый режим
+        '404':
+          description: ИНН не найден в ЕГРЮЛ/ЕГРИП
+        '409':
+          description: У пользователя уже есть компания или ИНН занят
+        '503':
+          description: ЕГРЮЛ недоступен
+  /api/v1/companies/lookup:
+    get:
+      operationId: companies_lookup_retrieve
+      description: 'Автозаполнение на первом шаге заявки: данные компании по ИНН и
+        быстрые стоп-факторы.'
+      parameters:
+      - in: query
+        name: inn
+        schema:
+          type: string
+        description: 10 цифр у ООО, 12 у ИП
+        required: true
+      tags:
+      - companies
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CompanyLookup'
+          description: ''
+        '400':
+          description: Неверный формат ИНН
+        '404':
+          description: ИНН не найден в ЕГРЮЛ/ЕГРИП
+        '503':
+          description: ЕГРЮЛ недоступен
+  /api/v1/health:
+    get:
+      operationId: health_retrieve
+      description: 'Жив ли бэкенд: доступны ли база и Redis. Без входа — его опрашивает
+        healthcheck Docker.'
+      tags:
+      - health
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Health'
+          description: ''
+  /api/v1/me:
+    get:
+      operationId: me_retrieve
+      tags:
+      - me
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Me'
+          description: ''
+  /api/v1/products:
+    get:
+      operationId: products_list
+      tags:
+      - products
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+          description: ''
+  /api/v1/products/{code}:
+    get:
+      operationId: products_retrieve
+      parameters:
+      - in: path
+        name: code
+        schema:
+          type: string
+          title: Код
+          description: Постоянный идентификатор латиницей, например EXPRESS. Не меняется,
+            если на продукт есть заявки
+        required: true
+      tags:
+      - products
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+          description: ''
+  /api/v1/products/{code}/documents:
+    get:
+      operationId: products_documents_list
+      parameters:
+      - in: path
+        name: code
+        schema:
+          type: string
+          title: Код
+          description: Постоянный идентификатор латиницей, например EXPRESS. Не меняется,
+            если на продукт есть заявки
+        required: true
+      - in: query
+        name: legal_form
+        schema:
+          enum:
+          - IP
+          - OOO
+          type: string
+          minLength: 1
+        description: |-
+          * `IP` - ИП
+          * `OOO` - ООО
+        required: true
+      - in: query
+        name: tax_regime
+        schema:
+          enum:
+          - OSNO
+          - USN_INCOME
+          - USN_INCOME_EXPENSES
+          - PSN
+          - ESHN
+          - AUSN
+          type: string
+          minLength: 1
+        description: |-
+          * `OSNO` - ОСНО
+          * `USN_INCOME` - УСН «Доходы»
+          * `USN_INCOME_EXPENSES` - УСН «Доходы минус расходы»
+          * `PSN` - Патент (только ИП)
+          * `ESHN` - ЕСХН
+          * `AUSN` - АУСН
+        required: true
+      tags:
+      - products
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DocumentRequirement'
+          description: ''
+  /api/v1/schema/:
+    get:
+      operationId: schema_retrieve
+      description: |-
+        OpenApi3 schema for this API. Format can be selected via content negotiation.
+
+        - YAML: application/vnd.oai.openapi
+        - JSON: application/vnd.oai.openapi+json
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - json
+          - yaml
+      - in: query
+        name: lang
+        schema:
+          type: string
+          enum:
+          - af
+          - ar
+          - ar-dz
+          - ast
+          - az
+          - be
+          - bg
+          - bn
+          - br
+          - bs
+          - ca
+          - ckb
+          - cs
+          - cy
+          - da
+          - de
+          - dsb
+          - el
+          - en
+          - en-au
+          - en-gb
+          - eo
+          - es
+          - es-ar
+          - es-co
+          - es-mx
+          - es-ni
+          - es-ve
+          - et
+          - eu
+          - fa
+          - fi
+          - fr
+          - fy
+          - ga
+          - gd
+          - gl
+          - he
+          - hi
+          - hr
+          - hsb
+          - hu
+          - hy
+          - ia
+          - id
+          - ig
+          - io
+          - is
+          - it
+          - ja
+          - ka
+          - kab
+          - kk
+          - km
+          - kn
+          - ko
+          - ky
+          - lb
+          - lt
+          - lv
+          - mk
+          - ml
+          - mn
+          - mr
+          - ms
+          - my
+          - nb
+          - ne
+          - nl
+          - nn
+          - os
+          - pa
+          - pl
+          - pt
+          - pt-br
+          - ro
+          - ru
+          - sk
+          - sl
+          - sq
+          - sr
+          - sr-latn
+          - sv
+          - sw
+          - ta
+          - te
+          - tg
+          - th
+          - tk
+          - tr
+          - tt
+          - udm
+          - ug
+          - uk
+          - ur
+          - uz
+          - vi
+          - zh-hans
+          - zh-hant
+      tags:
+      - schema
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/vnd.oai.openapi:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/yaml:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/vnd.oai.openapi+json:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+  /api/v1/underwriting/applications/{id}:
+    get:
+      operationId: underwriting_applications_retrieve
+      description: |-
+        Карточка заявки и действия андеррайтера: взять в работу, принять решение.
+
+        Это вьюсет, а не RetrieveAPIView: @action работает только во вьюсетах, подключённых через роутер.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+          title: Номер заявки
+          description: UUID, чтобы номера заявок нельзя было подобрать перебором
+        required: true
+      tags:
+      - underwriting
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnderwritingCard'
+          description: ''
+  /api/v1/underwriting/applications/{id}/decision:
+    post:
+      operationId: underwriting_applications_decision_create
+      description: |-
+        Карточка заявки и действия андеррайтера: взять в работу, принять решение.
+
+        Это вьюсет, а не RetrieveAPIView: @action работает только во вьюсетах, подключённых через роутер.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+          title: Номер заявки
+          description: UUID, чтобы номера заявок нельзя было подобрать перебором
+        required: true
+      tags:
+      - underwriting
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UnderwriterDecision'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UnderwriterDecision'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UnderwriterDecision'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnderwritingCard'
+          description: ''
+  /api/v1/underwriting/applications/{id}/take:
+    post:
+      operationId: underwriting_applications_take_create
+      description: Взять заявку в работу. Повторно тем же андеррайтером — не ошибка.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+          title: Номер заявки
+          description: UUID, чтобы номера заявок нельзя было подобрать перебором
+        required: true
+      tags:
+      - underwriting
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnderwritingCard'
+          description: ''
+  /api/v1/underwriting/queue:
+    get:
+      operationId: underwriting_queue_list
+      description: Заявки, которые ждут решения андеррайтера. Старые сверху.
+      tags:
+      - underwriting
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/QueueItem'
+          description: ''
+components:
+  schemas:
+    AccessToken:
+      type: object
+      properties:
+        access:
+          type: string
+      required:
+      - access
+    ActorTypeEnum:
+      enum:
+      - CLIENT
+      - UNDERWRITER
+      - SYSTEM
+      type: string
+      description: |-
+        * `CLIENT` - Клиент
+        * `UNDERWRITER` - Андеррайтер
+        * `SYSTEM` - Система
+    Agreement:
+      type: object
+      properties:
+        number:
+          type: string
+          title: Номер договора
+          description: Например, КД-20261024-3F9A1C
+          maxLength: 32
+        amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,12}(?:\.\d{0,2})?$
+          title: Сумма кредита, ₽
+        term_months:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+          title: Срок, мес.
+        rate:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,2})?$
+          title: Ставка, % годовых
+        monthly_payment:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,12}(?:\.\d{0,2})?$
+          title: Платёж в месяц, ₽
+        signed_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Подписан
+        disbursed_at:
+          type: string
+          format: date-time
+          nullable: true
+          title: Деньги зачислены
+          description: Пусто, пока идёт выдача
+      required:
+      - amount
+      - monthly_payment
+      - number
+      - rate
+      - signed_at
+      - term_months
+    ApplicationCreate:
+      type: object
+      properties:
+        product_code:
+          type: string
+          title: Код
+          description: Постоянный идентификатор латиницей, например EXPRESS. Не меняется,
+            если на продукт есть заявки
+      required:
+      - product_code
+    ApplicationDocument:
+      type: object
+      description: Сведения о загруженном документе для ответа клиенту (без самого
+        файла).
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        doc_type:
+          allOf:
+          - $ref: '#/components/schemas/DocTypeEnum'
+          readOnly: true
+          title: Тип документа
+        original_name:
+          type: string
+          readOnly: true
+          title: Исходное имя файла
+          description: Как файл назывался у клиента
+        size:
+          type: integer
+          readOnly: true
+          title: Размер, байт
+        uploaded_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Загружен
+      required:
+      - doc_type
+      - id
+      - original_name
+      - size
+      - uploaded_at
+    ApplicationDocumentUpload:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        doc_type:
+          allOf:
+          - $ref: '#/components/schemas/DocTypeEnum'
+          title: Тип документа
+        file:
+          type: string
+          format: uri
+          writeOnly: true
+          title: Файл
+        original_name:
+          type: string
+          readOnly: true
+          title: Исходное имя файла
+          description: Как файл назывался у клиента
+        size:
+          type: integer
+          readOnly: true
+          title: Размер, байт
+        uploaded_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Загружен
+      required:
+      - doc_type
+      - file
+      - id
+      - original_name
+      - size
+      - uploaded_at
+    ApplicationEvent:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Когда
+        action:
+          type: string
+          readOnly: true
+          title: Действие
+          description: Код действия, например SUBMITTED, DOCUMENT_UPLOADED, SCORED
+        actor_type:
+          allOf:
+          - $ref: '#/components/schemas/ActorTypeEnum'
+          readOnly: true
+          title: Кто действовал
+        from_status:
+          allOf:
+          - $ref: '#/components/schemas/ApplicationStatusEnum'
+          readOnly: true
+          title: Статус до
+        from_status_display:
+          type: string
+          readOnly: true
+        to_status:
+          allOf:
+          - $ref: '#/components/schemas/ApplicationStatusEnum'
+          readOnly: true
+          title: Статус после
+        to_status_display:
+          type: string
+          readOnly: true
+        reason_code:
+          type: string
+          readOnly: true
+          title: Код причины
+          description: Почему так решили, например SOURCE_UNAVAILABLE или STOP_FACTOR_LIQUIDATION
+      required:
+      - action
+      - actor_type
+      - created_at
+      - from_status
+      - from_status_display
+      - id
+      - reason_code
+      - to_status
+      - to_status_display
+    ApplicationPatch:
+      type: object
+      properties:
+        amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,12}(?:\.\d{0,2})?$
+          nullable: true
+          title: Сумма кредита, ₽
+        term_months:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 1
+          format: int64
+          nullable: true
+          title: Срок, мес.
+        purpose:
+          type: string
+          title: Цель кредита
+          description: 'Своими словами: на что нужны деньги'
+        annual_revenue:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,12}(?:\.\d{0,2})?$
+          nullable: true
+          title: Выручка за год, ₽
+          description: Со слов клиента. При проверке сверяется с отчётностью из «Прозрачного
+            бизнеса»
+        existing_monthly_payments:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,12}(?:\.\d{0,2})?$
+          nullable: true
+          title: Платежи по другим кредитам в месяц, ₽
+          description: Нужны для расчёта долговой нагрузки. 0, если других кредитов
+            нет
+        collateral_type:
+          title: Вид залога
+          description: |-
+            Только для продуктов с залогом
+
+            * `REAL_ESTATE` - Недвижимость
+            * `VEHICLE` - Транспорт
+            * `EQUIPMENT` - Оборудование
+          oneOf:
+          - $ref: '#/components/schemas/CollateralTypeEnum'
+          - $ref: '#/components/schemas/BlankEnum'
+        collateral_value:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,12}(?:\.\d{0,2})?$
+          nullable: true
+          title: Стоимость залога, ₽
+          description: Кредит не может быть больше этой суммы, умноженной на max_ltv
+            продукта
+        consent:
+          type: boolean
+          writeOnly: true
+    ApplicationRetrieve:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+          title: Номер заявки
+          description: UUID, чтобы номера заявок нельзя было подобрать перебором
+        product:
+          type: string
+          title: Продукт
+          description: Постоянный идентификатор латиницей, например EXPRESS. Не меняется,
+            если на продукт есть заявки
+          readOnly: true
+        status:
+          allOf:
+          - $ref: '#/components/schemas/ApplicationStatusEnum'
+          readOnly: true
+          title: Статус
+          description: |-
+            Меняется только через transitions.py
+
+            * `DRAFT` - Черновик
+            * `IN_REVIEW` - На проверке
+            * `UNDERWRITING` - У андеррайтера
+            * `INFO_REQUESTED` - Дозапрос
+            * `APPROVED` - Одобрено
+            * `COUNTER_OFFER` - Контрпредложение
+            * `REJECTED` - Отказ
+            * `AWAITING_SIGNATURE` - Ожидает подписания
+            * `DISBURSING` - Выдача
+            * `DISBURSED` - Выдано
+            * `CANCELLED` - Отменена
+        status_display:
+          type: string
+          readOnly: true
+        next_action:
+          type: string
+          nullable: true
+          readOnly: true
+        amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,12}(?:\.\d{0,2})?$
+          readOnly: true
+          nullable: true
+          title: Сумма кредита, ₽
+        term_months:
+          type: integer
+          readOnly: true
+          nullable: true
+          title: Срок, мес.
+        purpose:
+          type: string
+          readOnly: true
+          title: Цель кредита
+          description: 'Своими словами: на что нужны деньги'
+        annual_revenue:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,12}(?:\.\d{0,2})?$
+          readOnly: true
+          nullable: true
+          title: Выручка за год, ₽
+          description: Со слов клиента. При проверке сверяется с отчётностью из «Прозрачного
+            бизнеса»
+        existing_monthly_payments:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,12}(?:\.\d{0,2})?$
+          readOnly: true
+          nullable: true
+          title: Платежи по другим кредитам в месяц, ₽
+          description: Нужны для расчёта долговой нагрузки. 0, если других кредитов
+            нет
+        collateral_type:
+          allOf:
+          - $ref: '#/components/schemas/CollateralTypeEnum'
+          readOnly: true
+          title: Вид залога
+          description: |-
+            Только для продуктов с залогом
+
+            * `REAL_ESTATE` - Недвижимость
+            * `VEHICLE` - Транспорт
+            * `EQUIPMENT` - Оборудование
+        collateral_value:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,12}(?:\.\d{0,2})?$
+          readOnly: true
+          nullable: true
+          title: Стоимость залога, ₽
+          description: Кредит не может быть больше этой суммы, умноженной на max_ltv
+            продукта
+        consent_given_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+          title: Согласие дано
+          description: 'Когда клиент согласился на запрос кредитной истории в БКИ
+            и обработку данных. Без согласия заявку нельзя подать: банк не вправе
+            запрашивать кредитную историю'
+        version:
+          type: integer
+          readOnly: true
+          title: Версия
+          description: 'Растёт при каждом изменении статуса. Нужна, чтобы два одновременных
+            изменения не затёрли друг друга: второе получит 409'
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Создана
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Изменена
+        submitted_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+          title: Подана
+          description: Когда клиент первый раз отправил заявку
+        documents:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApplicationDocument'
+          readOnly: true
+        offer:
+          allOf:
+          - $ref: '#/components/schemas/Offer'
+          readOnly: true
+          nullable: true
+        agreement:
+          allOf:
+          - $ref: '#/components/schemas/Agreement'
+          readOnly: true
+          nullable: true
+        open_info_request:
+          allOf:
+          - $ref: '#/components/schemas/OpenInfoRequest'
+          readOnly: true
+          nullable: true
+      required:
+      - agreement
+      - amount
+      - annual_revenue
+      - collateral_type
+      - collateral_value
+      - consent_given_at
+      - created_at
+      - documents
+      - existing_monthly_payments
+      - id
+      - next_action
+      - offer
+      - open_info_request
+      - product
+      - purpose
+      - status
+      - status_display
+      - submitted_at
+      - term_months
+      - updated_at
+      - version
+    ApplicationStatusEnum:
+      enum:
+      - DRAFT
+      - IN_REVIEW
+      - UNDERWRITING
+      - INFO_REQUESTED
+      - APPROVED
+      - COUNTER_OFFER
+      - REJECTED
+      - AWAITING_SIGNATURE
+      - DISBURSING
+      - DISBURSED
+      - CANCELLED
+      type: string
+      description: |-
+        * `DRAFT` - Черновик
+        * `IN_REVIEW` - На проверке
+        * `UNDERWRITING` - У андеррайтера
+        * `INFO_REQUESTED` - Дозапрос
+        * `APPROVED` - Одобрено
+        * `COUNTER_OFFER` - Контрпредложение
+        * `REJECTED` - Отказ
+        * `AWAITING_SIGNATURE` - Ожидает подписания
+        * `DISBURSING` - Выдача
+        * `DISBURSED` - Выдано
+        * `CANCELLED` - Отменена
+    BlankEnum:
+      enum:
+      - ''
+    CalculatorInput:
+      type: object
+      properties:
+        product_code:
+          type: string
+          title: Код
+          description: Постоянный идентификатор латиницей, например EXPRESS. Не меняется,
+            если на продукт есть заявки
+        amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,12}(?:\.\d{0,2})?$
+        term_months:
+          type: integer
+          minimum: 1
+      required:
+      - amount
+      - product_code
+      - term_months
+    CalculatorResult:
+      type: object
+      properties:
+        rate:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,2})?$
+        monthly_payment:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,12}(?:\.\d{0,2})?$
+        total_payment:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,12}(?:\.\d{0,2})?$
+        overpayment:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,12}(?:\.\d{0,2})?$
+      required:
+      - monthly_payment
+      - overpayment
+      - rate
+      - total_payment
+    CollateralTypeEnum:
+      enum:
+      - REAL_ESTATE
+      - VEHICLE
+      - EQUIPMENT
+      type: string
+      description: |-
+        * `REAL_ESTATE` - Недвижимость
+        * `VEHICLE` - Транспорт
+        * `EQUIPMENT` - Оборудование
+    Company:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        inn:
+          type: string
+          title: ИНН
+          description: 10 цифр у ООО, 12 у ИП. По нему идут запросы в реестры и БКИ
+          maxLength: 12
+        ogrn:
+          type: string
+          title: ОГРН / ОГРНИП
+          description: 13 цифр у ООО, 15 у ИП
+          maxLength: 15
+        name:
+          type: string
+          title: Название
+          maxLength: 255
+        legal_form:
+          allOf:
+          - $ref: '#/components/schemas/LegalFormEnum'
+          title: Форма бизнеса
+        tax_regime:
+          allOf:
+          - $ref: '#/components/schemas/TaxRegimeEnum'
+          title: Налоговый режим
+          description: |-
+            От него зависит список документов для заявки
+
+            * `OSNO` - ОСНО
+            * `USN_INCOME` - УСН «Доходы»
+            * `USN_INCOME_EXPENSES` - УСН «Доходы минус расходы»
+            * `PSN` - Патент (только ИП)
+            * `ESHN` - ЕСХН
+            * `AUSN` - АУСН
+        registered_at:
+          type: string
+          format: date
+          title: Дата регистрации
+          description: Из реестра. По ней считается возраст бизнеса
+      required:
+      - id
+      - inn
+      - legal_form
+      - name
+      - ogrn
+      - registered_at
+      - tax_regime
+    CompanyCreate:
+      type: object
+      properties:
+        inn:
+          type: string
+          pattern: ^(\d{10}|\d{12})$
+        tax_regime:
+          allOf:
+          - $ref: '#/components/schemas/TaxRegimeEnum'
+          description: |-
+            Нужен, только если «Прозрачный бизнес» не ответил. Иначе берём режим оттуда
+
+            * `OSNO` - ОСНО
+            * `USN_INCOME` - УСН «Доходы»
+            * `USN_INCOME_EXPENSES` - УСН «Доходы минус расходы»
+            * `PSN` - Патент (только ИП)
+            * `ESHN` - ЕСХН
+            * `AUSN` - АУСН
+      required:
+      - inn
+    CompanyLookup:
+      type: object
+      description: 'Данные для автозаполнения: из ЕГРЮЛ и «Прозрачного бизнеса».'
+      properties:
+        inn:
+          type: string
+        name:
+          type: string
+        ogrn:
+          type: string
+        legal_form:
+          $ref: '#/components/schemas/LegalFormEnum'
+        registered_at:
+          type: string
+          format: date
+        address:
+          type: string
+        director_name:
+          type: string
+        okved_name:
+          type: string
+        tax_regime:
+          nullable: true
+          description: |-
+            null — «Прозрачный бизнес» не ответил, клиент выбирает режим сам
+
+            * `OSNO` - ОСНО
+            * `USN_INCOME` - УСН «Доходы»
+            * `USN_INCOME_EXPENSES` - УСН «Доходы минус расходы»
+            * `PSN` - Патент (только ИП)
+            * `ESHN` - ЕСХН
+            * `AUSN` - АУСН
+          oneOf:
+          - $ref: '#/components/schemas/TaxRegimeEnum'
+          - $ref: '#/components/schemas/NullEnum'
+        stop_factors:
+          type: array
+          items:
+            $ref: '#/components/schemas/StopFactor'
+          description: Причины отказа, видные уже по реестрам. Пусто — можно подавать
+            заявку
+      required:
+      - address
+      - director_name
+      - inn
+      - legal_form
+      - name
+      - ogrn
+      - okved_name
+      - registered_at
+      - stop_factors
+      - tax_regime
+    Decision:
+      type: object
+      description: 'Решение с раскладкой баллов: системное или андеррайтера.'
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        outcome:
+          allOf:
+          - $ref: '#/components/schemas/DecisionOutcomeEnum'
+          readOnly: true
+          title: Исход
+        decided_by:
+          allOf:
+          - $ref: '#/components/schemas/DecisionMakerEnum'
+          readOnly: true
+          title: Кем принято решение
+        underwriter:
+          type: string
+          readOnly: true
+          nullable: true
+        score:
+          type: integer
+          readOnly: true
+          nullable: true
+          title: Оценка
+        risk_class:
+          type: string
+          readOnly: true
+          title: Класс риска
+        reason_codes:
+          readOnly: true
+          title: Список кодов
+        factor_breakdown:
+          readOnly: true
+          title: Список факторов с баллами
+        limits:
+          readOnly: true
+          title: Лимиты допустимой суммы
+        offer_amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,12}(?:\.\d{0,2})?$
+          readOnly: true
+          nullable: true
+        offer_term_months:
+          type: integer
+          readOnly: true
+          nullable: true
+        offer_rate:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,2})?$
+          readOnly: true
+          nullable: true
+        offer_monthly_payment:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,12}(?:\.\d{0,2})?$
+          readOnly: true
+          nullable: true
+        comment:
+          type: string
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - comment
+      - created_at
+      - decided_by
+      - factor_breakdown
+      - id
+      - limits
+      - offer_amount
+      - offer_monthly_payment
+      - offer_rate
+      - offer_term_months
+      - outcome
+      - reason_codes
+      - risk_class
+      - score
+      - underwriter
+    DecisionMakerEnum:
+      enum:
+      - SYSTEM
+      - UNDERWRITER
+      type: string
+      description: |-
+        * `SYSTEM` - Система
+        * `UNDERWRITER` - Андеррайтер
+    DecisionOutcomeEnum:
+      enum:
+      - APPROVE
+      - COUNTER_OFFER
+      - INFO_REQUEST
+      - UNDERWRITING
+      - REJECT
+      type: string
+      description: |-
+        * `APPROVE` - APPROVE
+        * `COUNTER_OFFER` - COUNTER_OFFER
+        * `INFO_REQUEST` - INFO_REQUEST
+        * `UNDERWRITING` - UNDERWRITING
+        * `REJECT` - REJECT
+    DocTypeEnum:
+      enum:
+      - BANK_STATEMENT
+      - FINANCIAL_STATEMENTS
+      - VAT_RETURN
+      - NDFL_RETURN
+      - USN_RETURN
+      - ESHN_RETURN
+      - PATENT
+      - PURCHASE_CONTRACT
+      - COLLATERAL_DOCS
+      type: string
+      description: |-
+        * `BANK_STATEMENT` - Выписка по расчётному счёту
+        * `FINANCIAL_STATEMENTS` - Бухгалтерская отчётность
+        * `VAT_RETURN` - Декларация по НДС
+        * `NDFL_RETURN` - Декларация 3-НДФЛ
+        * `USN_RETURN` - Декларация по УСН
+        * `ESHN_RETURN` - Декларация по ЕСХН
+        * `PATENT` - Патент и книга учёта доходов
+        * `PURCHASE_CONTRACT` - Договор или счёт на покупку
+        * `COLLATERAL_DOCS` - Документы на залог и его оценка
+    DocumentRequirement:
+      type: object
+      properties:
+        doc_type:
+          allOf:
+          - $ref: '#/components/schemas/DocTypeEnum'
+          title: Тип документа
+          description: |-
+            По нему загруженный файл заявки сопоставляется с этим требованием
+
+            * `BANK_STATEMENT` - Выписка по расчётному счёту
+            * `FINANCIAL_STATEMENTS` - Бухгалтерская отчётность
+            * `VAT_RETURN` - Декларация по НДС
+            * `NDFL_RETURN` - Декларация 3-НДФЛ
+            * `USN_RETURN` - Декларация по УСН
+            * `ESHN_RETURN` - Декларация по ЕСХН
+            * `PATENT` - Патент и книга учёта доходов
+            * `PURCHASE_CONTRACT` - Договор или счёт на покупку
+            * `COLLATERAL_DOCS` - Документы на залог и его оценка
+        name:
+          type: string
+          title: Название для клиента
+          maxLength: 128
+        hint:
+          type: string
+          title: Подсказка
+          description: Где взять документ и в каком виде
+        is_required:
+          type: boolean
+          title: Обязательный
+          description: Без обязательных документов заявку нельзя отправить
+      required:
+      - doc_type
+      - name
+    EnrichmentResult:
+      type: object
+      description: 'Ответ внешнего источника как есть: андеррайтер может заглянуть
+        в сырые данные.'
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        source:
+          allOf:
+          - $ref: '#/components/schemas/SourceEnum'
+          readOnly: true
+          title: Источник
+        status:
+          allOf:
+          - $ref: '#/components/schemas/EnrichmentResultStatusEnum'
+          readOnly: true
+          title: Результат запроса
+          description: |-
+            UNAVAILABLE — источник не ответил после всех повторов
+
+            * `OK` - Получено
+            * `NOT_FOUND` - Не найдено
+            * `UNAVAILABLE` - Источник недоступен
+        payload:
+          readOnly: true
+          nullable: true
+          title: Ответ источника
+          description: Сырой JSON как есть. Пусто, если ответа нет
+        error:
+          type: string
+          readOnly: true
+          title: Ошибка
+          description: Текст ошибки, если статус не OK
+        fetched_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Получено
+      required:
+      - error
+      - fetched_at
+      - id
+      - payload
+      - source
+      - status
+    EnrichmentResultStatusEnum:
+      enum:
+      - OK
+      - NOT_FOUND
+      - UNAVAILABLE
+      type: string
+      description: |-
+        * `OK` - Получено
+        * `NOT_FOUND` - Не найдено
+        * `UNAVAILABLE` - Источник недоступен
+    Health:
+      type: object
+      properties:
+        status:
+          type: string
+        db:
+          type: string
+        redis:
+          type: string
+      required:
+      - db
+      - redis
+      - status
+    InfoRequested:
+      type: object
+      description: Тело ответа клиента на дозапрос. Цифры анкеты — только если клиент
+        их исправляет.
+      properties:
+        answer:
+          type: string
+          description: Ответ на вопрос банка
+        annual_revenue:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,12}(?:\.\d{0,2})?$
+          description: Исправленная выручка за год
+        existing_monthly_payments:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,12}(?:\.\d{0,2})?$
+          description: Исправленные платежи по другим кредитам
+      required:
+      - answer
+    LegalFormEnum:
+      enum:
+      - IP
+      - OOO
+      type: string
+      description: |-
+        * `IP` - ИП
+        * `OOO` - ООО
+    Me:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        username:
+          type: string
+          title: Имя пользователя
+          description: Обязательное поле. Не более 150 символов. Только буквы, цифры
+            и символы @/./+/-/_.
+          pattern: ^[\w.@+-]+$
+          maxLength: 150
+        email:
+          title: Адрес электронной почты
+          oneOf:
+          - type: string
+            format: email
+            maxLength: 254
+          - type: string
+            maxLength: 0
+        first_name:
+          type: string
+          title: Имя
+          maxLength: 150
+        last_name:
+          type: string
+          title: Фамилия
+          maxLength: 150
+        role:
+          allOf:
+          - $ref: '#/components/schemas/RoleEnum'
+          title: Роль
+          description: |-
+            Клиент подаёт заявки, андеррайтер разбирает их вручную
+
+            * `CLIENT` - Клиент
+            * `UNDERWRITER` - Андеррайтер
+        company:
+          allOf:
+          - $ref: '#/components/schemas/Company'
+          readOnly: true
+          nullable: true
+      required:
+      - company
+      - id
+      - username
+    NullEnum:
+      enum:
+      - null
+    Offer:
+      type: object
+      properties:
+        amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,12}(?:\.\d{0,2})?$
+        term_months:
+          type: integer
+        rate:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,2})?$
+        monthly_payment:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,12}(?:\.\d{0,2})?$
+        reason_codes:
+          type: array
+          items:
+            type: string
+      required:
+      - amount
+      - monthly_payment
+      - rate
+      - reason_codes
+      - term_months
+    OpenInfoRequest:
+      type: object
+      description: Вопрос банка, который клиент видит в заявке.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        asked_by:
+          allOf:
+          - $ref: '#/components/schemas/DecisionMakerEnum'
+          readOnly: true
+          title: Кто спросил
+          description: |-
+            После ответа заявка вернётся к нему: системе — на пересчёт, андеррайтеру — в очередь
+
+            * `SYSTEM` - Система
+            * `UNDERWRITER` - Андеррайтер
+        question:
+          type: string
+          readOnly: true
+          title: Вопрос
+          description: Что банк просит уточнить — простыми словами
+        doc_types:
+          readOnly: true
+          title: Какие документы приложить
+          description: Коды из DocTypeChoices
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Спросили
+      required:
+      - asked_by
+      - created_at
+      - doc_types
+      - id
+      - question
+    PatchedApplicationPatch:
+      type: object
+      properties:
+        amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,12}(?:\.\d{0,2})?$
+          nullable: true
+          title: Сумма кредита, ₽
+        term_months:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 1
+          format: int64
+          nullable: true
+          title: Срок, мес.
+        purpose:
+          type: string
+          title: Цель кредита
+          description: 'Своими словами: на что нужны деньги'
+        annual_revenue:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,12}(?:\.\d{0,2})?$
+          nullable: true
+          title: Выручка за год, ₽
+          description: Со слов клиента. При проверке сверяется с отчётностью из «Прозрачного
+            бизнеса»
+        existing_monthly_payments:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,12}(?:\.\d{0,2})?$
+          nullable: true
+          title: Платежи по другим кредитам в месяц, ₽
+          description: Нужны для расчёта долговой нагрузки. 0, если других кредитов
+            нет
+        collateral_type:
+          title: Вид залога
+          description: |-
+            Только для продуктов с залогом
+
+            * `REAL_ESTATE` - Недвижимость
+            * `VEHICLE` - Транспорт
+            * `EQUIPMENT` - Оборудование
+          oneOf:
+          - $ref: '#/components/schemas/CollateralTypeEnum'
+          - $ref: '#/components/schemas/BlankEnum'
+        collateral_value:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,12}(?:\.\d{0,2})?$
+          nullable: true
+          title: Стоимость залога, ₽
+          description: Кредит не может быть больше этой суммы, умноженной на max_ltv
+            продукта
+        consent:
+          type: boolean
+          writeOnly: true
+    Product:
+      type: object
+      properties:
+        code:
+          type: string
+          title: Код
+          description: Постоянный идентификатор латиницей, например EXPRESS. Не меняется,
+            если на продукт есть заявки
+          maxLength: 32
+          pattern: ^[-a-zA-Z0-9_]+$
+        title:
+          type: string
+          title: Название
+          maxLength: 64
+        description:
+          type: string
+          title: Описание
+          description: 'Простыми словами: на что этот кредит'
+        min_amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,12}(?:\.\d{0,2})?$
+          title: Минимальная сумма, ₽
+        max_amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,12}(?:\.\d{0,2})?$
+          title: Максимальная сумма, ₽
+        max_term_months:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+          title: Максимальный срок, мес.
+          description: У продуктов MVP от 24 до 60 месяцев
+        base_rate:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,2})?$
+          title: Базовая ставка, % годовых
+          description: Ставка для лучшего класса риска. Для класса B к ней добавляется
+            надбавка
+        requires_collateral:
+          type: boolean
+          title: Нужен залог
+        max_ltv:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,1}(?:\.\d{0,2})?$
+          nullable: true
+          title: Максимальный LTV
+          description: 'Loan-to-value: какую долю стоимости залога можно выдать кредитом.
+            0.70 — под залог на 10 млн дадут не больше 7 млн. Пусто у продуктов без
+            залога'
+        min_business_age_months:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+          title: Минимальный возраст бизнеса, мес.
+          description: Если бизнес моложе, заявка получает отказ по стоп-фактору
+      required:
+      - base_rate
+      - code
+      - description
+      - max_amount
+      - max_term_months
+      - min_amount
+      - min_business_age_months
+      - title
+    QueueItem:
+      type: object
+      description: 'Строка очереди андеррайтера: что за заявка, кто её разбирает и
+        почему она здесь.'
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+          title: Номер заявки
+          description: UUID, чтобы номера заявок нельзя было подобрать перебором
+        company_name:
+          type: string
+          readOnly: true
+        company_inn:
+          type: string
+          readOnly: true
+        product_code:
+          type: string
+          readOnly: true
+        product_title:
+          type: string
+          readOnly: true
+        amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,12}(?:\.\d{0,2})?$
+          readOnly: true
+          nullable: true
+          title: Сумма кредита, ₽
+        term_months:
+          type: integer
+          readOnly: true
+          nullable: true
+          title: Срок, мес.
+        submitted_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+          title: Подана
+          description: Когда клиент первый раз отправил заявку
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Изменена
+        assigned_to:
+          type: string
+          readOnly: true
+          nullable: true
+        reason_codes:
+          type: array
+          items:
+            type: string
+          description: 'Почему заявка у андеррайтера: причины последнего решения системы.'
+          readOnly: true
+      required:
+      - amount
+      - assigned_to
+      - company_inn
+      - company_name
+      - id
+      - product_code
+      - product_title
+      - reason_codes
+      - submitted_at
+      - term_months
+      - updated_at
+    RoleEnum:
+      enum:
+      - CLIENT
+      - UNDERWRITER
+      type: string
+      description: |-
+        * `CLIENT` - Клиент
+        * `UNDERWRITER` - Андеррайтер
+    SourceEnum:
+      enum:
+      - EGRUL
+      - TB
+      - BKI
+      type: string
+      description: |-
+        * `EGRUL` - ЕГРЮЛ/ЕГРИП
+        * `TB` - Прозрачный бизнес
+        * `BKI` - БКИ
+    StopFactor:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+      required:
+      - code
+      - message
+    TaxRegimeEnum:
+      enum:
+      - OSNO
+      - USN_INCOME
+      - USN_INCOME_EXPENSES
+      - PSN
+      - ESHN
+      - AUSN
+      type: string
+      description: |-
+        * `OSNO` - ОСНО
+        * `USN_INCOME` - УСН «Доходы»
+        * `USN_INCOME_EXPENSES` - УСН «Доходы минус расходы»
+        * `PSN` - Патент (только ИП)
+        * `ESHN` - ЕСХН
+        * `AUSN` - АУСН
+    TokenObtainPair:
+      type: object
+      properties:
+        username:
+          type: string
+          writeOnly: true
+        password:
+          type: string
+          writeOnly: true
+        access:
+          type: string
+          readOnly: true
+        refresh:
+          type: string
+          readOnly: true
+      required:
+      - access
+      - password
+      - refresh
+      - username
+    UnderwriterDecision:
+      type: object
+      description: Что присылает андеррайтер. Сумма и срок нужны только для оффера,
+        вопрос — только для дозапроса.
+      properties:
+        outcome:
+          $ref: '#/components/schemas/UnderwriterDecisionOutcomeEnum'
+        comment:
+          type: string
+          description: Почему такое решение. Обязательно — попадёт в журнал
+        amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,12}(?:\.\d{0,2})?$
+        term_months:
+          type: integer
+          minimum: 1
+        rate:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,2})?$
+          description: По умолчанию — базовая ставка продукта
+        question:
+          type: string
+          description: 'Для дозапроса: что спросить у клиента'
+        doc_types:
+          type: array
+          items:
+            $ref: '#/components/schemas/DocTypeEnum'
+          description: 'Для дозапроса: какие документы приложить'
+      required:
+      - comment
+      - outcome
+    UnderwriterDecisionOutcomeEnum:
+      enum:
+      - APPROVE
+      - COUNTER_OFFER
+      - INFO_REQUEST
+      - REJECT
+      type: string
+      description: |-
+        * `APPROVE` - APPROVE
+        * `COUNTER_OFFER` - COUNTER_OFFER
+        * `INFO_REQUEST` - INFO_REQUEST
+        * `REJECT` - REJECT
+    UnderwritingCard:
+      type: object
+      description: 'Карточка заявки для андеррайтера: анкета, компания, документы,
+        источники, решения, журнал.'
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+          title: Номер заявки
+          description: UUID, чтобы номера заявок нельзя было подобрать перебором
+        status:
+          allOf:
+          - $ref: '#/components/schemas/ApplicationStatusEnum'
+          readOnly: true
+          title: Статус
+          description: |-
+            Меняется только через transitions.py
+
+            * `DRAFT` - Черновик
+            * `IN_REVIEW` - На проверке
+            * `UNDERWRITING` - У андеррайтера
+            * `INFO_REQUESTED` - Дозапрос
+            * `APPROVED` - Одобрено
+            * `COUNTER_OFFER` - Контрпредложение
+            * `REJECTED` - Отказ
+            * `AWAITING_SIGNATURE` - Ожидает подписания
+            * `DISBURSING` - Выдача
+            * `DISBURSED` - Выдано
+            * `CANCELLED` - Отменена
+        status_display:
+          type: string
+          readOnly: true
+        product_code:
+          type: string
+          readOnly: true
+        product_title:
+          type: string
+          readOnly: true
+        assigned_to:
+          type: string
+          readOnly: true
+          nullable: true
+        amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,12}(?:\.\d{0,2})?$
+          readOnly: true
+          nullable: true
+          title: Сумма кредита, ₽
+        term_months:
+          type: integer
+          readOnly: true
+          nullable: true
+          title: Срок, мес.
+        purpose:
+          type: string
+          readOnly: true
+          title: Цель кредита
+          description: 'Своими словами: на что нужны деньги'
+        annual_revenue:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,12}(?:\.\d{0,2})?$
+          readOnly: true
+          nullable: true
+          title: Выручка за год, ₽
+          description: Со слов клиента. При проверке сверяется с отчётностью из «Прозрачного
+            бизнеса»
+        existing_monthly_payments:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,12}(?:\.\d{0,2})?$
+          readOnly: true
+          nullable: true
+          title: Платежи по другим кредитам в месяц, ₽
+          description: Нужны для расчёта долговой нагрузки. 0, если других кредитов
+            нет
+        collateral_type:
+          allOf:
+          - $ref: '#/components/schemas/CollateralTypeEnum'
+          readOnly: true
+          title: Вид залога
+          description: |-
+            Только для продуктов с залогом
+
+            * `REAL_ESTATE` - Недвижимость
+            * `VEHICLE` - Транспорт
+            * `EQUIPMENT` - Оборудование
+        collateral_value:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,12}(?:\.\d{0,2})?$
+          readOnly: true
+          nullable: true
+          title: Стоимость залога, ₽
+          description: Кредит не может быть больше этой суммы, умноженной на max_ltv
+            продукта
+        info_request_rounds:
+          type: integer
+          readOnly: true
+          title: Число раундов дозапроса
+          description: Сколько раз у клиента уже что-то запрашивали. После двух раундов
+            заявка уходит андеррайтеру
+        consent_given_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+          title: Согласие дано
+          description: 'Когда клиент согласился на запрос кредитной истории в БКИ
+            и обработку данных. Без согласия заявку нельзя подать: банк не вправе
+            запрашивать кредитную историю'
+        submitted_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+          title: Подана
+          description: Когда клиент первый раз отправил заявку
+        version:
+          type: integer
+          readOnly: true
+          title: Версия
+          description: 'Растёт при каждом изменении статуса. Нужна, чтобы два одновременных
+            изменения не затёрли друг друга: второе получит 409'
+        company:
+          allOf:
+          - $ref: '#/components/schemas/Company'
+          readOnly: true
+        documents:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApplicationDocument'
+          readOnly: true
+        enrichment_results:
+          type: array
+          items:
+            $ref: '#/components/schemas/EnrichmentResult'
+          readOnly: true
+        decisions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Decision'
+          readOnly: true
+        events:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApplicationEvent'
+          readOnly: true
+        agreement:
+          allOf:
+          - $ref: '#/components/schemas/Agreement'
+          readOnly: true
+          nullable: true
+      required:
+      - agreement
+      - amount
+      - annual_revenue
+      - assigned_to
+      - collateral_type
+      - collateral_value
+      - company
+      - consent_given_at
+      - decisions
+      - documents
+      - enrichment_results
+      - events
+      - existing_monthly_payments
+      - id
+      - info_request_rounds
+      - product_code
+      - product_title
+      - purpose
+      - status
+      - status_display
+      - submitted_at
+      - term_months
+      - version
+  securitySchemes:
+    jwtAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

@@ -1,0 +1,6 @@
+info:
+  name: schema
+  type: folder
+
+request:
+  auth: inherit

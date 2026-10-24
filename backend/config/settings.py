@@ -90,7 +90,6 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-# В Docker — PostgreSQL (docker-compose ставит DJANGO_DB=postgres), локально и в тестах — SQLite
 if os.environ.get("DJANGO_DB") == "postgres":
     DATABASES = {
         "default": {
@@ -200,19 +199,14 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 UPLOAD_MAX_SIZE_MB = int(os.environ.get("UPLOAD_MAX_SIZE_MB", "10"))
 
 
-# Фоновые задачи (Celery + Redis): конвейер проверки и выдача.
-# Локально и в тестах задачи выполняются сразу в том же процессе, Redis не нужен.
-# В Docker docker-compose ставит CELERY_TASK_ALWAYS_EAGER=0, и задачи уходят воркеру.
 CELERY_BROKER_URL = os.environ.get("REDIS_URL", "redis://localhost:6379/0")
 CELERY_TASK_ALWAYS_EAGER = os.environ.get("CELERY_TASK_ALWAYS_EAGER", "1") == "1"
 CELERY_TASK_EAGER_PROPAGATES = True
 CELERY_TASK_ACKS_LATE = True  # если воркер упал посреди задачи, она вернётся в очередь
 CELERY_WORKER_PREFETCH_MULTIPLIER = 1
 
-# Через сколько секунд после подписания «приходят» деньги. Пока идёт выдача, клиент видит статус DISBURSING
 DISBURSEMENT_DELAY_SECONDS = int(os.environ.get("DISBURSEMENT_DELAY_SECONDS", "5"))
 
-# Логи в консоль: в Docker их видно через docker compose logs
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,

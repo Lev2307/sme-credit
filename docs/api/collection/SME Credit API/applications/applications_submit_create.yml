@@ -1,0 +1,74 @@
+info:
+  name: applications_submit_create
+  type: http
+  seq: 14
+  tags:
+    - applications
+
+http:
+  method: POST
+  url: "{{baseUrl}}/api/v1/applications/:id/submit"
+  params:
+    - name: id
+      value: ""
+      type: path
+  auth:
+    type: bearer
+    token: "{{token}}"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false
+
+examples:
+  - name: 200 Response
+    request:
+      url: "{{baseUrl}}/api/v1/applications/:id/submit"
+      method: POST
+      params:
+        - name: id
+          value: ""
+          type: path
+    response:
+      status: 200
+      statusText: OK
+      headers:
+        - name: Content-Type
+          value: application/json
+      body:
+        type: json
+        data: |-
+          {
+            "id": "",
+            "product": "",
+            "status": "",
+            "status_display": "",
+            "next_action": "",
+            "amount": "",
+            "term_months": 0,
+            "purpose": "",
+            "annual_revenue": "",
+            "existing_monthly_payments": "",
+            "collateral_type": "",
+            "collateral_value": "",
+            "consent_given_at": "",
+            "version": 0,
+            "created_at": "",
+            "updated_at": "",
+            "submitted_at": "",
+            "documents": [
+              {
+                "id": 0,
+                "doc_type": "",
+                "original_name": "",
+                "size": 0,
+                "uploaded_at": ""
+              }
+            ],
+            "offer": "",
+            "agreement": "",
+            "open_info_request": ""
+          }

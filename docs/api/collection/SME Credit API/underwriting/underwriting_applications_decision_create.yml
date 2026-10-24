@@ -1,0 +1,148 @@
+info:
+  name: underwriting_applications_decision_create
+  type: http
+  seq: 2
+  tags:
+    - underwriting
+
+http:
+  method: POST
+  url: "{{baseUrl}}/api/v1/underwriting/applications/:id/decision"
+  params:
+    - name: id
+      value: ""
+      type: path
+  body:
+    type: json
+    data: |-
+      {
+        "outcome": "APPROVE",
+        "comment": "",
+        "amount": "",
+        "term_months": 0,
+        "rate": "",
+        "question": "",
+        "doc_types": [
+          "BANK_STATEMENT"
+        ]
+      }
+  auth:
+    type: bearer
+    token: "{{token}}"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false
+
+examples:
+  - name: 200 Response
+    request:
+      url: "{{baseUrl}}/api/v1/underwriting/applications/:id/decision"
+      method: POST
+      params:
+        - name: id
+          value: ""
+          type: path
+      body:
+        type: json
+        data: |-
+          {
+            "outcome": "APPROVE",
+            "comment": "",
+            "amount": "",
+            "term_months": 0,
+            "rate": "",
+            "question": "",
+            "doc_types": [
+              "BANK_STATEMENT"
+            ]
+          }
+    response:
+      status: 200
+      statusText: OK
+      headers:
+        - name: Content-Type
+          value: application/json
+      body:
+        type: json
+        data: |-
+          {
+            "id": "",
+            "status": "",
+            "status_display": "",
+            "product_code": "",
+            "product_title": "",
+            "assigned_to": "",
+            "amount": "",
+            "term_months": 0,
+            "purpose": "",
+            "annual_revenue": "",
+            "existing_monthly_payments": "",
+            "collateral_type": "",
+            "collateral_value": "",
+            "info_request_rounds": 0,
+            "consent_given_at": "",
+            "submitted_at": "",
+            "version": 0,
+            "company": "",
+            "documents": [
+              {
+                "id": 0,
+                "doc_type": "",
+                "original_name": "",
+                "size": 0,
+                "uploaded_at": ""
+              }
+            ],
+            "enrichment_results": [
+              {
+                "id": 0,
+                "source": "",
+                "status": "",
+                "payload": "",
+                "error": "",
+                "fetched_at": ""
+              }
+            ],
+            "decisions": [
+              {
+                "id": 0,
+                "outcome": "",
+                "decided_by": "",
+                "underwriter": "",
+                "score": 0,
+                "risk_class": "",
+                "reason_codes": "",
+                "factor_breakdown": "",
+                "limits": "",
+                "offer_amount": "",
+                "offer_term_months": 0,
+                "offer_rate": "",
+                "offer_monthly_payment": "",
+                "comment": "",
+                "created_at": ""
+              }
+            ],
+            "events": [
+              {
+                "id": 0,
+                "created_at": "",
+                "action": "",
+                "actor_type": "",
+                "from_status": "",
+                "from_status_display": "",
+                "to_status": "",
+                "to_status_display": "",
+                "reason_code": ""
+              }
+            ],
+            "agreement": ""
+          }
+
+docs: |-
+  Карточка заявки и действия андеррайтера: взять в работу, принять решение.
+
+  Это вьюсет, а не RetrieveAPIView: @action работает только во вьюсетах, подключённых через роутер.

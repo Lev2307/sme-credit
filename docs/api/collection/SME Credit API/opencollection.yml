@@ -1,0 +1,26 @@
+opencollection: 1.0.0
+
+info:
+  name: SME Credit API
+config:
+  proxy:
+    inherit: true
+    config:
+      protocol: http
+      hostname: ""
+      port: ""
+      auth:
+        username: ""
+        password: ""
+      bypassProxy: ""
+
+request:
+  auth:
+    type: bearer
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzkyODgyMzg1LCJpYXQiOjE3OTI4ODE0ODUsImp0aSI6ImYxZWUyZDM5MGUyNDQzMjE5NmYzNmQ5MzZhNGE2MTc0IiwidXNlcl9pZCI6IjMifQ.lNQAIVnaPvV1LQ-rDgvOrDJFVZTBPgzg2qo0t9Jbj3U
+bundled: false
+extensions:
+  bruno:
+    ignore:
+      - node_modules
+      - .git

@@ -1,0 +1,52 @@
+info:
+  name: underwriting_queue_list
+  type: http
+  seq: 4
+  tags:
+    - underwriting
+
+http:
+  method: GET
+  url: "{{baseUrl}}/api/v1/underwriting/queue"
+  auth:
+    type: bearer
+    token: "{{token}}"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false
+
+examples:
+  - name: 200 Response
+    request:
+      url: "{{baseUrl}}/api/v1/underwriting/queue"
+      method: GET
+    response:
+      status: 200
+      statusText: OK
+      headers:
+        - name: Content-Type
+          value: application/json
+      body:
+        type: json
+        data: |-
+          [
+            {
+              "id": "",
+              "company_name": "",
+              "company_inn": "",
+              "product_code": "",
+              "product_title": "",
+              "amount": "",
+              "term_months": 0,
+              "submitted_at": "",
+              "updated_at": "",
+              "assigned_to": "",
+              "reason_codes": []
+            }
+          ]
+
+docs: Заявки, которые ждут решения андеррайтера. Старые сверху.

@@ -1,0 +1,47 @@
+info:
+  name: applications_documents_destroy
+  type: http
+  seq: 7
+  tags:
+    - applications
+
+http:
+  method: DELETE
+  url: "{{baseUrl}}/api/v1/applications/:id/documents/:doc_id"
+  params:
+    - name: doc_id
+      value: ""
+      type: path
+    - name: id
+      value: ""
+      type: path
+  auth:
+    type: bearer
+    token: "{{token}}"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false
+
+examples:
+  - name: 204 Response
+    description: No response body
+    request:
+      url: "{{baseUrl}}/api/v1/applications/:id/documents/:doc_id"
+      method: DELETE
+      params:
+        - name: doc_id
+          value: ""
+          type: path
+        - name: id
+          value: ""
+          type: path
+    response:
+      status: 204
+      statusText: No Content
+      body:
+        type: text
+        data: ""
