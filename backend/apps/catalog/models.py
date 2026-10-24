@@ -1,5 +1,8 @@
 from django.db import models
+from django.core.exceptions import ValidationError
+from django.core.serializers.json import DjangoJSONEncoder
 
+from apps.decisioning.params import ModelParams
 from apps.common.choices import DocTypeChoices, LegalFormChoices, TaxRegimeChoices
 
 
@@ -118,3 +121,28 @@ class DocumentRequirement(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class ScoringConfig(models.Model):
+    version = models.PositiveIntegerField(unique=True, verbose_name="версия")
+    params = models.JSONField(verbose_name="параметры", encoder=DjangoJSONEncoder)
+    is_active = models.BooleanField(verbose_name="статус версии", default=True)
+    comment = models.CharField(max_length=128, verbose_name="комментарий", blank=True)
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="время создания")
+
+    class Meta:
+        ordering = ["version"]
+
+    @staticmethod
+    def current():
+        return ScoringConfig.objects.filter(is_active=True).order_by('-version').first()
+
+    def clean(self):
+        try:
+            ModelParams.from_dict(self.params)
+        except ValueError as e:
+            raise ValidationError({"params": str(e)})
+        return super().clean()
+
+    def __str__(self):
+        return f"Версия {self.version}"

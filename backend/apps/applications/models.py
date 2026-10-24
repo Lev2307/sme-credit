@@ -2,12 +2,14 @@ import uuid
 from pathlib import Path
 
 from django.conf import settings
+from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
 from django.db.models import Q
 
 from apps.accounts.models import Company
-from apps.catalog.models import Product
+from apps.catalog.models import Product, ScoringConfig
 from apps.common.choices import DocTypeChoices
+from apps.decisioning.types import Outcome
 
 
 class Application(models.Model):
@@ -290,3 +292,49 @@ class EnrichmentResult(models.Model):
 
 
 ApplicationStatus = Application.Status
+
+class Decision(models.Model):
+    class DecidedByChoices(models.TextChoices):
+        SYSTEM = "SYSTEM", "Система"
+        UNDERWRITER = "UNDERWRITER", "Андеррайтер"
+
+    application = models.ForeignKey(Application, on_delete=models.PROTECT, related_name="decisions")
+    outcome = models.CharField(max_length=24, choices=[(o.value, o.value) for o in Outcome], verbose_name="исход")
+    decided_by = models.CharField(max_length=12, choices=DecidedByChoices.choices, verbose_name="кем принято решение")
+    underwriter = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name="underwriter_decisions",
+        verbose_name="андеррайтер",
+        help_text="Кто принял решение вручную. Пусто, если решала система",
+    )
+    score = models.PositiveIntegerField(null=True, blank=True, verbose_name="оценка")
+    risk_class = models.CharField(max_length=1, verbose_name="класс риска", blank=True)
+    reason_codes = models.JSONField(verbose_name="список кодов", encoder=DjangoJSONEncoder)
+    factor_breakdown = models.JSONField(verbose_name="список факторов с баллами", encoder=DjangoJSONEncoder)
+    limits = models.JSONField(verbose_name="лимиты допустимой суммы", encoder=DjangoJSONEncoder)
+    input_snapshot = models.JSONField(verbose_name="на каких данных решали", encoder=DjangoJSONEncoder)
+    offer_amount = models.DecimalField(max_digits=14, decimal_places=2, null=True, blank=True)
+    offer_term_months = models.PositiveIntegerField(null=True, blank=True)
+    offer_rate = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    offer_monthly_payment = models.DecimalField(max_digits=14, decimal_places=2, null=True, blank=True)
+    config = models.ForeignKey(
+        ScoringConfig,
+        on_delete=models.PROTECT,
+        related_name="decisions"
+    )
+    comment = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['created_at', "id"]
+
+    def save(self, *args, **kwargs):
+        if not self._state.adding:
+            raise ValueError("Решение нельзя изменить")
+        super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        raise ValueError("Итоговое решение нельзя удалить")

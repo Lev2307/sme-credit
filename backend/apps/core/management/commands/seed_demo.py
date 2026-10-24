@@ -8,8 +8,10 @@ from apps.accounts.models import User
 from apps.common.choices import TaxRegimeChoices as TR
 from apps.common.choices import LegalFormChoices as LF
 from apps.catalog.models import Product, DocumentRequirement
+from apps.decisioning.params import DEFAULT_PARAMS
+from apps.catalog.models import ScoringConfig
 
-from apps.common.choices import DocTypeChoices as DT  # ПРАВКА: типы документов переехали в common
+from apps.common.choices import DocTypeChoices as DT
 
 CLIENTS = [
     {
@@ -41,6 +43,12 @@ CLIENTS = [
         "first_name": "Марк",
         "last_name": "Буров",
         "password": "x123x",
+    },
+    {
+        "username": "Capricious",
+        "first_name": "Вадим",
+        "last_name": "Казаков",
+        "password": "x123x"
     }
 ]
 
@@ -169,6 +177,16 @@ class Command(BaseCommand):
     help = "Creates init instances: superuser, 5 client users, 1 underwriter, 3 product and connected docs"
 
     def handle(self, *args, **options):
+        # создание конфига
+        config, created = ScoringConfig.objects.get_or_create(
+            version=1,
+            defaults={
+                "params": DEFAULT_PARAMS,
+                "is_active": True,
+                "comment": "Начальная версия: числа из docs/03-decision-model.md",
+            }
+        )
+
         admin, created = User.objects.get_or_create(username="admin", defaults={"is_staff": True, "is_superuser": True})
         if created:
             admin.set_password("x123x")

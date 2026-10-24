@@ -45,3 +45,9 @@ def check_completeness(app: Application) -> dict:
         problems["missing_documents"] = missing
 
     return problems
+
+def missing_required_documents(app: Application) -> list:
+    """Обязательные документы продукта, которые клиент ещё не загрузил."""
+    needed = required_documents(app.product, app.company.legal_form, app.company.tax_regime).filter(is_required=True)
+    uploaded = set(app.documents.values_list("doc_type", flat=True))
+    return [r for r in needed if r.doc_type not in uploaded]

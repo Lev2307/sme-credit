@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import DocumentRequirement, Product
+from .models import DocumentRequirement, Product, ScoringConfig
 
 
 # ПРАВКА (необязательно): колонки и фильтры, чтобы главное было видно прямо в списке
@@ -14,3 +14,8 @@ class ProductAdmin(admin.ModelAdmin):
 class DocumentRequirementAdmin(admin.ModelAdmin):
     list_display = ("name", "doc_type", "product", "legal_form", "tax_regime", "is_required")
     list_filter = ("product", "legal_form", "tax_regime", "is_required")
+
+@admin.register(ScoringConfig)
+class ScoringConfigAdmin(admin.ModelAdmin):
+    list_display = ("version", "is_active", "comment", "created_at")
+    save_as = True  # кнопка «Сохранить как новый объект»: так делается новая версия
