@@ -49,11 +49,10 @@ mocks/
 
 ## Локальный запуск
 
-Используется общий venv в корне репозитория (`sme-credit/.venv`), тот же, что у бэкенда. Из папки `mocks`:
+У моков своё окружение и свой `uv.lock`. Из папки `mocks`:
 
 ```bash
-../.venv/Scripts/python manage.py runserver 8090
-../.venv/Scripts/python -m pytest
+uv sync
+uv run python manage.py runserver 8090
+uv run pytest
 ```
-
-Ключ берётся из корневого `.env` (`MOCKS_API_KEY`). Контракты смотрите на http://localhost:8090/docs/.

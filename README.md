@@ -19,10 +19,14 @@ docker compose up --build
 
 | Что | Адрес |
 |---|---|
-| Кабинет клиента и андеррайтера | http://localhost:8080 |
-| Документация API (Swagger UI) | http://localhost:8080/api/v1/docs/ |
-| Админка (справочники и параметры модели) | http://localhost:8080/admin/ |
-| Контракты моков | http://localhost:8090/docs |
+| Документация API (Swagger UI) | http://localhost:8000/api/v1/docs/ |
+| Админка (справочники и параметры модели) | http://localhost:8000/admin/ |
+| Проверка, что всё живо | http://localhost:8000/api/v1/health |
+| Контракты моков | http://localhost:8090/docs/ |
+
+Кабинет клиента и андеррайтера будет на http://localhost:8080, когда к сборке добавится фронтенд.
+
+В Docker поднимаются контейнеры `postgres`, `redis`, `mocks`, `backend` (API и админка) и `worker` (Celery: проверка заявки и выдача). Позже добавится `frontend`.
 
 Миграции и демо-данные загружаются автоматически при первом запуске.
 

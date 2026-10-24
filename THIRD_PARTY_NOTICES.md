@@ -20,6 +20,8 @@
 | redis-py | Клиент Redis для Celery | MIT |
 | psycopg | Драйвер PostgreSQL | LGPL-3.0 |
 | gunicorn | WSGI-сервер | MIT |
+| whitenoise | Раздача статики админки из приложения | MIT |
+| uv | Установка зависимостей по lock-файлу при сборке образов | MIT / Apache-2.0 |
 | httpx | HTTP-клиент для обращения к внешним сервисам | BSD-3-Clause |
 | python-dotenv | Чтение настроек из `.env` | BSD-3-Clause |
 | pytest, pytest-django | Тесты | MIT, BSD-3-Clause |

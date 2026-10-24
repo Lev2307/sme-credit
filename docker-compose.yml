@@ -1,0 +1,65 @@
+name: sme-credit
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 3s
+      retries: 20
+
+  redis:
+    image: redis:7.2-alpine  # 7.2 — последняя версия под BSD-3-Clause
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 3s
+      retries: 20
+
+  mocks:
+    build: ./mocks
+    env_file: .env
+    ports:
+      - "8090:8090"
+
+  backend:
+    build: ./backend
+    command: web
+    env_file: .env
+    environment: &docker-env   # адреса внутри сети Docker поверх локальных из .env
+      DJANGO_DB: postgres
+      POSTGRES_HOST: postgres
+      REDIS_URL: redis://redis:6379/0
+      CELERY_TASK_ALWAYS_EAGER: "0"
+      MOCKS_BASE_URL: http://mocks:8090
+    volumes:
+      - media:/app/media
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres: { condition: service_healthy }
+      redis: { condition: service_healthy }
+      mocks: { condition: service_started }
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/v1/health')"]
+      interval: 5s
+      retries: 30
+
+  worker:
+    build: ./backend
+    command: worker
+    env_file: .env
+    environment: *docker-env
+    volumes:
+      - media:/app/media
+    depends_on:
+      backend: { condition: service_healthy }  # стартует после миграций
+
+volumes:
+  postgres_data:
+  media:

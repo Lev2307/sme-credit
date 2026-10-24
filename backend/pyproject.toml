@@ -1,14 +1,18 @@
 [project]
 name = "backend"
 version = "0.1.0"
-requires-python = ">=3.11"
+requires-python = ">=3.12"
 dependencies = [
+    "celery[redis]>=5.5",
     "django>=5.2,<6",
     "djangorestframework>=3.18.3",
     "djangorestframework-simplejwt>=5.5.1",
     "drf-spectacular>=0.30.0",
+    "gunicorn>=23",
     "httpx>=0.28.1",
+    "psycopg[binary]>=3.2",
     "python-dotenv>=1.2.4",
+    "whitenoise>=6.9",
 ]
 
 [dependency-groups]
