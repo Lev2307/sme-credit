@@ -7,14 +7,15 @@ info:
 
 http:
   method: GET
-  url: "{{baseUrl}}/api/v1/applications/:id"
-  params:
-    - name: id
-      value: ""
-      type: path
+  url: "{{baseUrl}}/api/v1/applications/{{appId}}"
   auth:
     type: bearer
     token: "{{token}}"
+
+runtime:
+  scripts:
+    - type: after-response
+      code: "if (res.body.open_info_request) { bru.setEnvVar(\"infoId\", res.body.open_info_request.id); }"
 
 settings:
   encodeUrl: true

@@ -85,7 +85,7 @@ def test_me_underwriter_has_no_company(underwriter):
     assert r.data["company"] is None
 
 
-def test_refresh_rotates_token_and_old_one_stops_working(client_user):
+def test_refresh_rotates_token_but_old_one_still_works(client_user):
     api = APIClient()
     login(api, "client1")
     old = api.cookies["refresh"].value
@@ -96,9 +96,10 @@ def test_refresh_rotates_token_and_old_one_stops_working(client_user):
     assert set(r.data) == ACCESS_FIELDS
     assert api.cookies["refresh"].value != old
 
-    stale = APIClient()
-    stale.cookies["refresh"] = old
-    assert stale.post(REFRESH).status_code == 401
+    # Старый токен не отзываем (BLACKLIST_AFTER_ROTATION = False)
+    previous = APIClient()
+    previous.cookies["refresh"] = old
+    assert previous.post(REFRESH).status_code == 200
 
 
 def test_refresh_without_cookie(db):

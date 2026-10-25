@@ -7,21 +7,13 @@ info:
 
 http:
   method: POST
-  url: "{{baseUrl}}/api/v1/applications/:id/info-requests/:info_id/answer"
-  params:
-    - name: id
-      value: ""
-      type: path
-    - name: info_id
-      value: ""
-      type: path
+  url: "{{baseUrl}}/api/v1/applications/{{appId}}/info-requests/{{infoId}}/answer"
   body:
     type: json
     data: |-
       {
-        "answer": "",
-        "annual_revenue": "",
-        "existing_monthly_payments": ""
+        "answer": "Выручку в анкете указали с ошибкой, исправили",
+        "annual_revenue": "12000000"
       }
   auth:
     type: bearer

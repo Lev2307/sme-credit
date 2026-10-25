@@ -7,11 +7,7 @@ info:
 
 http:
   method: POST
-  url: "{{baseUrl}}/api/v1/underwriting/applications/:id/decision"
-  params:
-    - name: id
-      value: ""
-      type: path
+  url: "{{baseUrl}}/api/v1/underwriting/applications/{{appId}}/decision"
   body:
     type: json
     data: |-
@@ -28,7 +24,7 @@ http:
       }
   auth:
     type: bearer
-    token: "{{token}}"
+    token: "{{uwToken}}"
 
 settings:
   encodeUrl: true

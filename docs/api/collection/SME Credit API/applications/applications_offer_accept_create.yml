@@ -7,11 +7,7 @@ info:
 
 http:
   method: POST
-  url: "{{baseUrl}}/api/v1/applications/:id/offer/accept"
-  params:
-    - name: id
-      value: ""
-      type: path
+  url: "{{baseUrl}}/api/v1/applications/{{appId}}/offer/accept"
   auth:
     type: bearer
     token: "{{token}}"

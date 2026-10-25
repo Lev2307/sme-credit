@@ -1,0 +1,61 @@
+info:
+  name: auth_login_underwriter
+  type: http
+  seq: 4
+  tags:
+    - auth
+
+http:
+  method: POST
+  url: "{{baseUrl}}/api/v1/auth/login"
+  body:
+    type: json
+    data: |-
+      {
+        "username": "underWriter",
+        "password": "x123x"
+      }
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: after-response
+      code: bru.setEnvVar("uwToken", res.body.access);
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false
+
+examples:
+  - name: 200 Response
+    request:
+      url: "{{baseUrl}}/api/v1/auth/login"
+      method: POST
+      body:
+        type: json
+        data: |-
+          {
+            "username": "",
+            "password": "",
+            "access": "",
+            "refresh": ""
+          }
+    response:
+      status: 200
+      statusText: OK
+      headers:
+        - name: Content-Type
+          value: application/json
+      body:
+        type: json
+        data: |-
+          {
+            "access": ""
+          }
+
+docs: |-
+  Вход под андеррайтером. Токен сохраняется в переменную uwToken, поэтому
+  токен клиента (token) не перезаписывается: можно чередовать запросы клиента и банка.

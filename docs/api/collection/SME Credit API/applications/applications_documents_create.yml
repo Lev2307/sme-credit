@@ -9,19 +9,24 @@ http:
   method: POST
   url: "{{baseUrl}}/api/v1/applications/{{appId}}/documents"
   body:
-    type: json
-    data: |-
-      {
-        "id": 0,
-        "doc_type": "",
-        "file": "",
-        "original_name": "",
-        "size": 0,
-        "uploaded_at": ""
-      }
+    type: multipart-form
+    data:
+      - name: doc_type
+        type: text
+        value: BANK_STATEMENT
+      - name: file
+        type: file
+        value:
+          - fixtures/sample.pdf
+        contentType: application/pdf
   auth:
     type: bearer
     token: "{{token}}"
+
+runtime:
+  scripts:
+    - type: after-response
+      code: bru.setEnvVar("docId", res.body.id);
 
 settings:
   encodeUrl: true

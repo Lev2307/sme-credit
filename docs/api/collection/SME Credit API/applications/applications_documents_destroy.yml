@@ -7,14 +7,7 @@ info:
 
 http:
   method: DELETE
-  url: "{{baseUrl}}/api/v1/applications/:id/documents/:doc_id"
-  params:
-    - name: doc_id
-      value: ""
-      type: path
-    - name: id
-      value: ""
-      type: path
+  url: "{{baseUrl}}/api/v1/applications/{{appId}}/documents/{{docId}}"
   auth:
     type: bearer
     token: "{{token}}"

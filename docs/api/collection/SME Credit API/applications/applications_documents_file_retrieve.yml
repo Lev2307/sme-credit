@@ -7,14 +7,7 @@ info:
 
 http:
   method: GET
-  url: "{{baseUrl}}/api/v1/applications/:id/documents/:doc_id/file"
-  params:
-    - name: doc_id
-      value: ""
-      type: path
-    - name: id
-      value: ""
-      type: path
+  url: "{{baseUrl}}/api/v1/applications/{{appId}}/documents/{{docId}}/file"
   auth:
     type: bearer
     token: "{{token}}"

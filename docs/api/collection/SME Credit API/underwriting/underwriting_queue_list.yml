@@ -10,7 +10,7 @@ http:
   url: "{{baseUrl}}/api/v1/underwriting/queue"
   auth:
     type: bearer
-    token: "{{token}}"
+    token: "{{uwToken}}"
 
 settings:
   encodeUrl: true

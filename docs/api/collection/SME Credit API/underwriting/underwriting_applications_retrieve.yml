@@ -7,14 +7,10 @@ info:
 
 http:
   method: GET
-  url: "{{baseUrl}}/api/v1/underwriting/applications/:id"
-  params:
-    - name: id
-      value: ""
-      type: path
+  url: "{{baseUrl}}/api/v1/underwriting/applications/{{appId}}"
   auth:
     type: bearer
-    token: "{{token}}"
+    token: "{{uwToken}}"
 
 settings:
   encodeUrl: true
