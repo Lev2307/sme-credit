@@ -137,4 +137,5 @@ export const server = setupServer(
   meHandler,
   applicationsHandler([]),
   http.get(`${API}/products`, () => HttpResponse.json(products)),
+  http.get(`${API}/applications/:id/events`, () => HttpResponse.json([])),
 );

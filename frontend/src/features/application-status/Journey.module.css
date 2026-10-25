@@ -1,0 +1,10 @@
+/* На телефоне подписи этапов прячем: текущий этап назван в заголовке статуса */
+.stepBody {
+  @media (max-width: $mantine-breakpoint-sm) {
+    display: none;
+  }
+}
+
+.steps {
+  flex-wrap: nowrap;
+}

@@ -1,9 +1,11 @@
-import { Anchor, Button, Group, Skeleton, Stack, Text } from '@mantine/core';
+import { Anchor, Group, Skeleton, Stack, Text } from '@mantine/core';
 import { IconArrowLeft } from '@tabler/icons-react';
 import { Link, useParams } from 'react-router';
 import { useApplicationsRetrieve } from '@/api/applications/applications';
 import { useProductsList } from '@/api/products/products';
-import { StatusLabel } from '@/features/applications/StatusLabel';
+import { CancelApplication } from '@/features/application-status/CancelApplication';
+import { StatusView } from '@/features/application-status/StatusView';
+import { isBankSide, POLL_INTERVAL_MS } from '@/features/applications/status';
 import { useSession } from '@/features/auth/session';
 import { ApiError } from '@/shared/api/errors';
 import { formatDate } from '@/shared/lib/format';
@@ -23,12 +25,18 @@ function BackLink() {
   );
 }
 
-// Страница одной заявки. Черновик открывается анкетой-мастером, остальные статусы
-// покажет страница статуса (следующая часть)
+// Страница одной заявки. Черновик открывается анкетой-мастером, отправленная заявка
+// показывает статус, историю и то, что нужно от клиента
 export function ApplicationPage() {
   const { id = '' } = useParams();
   const { data: me } = useSession();
-  const application = useApplicationsRetrieve(id);
+  const application = useApplicationsRetrieve(id, {
+    query: {
+      // Пока заявка у банка, статус меняет worker: опрашиваем, потом перестаём
+      refetchInterval: (query) =>
+        query.state.data && isBankSide(query.state.data.status) ? POLL_INTERVAL_MS : false,
+    },
+  });
   const products = useProductsList({ query: { staleTime: 5 * 60_000 } });
   const product = products.data?.find((p) => p.code === application.data?.product);
   usePageTitle(product?.title ?? 'Заявка');
@@ -76,18 +84,15 @@ export function ApplicationPage() {
         </Text>
       </div>
 
-      {app.status === 'DRAFT' && product && company ? (
-        <DraftWizard key={app.id} application={app} product={product} company={company} />
-      ) : (
-        <Stack gap="sm" align="flex-start">
-          <StatusLabel status={app.status} label={app.status_display} />
-          {app.next_action && <Text>{app.next_action}</Text>}
-          <Text c="dimmed">Подробный статус и таймлайн появятся в следующей части.</Text>
-          <Button component={Link} to="/cabinet" variant="default">
-            К заявкам
-          </Button>
-        </Stack>
+      {company && app.status === 'DRAFT' && product && (
+        <>
+          <DraftWizard key={app.id} application={app} product={product} company={company} />
+          <div>
+            <CancelApplication applicationId={app.id} />
+          </div>
+        </>
       )}
+      {company && app.status !== 'DRAFT' && <StatusView application={app} company={company} />}
     </Stack>
   );
 }

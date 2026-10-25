@@ -17,11 +17,13 @@ type Props = {
   applicationId: string;
   requirement: DocumentRequirement;
   uploaded: ApplicationDocument[];
+  // Удалять файлы бэкенд разрешает только в черновике; при ответе на дозапрос можно только добавить
+  canDelete?: boolean;
 };
 
 // Одно требование из списка: что нужно, где взять и что уже загружено.
 // Своя мутация у каждой строки, чтобы загрузки в разных строках не мешали друг другу
-export function DocumentRow({ applicationId, requirement, uploaded }: Props) {
+export function DocumentRow({ applicationId, requirement, uploaded, canDelete = true }: Props) {
   const upload = useUploadDocument(applicationId);
   const remove = useDeleteDocument(applicationId);
   const [localError, setLocalError] = useState<string | null>(null);
@@ -76,16 +78,18 @@ export function DocumentRow({ applicationId, requirement, uploaded }: Props) {
                 <Text size="sm" c="dimmed" className={classes.fileSize}>
                   {formatFileSize(doc.size)}
                 </Text>
-                <ActionIcon
-                  variant="subtle"
-                  color="gray"
-                  size="lg"
-                  aria-label={`Удалить файл ${doc.original_name}`}
-                  loading={remove.isPending && remove.variables === doc.id}
-                  onClick={() => remove.mutate(doc.id)}
-                >
-                  <IconTrash size={18} aria-hidden />
-                </ActionIcon>
+                {canDelete && (
+                  <ActionIcon
+                    variant="subtle"
+                    color="gray"
+                    size="lg"
+                    aria-label={`Удалить файл ${doc.original_name}`}
+                    loading={remove.isPending && remove.variables === doc.id}
+                    onClick={() => remove.mutate(doc.id)}
+                  >
+                    <IconTrash size={18} aria-hidden />
+                  </ActionIcon>
+                )}
               </li>
             ))}
           </ul>

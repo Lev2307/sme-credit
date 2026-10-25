@@ -1,0 +1,21 @@
+/* Вопрос может быть из нескольких абзацев: переносы строк из бэкенда сохраняем */
+.question {
+  white-space: pre-line;
+  max-width: 65ch;
+}
+
+.docs {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.corrections {
+  display: grid;
+  gap: var(--mantine-spacing-md);
+  max-width: 640px;
+
+  @media (min-width: $mantine-breakpoint-sm) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

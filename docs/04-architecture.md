@@ -114,7 +114,7 @@ flowchart LR
         │   ├── applications/     # список заявок клиента, статусы
         │   ├── catalog/          # продукты, условия и документы под компанию
         │   ├── application-form/ # анкета-мастер: автосохранение, документы, отправка
-        │   ├── application-status/
+        │   ├── application-status/ # статус, история, дозапрос, отмена
         │   ├── offer/
         │   └── underwriter/
         ├── shared/               # HTTP-клиент с refresh, общие компоненты, форматирование денег и дат
