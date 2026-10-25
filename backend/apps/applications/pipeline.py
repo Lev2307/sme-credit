@@ -1,3 +1,4 @@
+import logging
 from uuid import UUID
 from dataclasses import asdict
 from datetime import date
@@ -18,6 +19,8 @@ from .models import EnrichmentResult, Application, ApplicationEvent, Decision, I
 from .transitions import transition, InvalidTransition
 from .services import missing_required_documents
 
+
+logger = logging.getLogger(__name__)
 
 S = Application.Status
 Src = EnrichmentResult.Source
@@ -127,6 +130,41 @@ def log_event(app: Application, action: str):
     )
 
 def process_application(app_id: UUID):
+    """Конвейер проверки. Любая непредвиденная ошибка не оставляет заявку висеть «На проверке»:
+    она уходит андеррайтеру с причиной PIPELINE_ERROR, а подробности остаются в логе worker'а.
+    """
+    try:
+        _process_application(app_id)
+    except Exception:
+        logger.exception("Конвейер упал на заявке %s, передаём андеррайтеру", app_id)
+        hand_over_after_failure(app_id)
+
+
+def hand_over_after_failure(app_id: UUID):
+    """Заявка, на которой упал конвейер, — андеррайтеру. Если она уже не на проверке, ничего не делаем."""
+    try:
+        with transaction.atomic():
+            app = Application.objects.select_for_update().get(id=app_id)
+            if app.status != S.IN_REVIEW:
+                return
+            config = ScoringConfig.current()
+            if config is not None:  # решение ссылается на версию параметров; без неё — только событие
+                Decision.objects.create(
+                    application=app,
+                    outcome=Outcome.UNDERWRITING,
+                    decided_by=Decision.DecidedByChoices.SYSTEM,
+                    reason_codes=["PIPELINE_ERROR"],
+                    factor_breakdown=[],
+                    limits=[],
+                    input_snapshot={},
+                    config=config,
+                )
+            transition(app, S.UNDERWRITING, action="DECIDED", reason_code="PIPELINE_ERROR")
+    except Exception:
+        logger.exception("Не удалось передать заявку %s андеррайтеру после сбоя конвейера", app_id)
+
+
+def _process_application(app_id: UUID):
     app = Application.objects.select_related("company", "product").get(id=app_id)
     if app.status != S.IN_REVIEW:
         return # задачу прислали дважды или клиент уже отменил заявку
@@ -137,9 +175,12 @@ def process_application(app_id: UUID):
     log_event(app, "ENRICHED")
 
     config = ScoringConfig.current()
+    if config is None:
+        raise RuntimeError("Нет активной версии параметров модели (ScoringConfig)")
     inp = build_input(app, data, as_of=timezone.localdate())
     result = evaluate(inp, ModelParams.from_dict(config.params))
-    log_event(app, "SCORED")
+    if result.score is not None:  # стоп-фактор, дозапрос и недоступный источник решаются без скоринга
+        log_event(app, "SCORED")
 
     try:
         with transaction.atomic():

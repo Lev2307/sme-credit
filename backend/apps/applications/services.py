@@ -1,9 +1,7 @@
-import random
-
 from django.db import transaction
 from django.utils import timezone
 
-from apps.catalog.services import check_limits, required_documents
+from apps.catalog.services import check_collateral, check_limits, required_documents
 from .models import Application, Agreement
 from .transitions import transition
 
@@ -38,13 +36,17 @@ def check_completeness(app: Application) -> dict:
     if missing_fields:
         problems["missing_fields"] = missing_fields
 
+    errors = {}
     if app.amount is not None and app.term_months is not None:
-        errors = check_limits(app.product, app.amount, app.term_months)
-        if errors:
-            problems["errors"] = errors
+        errors.update(check_limits(app.product, app.amount, app.term_months))
+    if app.annual_revenue is not None and app.annual_revenue <= 0:
+        errors["annual_revenue"] = "Выручка за год должна быть больше нуля"
+    errors.update(check_collateral(app.product, app.amount, app.collateral_value))
+    if errors:
+        problems["errors"] = errors
 
     needed = required_documents(app.product, app.company.legal_form, app.company.tax_regime).filter(is_required=True)
-    uploaded = set(app.documents.values_list("doc_type", flat=True))  # ПРАВКА: опечатка doct_type
+    uploaded = set(app.documents.values_list("doc_type", flat=True))
     missing = [{"doc_type": r.doc_type, "name": r.name} for r in needed if r.doc_type not in uploaded]
     if missing:
         problems["missing_documents"] = missing

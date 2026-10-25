@@ -1,8 +1,6 @@
 from decimal import Decimal
 
 from django.core.management.base import BaseCommand
-from django.shortcuts import get_object_or_404
-from django.http import Http404
 
 from apps.accounts.models import User
 from apps.common.choices import TaxRegimeChoices as TR
@@ -174,80 +172,64 @@ DOCUMENTS = [
 ]
 
 class Command(BaseCommand):
-    help = "Creates init instances: superuser, 5 client users, 1 underwriter, 3 product and connected docs"
+    help = (
+        "Демо-данные: параметры модели, администратор, андеррайтер, 6 клиентов, 3 продукта и требования к документам. "
+        "Идемпотентна: запускается при каждом старте контейнера и не трогает то, что уже есть в базе"
+    )
+
+    # Ищем записи только по ключу, остальное — в defaults. Иначе правка в админке (ставка продукта,
+    # имя клиента) делает запись «не найденной», и повторное создание падает на уникальном ключе,
+    # а вместе с ним и старт контейнера. То, что поправили в админке, не перезаписываем.
+
+    def report(self, created, what):
+        if created:
+            self.stdout.write(self.style.SUCCESS(f"Создано: {what}"))
+        else:
+            self.stdout.write(f"Уже есть: {what}")
+
+    def user(self, username, password, **defaults):
+        user, created = User.objects.get_or_create(username=username, defaults=defaults)
+        if created:
+            user.set_password(password)
+            user.save(update_fields=["password"])
+        return user, created
 
     def handle(self, *args, **options):
-        # создание конфига
-        config, created = ScoringConfig.objects.get_or_create(
+        _, created = ScoringConfig.objects.get_or_create(
             version=1,
             defaults={
                 "params": DEFAULT_PARAMS,
                 "is_active": True,
                 "comment": "Начальная версия: числа из docs/03-decision-model.md",
-            }
+            },
         )
+        self.report(created, "параметры модели, версия 1")
 
-        admin, created = User.objects.get_or_create(username="admin", defaults={"is_staff": True, "is_superuser": True})
-        if created:
-            admin.set_password("x123x")
-            admin.save()
-            self.stdout.write(self.style.SUCCESS('Сущность администратора с именем "%s" успешно создана!' % admin.username))
-        else:
-            self.stdout.write(self.style.WARNING('Сущность администратора с именем "%s" уже была создана' % admin.username))
+        _, created = self.user("admin", "x123x", is_staff=True, is_superuser=True)
+        self.report(created, "администратор admin")
 
-        underwriter, created = User.objects.get_or_create(username="underWriter", role=User.Role.UNDERWRITER)
-        if created:
-            underwriter.set_password("x123x")
-            underwriter.save()
-            self.stdout.write(self.style.SUCCESS('Сущность андеррайтера с именем "%s" успешно создана!' % underwriter.username))
-        else:
-            self.stdout.write(self.style.WARNING('Сущность андеррайтера с именем "%s" уже была создана' % underwriter.username))
+        _, created = self.user("underWriter", "x123x", role=User.Role.UNDERWRITER)
+        self.report(created, "андеррайтер underWriter")
 
         for client in CLIENTS:
-            cl, created = User.objects.get_or_create(username=client["username"], first_name=client["first_name"], last_name=client["last_name"], role=User.Role.CLIENT)
-            if created:
-                cl.set_password(client["password"])
-                cl.save()
-                self.stdout.write(self.style.SUCCESS('Сущность клиента с именем "%s" успешно создана!' % cl.username))
-            else:
-                self.stdout.write(self.style.WARNING('Сущность клиента с именем "%s" уже была создана' % cl.username))
-
+            _, created = self.user(
+                client["username"], client["password"],
+                first_name=client["first_name"], last_name=client["last_name"], role=User.Role.CLIENT,
+            )
+            self.report(created, f"клиент {client['username']}")
 
         for product in PRODUCTS:
-            pr, created = Product.objects.get_or_create(
-                code=product["code"],
-                title=product["title"],
-                description=product["description"],
-                min_amount=product["min_amount"],
-                max_amount=product["max_amount"],
-                max_term_months=product["max_term_months"],
-                base_rate=product["base_rate"],
-                requires_collateral=product["requires_collateral"],
-                max_ltv=product["max_ltv"],
-                min_business_age_months=product["min_business_age_months"],
-                sort_order=product["sort_order"],
-            )
-            if created:
-                self.stdout.write(self.style.SUCCESS('Сущность продукта с кодом "%s" успешно создана!' % pr.code))
-            else:
-                self.stdout.write(self.style.WARNING('Сущность продукта с кодом "%s" уже была создана' % pr.code))
+            fields = {k: v for k, v in product.items() if k != "code"}
+            _, created = Product.objects.get_or_create(code=product["code"], defaults=fields)
+            self.report(created, f"продукт {product['code']}")
 
         for document in DOCUMENTS:
-            prod = None
-            try:
-                prod = get_object_or_404(Product, code=document["product"])
-            except Http404:
-                pass
-            doc, created = DocumentRequirement.objects.get_or_create(
+            product = Product.objects.filter(code=document["product"]).first() if document["product"] else None
+            _, created = DocumentRequirement.objects.get_or_create(
                 doc_type=document["doc_type"],
-                name=document["name"],
-                hint=document["hint"],
-                product=prod,
+                product=product,
                 legal_form=document["legal_form"],
                 tax_regime=document["tax_regime"],
-                sort_order=document["sort_order"],
+                defaults={"name": document["name"], "hint": document["hint"], "sort_order": document["sort_order"]},
             )
-            if created:
-                self.stdout.write(self.style.SUCCESS('Сущность документа с названием "%s" успешно создана!' % doc.name))
-            else:
-                self.stdout.write(self.style.WARNING('Сущность документа с названием "%s" уже была создана' % doc.name))
+            self.report(created, f"документ «{document['name']}» ({document['tax_regime'] or 'любой режим'})")

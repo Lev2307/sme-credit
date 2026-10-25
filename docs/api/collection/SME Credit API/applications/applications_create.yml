@@ -10,10 +10,7 @@ http:
   url: "{{baseUrl}}/api/v1/applications"
   body:
     type: json
-    data: |-
-      {
-        "product_code": ""
-      }
+    data: '{"product_code": "WORKING_CAPITAL"}'
   auth:
     type: bearer
     token: "{{token}}"

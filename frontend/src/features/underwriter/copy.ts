@@ -13,6 +13,8 @@ export const REASON_LABEL: Record<string, string> = {
   CLASS_C: 'Класс риска C',
   AMOUNT_ABOVE_AUTO_LIMIT: 'Сумма выше порога автоматического решения',
   SOURCE_UNAVAILABLE: 'Внешний источник не ответил',
+  PIPELINE_ERROR: 'Сбой автоматической проверки, подробности в логе worker',
+  NO_REVENUE: 'Нулевая выручка: нагрузку и лимиты не посчитать',
   MASS_ADDRESS: 'Массовый адрес регистрации',
   INFO_REQUEST_LIMIT: 'Два раунда дозапроса без результата',
   CAP_RECENT_DELINQUENCY: 'Просрочки за последний год',

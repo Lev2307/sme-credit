@@ -91,6 +91,9 @@ export const draftSchema = (product: Product) => {
 
       if (v.purpose.trim() === '') fail('purpose', 'Опишите, на что нужны деньги');
       if (v.annual_revenue === '') fail('annual_revenue', 'Укажите выручку за год');
+      // От выручки считаются нагрузка и лимиты: с нулём заявку не проверить
+      else if (v.annual_revenue <= 0)
+        fail('annual_revenue', 'Выручка за год должна быть больше нуля');
       if (v.existing_monthly_payments === '') {
         fail('existing_monthly_payments', 'Укажите платежи по другим кредитам, 0 если их нет');
       }

@@ -125,5 +125,22 @@ def test_login_is_throttled(db):
     assert codes[10] == 429
 
 
+def test_successful_logins_do_not_count_towards_throttle(client_user):
+    # на демо быстро переключаются между учётками: успешные входы лимит не тратят
+    api = APIClient()
+    codes = [api.post(LOGIN, {"username": "client1", "password": PASSWORD}, format="json").status_code for _ in range(15)]
+    assert set(codes) == {200}
+
+
+def test_throttled_client_cannot_log_in_even_with_right_password(client_user):
+    api = APIClient()
+    for _ in range(10):
+        api.post(LOGIN, {"username": "client1", "password": "wrong"}, format="json")
+
+    r = api.post(LOGIN, {"username": "client1", "password": PASSWORD}, format="json")
+
+    assert r.status_code == 429
+
+
 def test_openapi_schema_has_no_errors(db):
     call_command("spectacular", "--validate", "--fail-on-warn", "--file", os.devnull)

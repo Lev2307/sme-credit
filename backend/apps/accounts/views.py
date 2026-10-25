@@ -7,7 +7,7 @@ from rest_framework.views import APIView
 from rest_framework.generics import RetrieveAPIView
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.exceptions import ValidationError
+from rest_framework.exceptions import AuthenticationFailed, ValidationError
 from rest_framework.permissions import AllowAny
 from rest_framework.throttling import ScopedRateThrottle
 
@@ -39,15 +39,41 @@ def set_refresh_cookie(response, token):
         path=REFRESH_COOKIE_PATH,
     )
 
+class FailedLoginThrottle(ScopedRateThrottle):
+    """Лимит на неудачные попытки входа (по IP), а не на все входы.
+
+    Защищает от перебора паролей, но не мешает быстро переключаться между тестовыми
+    учётками на демо: успешный вход в счётчик не попадает. Обычный ScopedRateThrottle
+    записывает попытку ещё до проверки пароля, этот — только когда пароль не подошёл.
+    """
+
+    def throttle_success(self):
+        return True  # пропускаем, но попытку пока не записываем
+
+    def record_failure(self):
+        self.history.insert(0, self.now)
+        self.cache.set(self.key, self.history, self.duration)
+
+
 class LoginView(TokenObtainPairView):
-    throttle_classes = [ScopedRateThrottle]
+    throttle_classes = [FailedLoginThrottle]
     throttle_scope = "login"
 
     @extend_schema(responses=AccessTokenSerializer)
     def post(self, request, *args, **kwargs):
-        response = super().post(request, *args, **kwargs)
+        try:
+            response = super().post(request, *args, **kwargs)
+        except AuthenticationFailed:
+            self.count_failed_attempt(request)
+            raise
         set_refresh_cookie(response, response.data.pop("refresh"))
         return response
+
+    def count_failed_attempt(self, request):
+        for throttle in self.get_throttles():
+            # allow_request заново читает историю попыток из кэша, саму попытку не записывает
+            if isinstance(throttle, FailedLoginThrottle) and throttle.allow_request(request, self):
+                throttle.record_failure()
 
 class RefreshView(TokenRefreshView):
     @extend_schema(request=None, responses=AccessTokenSerializer)

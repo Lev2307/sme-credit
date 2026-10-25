@@ -91,7 +91,7 @@ export function ProductCard({ product, company, draft, active }: Props) {
           <Text size="sm">
             {tooYoung
               ? `Нужен бизнес не моложе ${formatMonthsGenitive(product.min_business_age_months)}, а вашему ${formatMonths(businessAge)}. Заявку по этому продукту отклонят.`
-              : `Возраст бизнеса подходит: нужно от ${formatMonthsGenitive(product.min_business_age_months)}.`}
+              : `Возраст бизнеса: нужно от ${formatMonthsGenitive(product.min_business_age_months)}.`}
           </Text>
         </Group>
 

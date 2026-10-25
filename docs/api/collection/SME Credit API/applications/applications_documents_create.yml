@@ -7,11 +7,7 @@ info:
 
 http:
   method: POST
-  url: "{{baseUrl}}/api/v1/applications/:id/documents"
-  params:
-    - name: id
-      value: ""
-      type: path
+  url: "{{baseUrl}}/api/v1/applications/{{appId}}/documents"
   body:
     type: json
     data: |-

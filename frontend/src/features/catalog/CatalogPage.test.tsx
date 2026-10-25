@@ -67,13 +67,13 @@ describe('Выбор кредита', () => {
     expect(await invest.findByText('Документы на залог и отчёт об оценке')).toBeInTheDocument();
   });
 
-  it('предупреждает, если бизнес моложе, чем требует продукт', async () => {
+  it('не предупреждает, если бизнес достаточно взрослый', async () => {
     server.use(signedInAs('Reliable'), documentsHandler({}));
     renderApp('/cabinet/products');
 
     // Надёжной пекарне больше 5 лет: оба продукта подходят по возрасту
     const express = within(await card('Экспресс-кредит'));
-    expect(express.getByText(/Возраст бизнеса подходит: нужно от 6 месяцев/)).toBeInTheDocument();
+    expect(express.getByText(/Возраст бизнеса: нужно от 6 месяцев/)).toBeInTheDocument();
     expect(express.queryByText(/отклонят/)).not.toBeInTheDocument();
   });
 

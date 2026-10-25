@@ -7,11 +7,14 @@ info:
 
 http:
   method: GET
-  url: "{{baseUrl}}/api/v1/products/:code"
+  url: "{{baseUrl}}/api/v1/products/WORKING_CAPITAL/documents?legal_form=OOO&tax_regime=USN_INCOME_EXPENSES"
   params:
-    - name: code
-      value: ""
-      type: path
+    - name: legal_form
+      value: OOO
+      type: query
+    - name: tax_regime
+      value: USN_INCOME_EXPENSES
+      type: query
   auth:
     type: bearer
     token: "{{token}}"

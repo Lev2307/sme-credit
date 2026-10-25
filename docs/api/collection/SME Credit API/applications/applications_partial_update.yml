@@ -7,24 +7,12 @@ info:
 
 http:
   method: PATCH
-  url: "{{baseUrl}}/api/v1/applications/:id"
-  params:
-    - name: id
-      value: ""
-      type: path
+  url: "{{baseUrl}}/api/v1/applications/{{appId}}"
   body:
     type: json
-    data: |-
-      {
-        "amount": "",
-        "term_months": 0,
-        "purpose": "",
-        "annual_revenue": "",
-        "existing_monthly_payments": "",
-        "collateral_type": "",
-        "collateral_value": "",
-        "consent": false
-      }
+    data: |2-
+         {"amount": "4000000", "term_months": 24, "purpose": "Закупка сырья",
+          "annual_revenue": "60000000", "existing_monthly_payments": "210000", "consent": true}
   auth:
     type: bearer
     token: "{{token}}"

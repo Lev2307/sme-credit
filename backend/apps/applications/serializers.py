@@ -10,6 +10,7 @@ from .models import Application, ApplicationDocument, ApplicationEvent, Agreemen
 S = Application.Status
 
 MBMAX = settings.UPLOAD_MAX_SIZE_MB * 1024 * 1024
+REVENUE_POSITIVE = "Выручка за год должна быть больше нуля"
 
 NEXT_ACTIONS = {
     S.DRAFT: "Заполните анкету и загрузите документы, затем отправьте заявку",
@@ -102,6 +103,12 @@ class ApplicationPatchSerializer(serializers.ModelSerializer):
             "collateral_value": {"min_value": 0},
         }
 
+    def validate_annual_revenue(self, value):
+        # null — клиент стёр поле в черновике, это можно. Ноль — нельзя: от выручки считаются нагрузка и лимиты
+        if value is not None and value <= 0:
+            raise serializers.ValidationError(REVENUE_POSITIVE)
+        return value
+
     def update(self, instance, validated_data):
         consent = validated_data.pop("consent", None)
         if consent is True and instance.consent_given_at is None:
@@ -129,22 +136,22 @@ class ApplicationDocumentUploadSerializer(serializers.ModelSerializer):
 
     def validate_file(self, file):
         if file.size > MBMAX:
-            raise serializers.ValidationError("Размер документа не может быть больше 10МБ")
+            raise serializers.ValidationError(f"Размер документа не может быть больше {settings.UPLOAD_MAX_SIZE_MB} МБ")
 
         ext = pathlib.Path(file.name).suffix.lower() 
         if ext not in [".pdf", ".jpg", ".png", ".jpeg"]:
-            raise serializers.ValidationError(f"Не подходящее расширение файла - {ext}, возможно, у него просто сменили расширение")
+            raise serializers.ValidationError(f"Файл {ext or 'без расширения'} не подойдёт: загрузите PDF, JPG или PNG")
         else:
             # проверка сигнатур
             sign = file.read(8)
             file.seek(0)
 
             if ext == ".pdf" and not sign.startswith(b"%PDF-"):
-                raise serializers.ValidationError(f"Файл с расширением .pdf не является им")
+                raise serializers.ValidationError("Файл с расширением .pdf не является PDF")
             if ext == ".png" and not sign.startswith(b"\x89PNG\r\n\x1a\n"):
-                raise serializers.ValidationError(f"Файл с расширением .png не является им")
+                raise serializers.ValidationError("Файл с расширением .png не является PNG")
             if ext in (".jpg", ".jpeg") and not sign.startswith(b"\xff\xd8\xff"):
-                raise serializers.ValidationError(f"Файл с расширением .jpeg не является им")
+                raise serializers.ValidationError("Файл с расширением .jpg не является JPEG")
             
         return file
 

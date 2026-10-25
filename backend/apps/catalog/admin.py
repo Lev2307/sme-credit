@@ -3,7 +3,7 @@ from django.contrib import admin
 from .models import DocumentRequirement, Product, ScoringConfig
 
 
-# ПРАВКА (необязательно): колонки и фильтры, чтобы главное было видно прямо в списке
+# Колонки и фильтры, чтобы главное было видно прямо в списке
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
     list_display = ("code", "title", "min_amount", "max_amount", "max_term_months", "base_rate", "is_active", "sort_order")

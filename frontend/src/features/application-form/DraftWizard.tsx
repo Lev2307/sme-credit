@@ -17,6 +17,7 @@ import { draftSchema, stepOfField, stepsFor, toDraftValues, type DraftValues } f
 import classes from './DraftWizard.module.css';
 import { problemsFromMissingDocuments, problemsFromSubmitError, type Problem } from './problems';
 import { SaveStatus } from './SaveStatus';
+import { forgetStep, readStep, saveStep } from './stepMemory';
 import { CollateralStep } from './steps/CollateralStep';
 import { DocumentsStep } from './steps/DocumentsStep';
 import { FinanceStep } from './steps/FinanceStep';
@@ -37,7 +38,8 @@ export function DraftWizard({ application, product, company }: Props) {
   const queryClient = useQueryClient();
   const steps = useMemo(() => stepsFor(product), [product]);
   const schema = useMemo(() => draftSchema(product), [product]);
-  const [active, setActive] = useState(0);
+  // Возвращаемся к черновику на тот шаг, где клиент остановился
+  const [active, setActive] = useState(() => readStep(application.id, steps));
   const [serverProblems, setServerProblems] = useState<Problem[] | null>(null);
   const stepHeading = useRef<HTMLHeadingElement>(null);
   const isFirstRender = useRef(true);
@@ -55,6 +57,7 @@ export function DraftWizard({ application, product, company }: Props) {
   const submit = useMutation({
     mutationFn: () => applicationsSubmitCreate(application.id),
     onSuccess: (updated) => {
+      forgetStep(application.id);
       queryClient.setQueryData(getApplicationsRetrieveQueryKey(application.id), updated);
       void queryClient.invalidateQueries({ queryKey: getApplicationsListQueryKey() });
       notifications.show({ message: 'Заявка отправлена. Банк уже начал проверку' });
@@ -91,6 +94,7 @@ export function DraftWizard({ application, product, company }: Props) {
     await autosave.flush();
     setServerProblems(null);
     setActive(index);
+    saveStep(application.id, steps[index].key);
     window.scrollTo({ top: 0 });
   };
 

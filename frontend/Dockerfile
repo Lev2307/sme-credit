@@ -1,7 +1,3 @@
-# Образ фронтенда: собираем React на Node, раздаём через nginx.
-# nginx же проксирует /api, /admin и /static на бэкенд, поэтому фронт и API живут на одном адресе
-# и refresh-cookie работает без CORS (docs/04-architecture.md, «Контейнеры»)
-
 # Та же мажорная версия Node, что и при локальной разработке (package-lock собран npm 11)
 FROM node:24-alpine AS build
 

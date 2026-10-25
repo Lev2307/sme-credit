@@ -64,6 +64,7 @@
 
   @mixin hover {
     background-color: #2b332d;
+    color: #f0f3ef;
   }
 
   &:focus-visible {

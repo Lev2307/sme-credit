@@ -10,8 +10,12 @@
       // Тема до загрузки React, чтобы страница не мигала светлой. Ключ тот же, что у Mantine
       try {
         var saved = localStorage.getItem('mantine-color-scheme-value');
-        var scheme = saved === 'light' || saved === 'dark' ? saved
-          : window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        var scheme =
+          saved === 'light' || saved === 'dark'
+            ? saved
+            : window.matchMedia('(prefers-color-scheme: dark)').matches
+              ? 'dark'
+              : 'light';
         document.documentElement.setAttribute('data-mantine-color-scheme', scheme);
       } catch (e) {}
     </script>

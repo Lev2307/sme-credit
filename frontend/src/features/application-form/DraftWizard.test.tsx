@@ -1,4 +1,4 @@
-import { screen, waitFor, within } from '@testing-library/react';
+import { cleanup, screen, waitFor, within } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { beforeEach, describe, expect, it } from 'vitest';
 import type {
@@ -105,6 +105,20 @@ describe('Анкета-мастер', () => {
     expect(screen.getByLabelText(/На что нужны деньги/)).toHaveValue('Купить вторую печь');
   });
 
+  it('при возврате к черновику открывает шаг, где клиент остановился', async () => {
+    const first = open(filledDraft());
+
+    await first.user.click(await screen.findByRole('button', { name: 'Далее' }));
+    await stepHeading('Финансы');
+
+    // Ушёл из анкеты и вернулся
+    cleanup();
+    open(draft);
+
+    expect(await stepHeading('Финансы')).toBeInTheDocument();
+    expect(screen.getByText('Шаг 2 из 4')).toBeInTheDocument();
+  });
+
   it('сохраняет правку сама и показывает, что сохранено', async () => {
     const { user } = open(makeApplication({}));
 
@@ -128,6 +142,17 @@ describe('Анкета-мастер', () => {
     expect(screen.getByText('Укажите срок кредита')).toBeInTheDocument();
     expect(screen.getByText('Опишите, на что нужны деньги')).toBeInTheDocument();
     expect(screen.getByRole('heading', { level: 2, name: 'Сумма и срок' })).toBeInTheDocument();
+  });
+
+  it('не пускает дальше с нулевой выручкой', async () => {
+    const { user } = open(filledDraft({ annual_revenue: '0.00' }));
+
+    await user.click(await screen.findByRole('button', { name: 'Далее' }));
+    await stepHeading('Финансы');
+    await user.click(screen.getByRole('button', { name: 'Далее' }));
+
+    expect(await screen.findByText('Выручка за год должна быть больше нуля')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 2, name: 'Финансы' })).toBeInTheDocument();
   });
 
   it('шаг залога есть только у продукта с залогом', async () => {

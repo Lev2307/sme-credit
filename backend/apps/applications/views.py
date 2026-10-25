@@ -171,7 +171,7 @@ class ApplicationAPIViewset(CreateModelMixin, ListModelMixin, RetrieveModelMixin
                 app = transition(app, Application.Status.DISBURSING, request.user, action="OFFER_SIGNED")
                 Agreement.objects.create(
                     application=app,
-                    number="КД-"+timezone.now().date().strftime(r"%y%m%d")+"-"+app.id.hex[:6].upper(),
+                    number="КД-"+timezone.now().date().strftime(r"%Y%m%d")+"-"+app.id.hex[:6].upper(),
                     amount=offer["amount"],
                     term_months=offer["term_months"],
                     rate=offer["rate"],

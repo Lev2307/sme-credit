@@ -1,4 +1,3 @@
-from django.db.models import Q
 
 from drf_spectacular.utils import extend_schema
 from rest_framework.response import Response

@@ -1,7 +1,8 @@
 import { expect, test, type Page } from '@playwright/test';
+import { ensureCompany } from './helpers';
 
-// Сценарии только читают: привязка компании необратима, поэтому её проверяют компонентные тесты,
-// а здесь не тратим тестовые учётки
+// Привязка компании необратима: её через интерфейс проверяют компонентные тесты, а здесь
+// Reliable привязывается к своему же ИНН через API (ensureCompany), остальные учётки не трогаем
 
 const signIn = async (page: Page, username: string) => {
   await page.goto('/login');
@@ -20,7 +21,8 @@ test('клиент без компании попадает на привязк�
   await expect(page.getByRole('button', { name: 'Это моя компания, привязать' })).toBeEnabled();
 });
 
-test('каталог показывает продукты и документы под компанию клиента', async ({ page }) => {
+test('каталог показывает продукты и документы под компанию клиента', async ({ page, request }) => {
+  await ensureCompany(request, 'Reliable');
   await signIn(page, 'Reliable');
   await page.getByRole('link', { name: /Новая заявка|Выбрать кредит/ }).click();
 

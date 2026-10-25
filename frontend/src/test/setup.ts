@@ -37,5 +37,7 @@ afterEach(() => {
   cleanup();
   server.resetHandlers();
   setAccessToken(null);
+  // Анкета запоминает шаг в localStorage: тест не должен видеть то, что оставил прошлый
+  localStorage.clear();
 });
 afterAll(() => server.close());

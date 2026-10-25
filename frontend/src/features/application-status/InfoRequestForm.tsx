@@ -36,7 +36,8 @@ const numberField = z.union([z.number(), z.literal('')]);
 
 const schema = z.object({
   answer: z.string().trim().min(1, 'Напишите ответ банку').max(2000, 'Не больше 2000 символов'),
-  annual_revenue: numberField,
+  // Исправлять выручку необязательно, но если исправили — не на ноль (бэкенд тоже не примет)
+  annual_revenue: numberField.refine((v) => v === '' || v > 0, 'Выручка должна быть больше нуля'),
   existing_monthly_payments: numberField,
 });
 

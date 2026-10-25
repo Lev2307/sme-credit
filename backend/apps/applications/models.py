@@ -203,13 +203,11 @@ class ApplicationDocument(models.Model):
     )
     doc_type = models.CharField(max_length=32, choices=DocTypeChoices.choices, verbose_name="тип документа")
     file = models.FileField(upload_to=document_upload_to, verbose_name="файл")
-    # ПРАВКА: 64 символов мало для имён файлов
     original_name = models.CharField(
         max_length=255, verbose_name="исходное имя файла", help_text="Как файл назывался у клиента"
     )
     size = models.PositiveBigIntegerField(verbose_name="размер, байт")
     uploaded_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, verbose_name="кто загрузил")
-    # ПРАВКА: дата ставится сама
     uploaded_at = models.DateTimeField(auto_now_add=True, verbose_name="загружен")
 
     class Meta:

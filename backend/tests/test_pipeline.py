@@ -176,8 +176,10 @@ def test_demo_company(sources, make_app, config, name, inn, product, amount, rev
         assert decision.offer_monthly_payment == D(payment)
         assert decision.offer_term_months == 24
 
-    # журнал: опросили источники → посчитали → приняли решение со сменой статуса
-    assert actions(app) == ["ENRICHED", "SCORED", "DECIDED"]
+    # журнал: опросили источники → посчитали → приняли решение со сменой статуса.
+    # Стоп-фактор, дозапрос и недоступный источник решаются без скоринга — SCORED тогда нет
+    scored = ["SCORED"] if decision.score is not None else []
+    assert actions(app) == ["ENRICHED", *scored, "DECIDED"]
     decided = app.events.get(action="DECIDED")
     assert decided.actor_type == ApplicationEvent.ActorTypeChoices.SYSTEM
     assert decided.from_status == S.IN_REVIEW
@@ -382,3 +384,57 @@ def test_enqueue_processing_runs_pipeline(sources, make_app):
 
     app.refresh_from_db()
     assert app.status == S.APPROVED
+
+
+# --- Сбои внутри конвейера ------------------------------------------------------------------
+
+
+def test_unexpected_error_hands_application_to_underwriter(sources, make_app, monkeypatch):
+    """Любая непредвиденная ошибка не оставляет заявку навсегда «На проверке»."""
+    app = make_app("9901000010", amount="4000000", revenue="60000000")
+
+    def broken_evaluate(*args, **kwargs):
+        raise ZeroDivisionError("что-то сломалось в модели")
+
+    monkeypatch.setattr(pipeline, "evaluate", broken_evaluate)
+
+    app = run(app)
+
+    assert app.status == S.UNDERWRITING
+    assert app.decisions.get().reason_codes == ["PIPELINE_ERROR"]
+    decided = app.events.get(action="DECIDED")
+    assert decided.reason_code == "PIPELINE_ERROR"
+
+
+def test_error_after_client_cancelled_changes_nothing(sources, make_app, monkeypatch):
+    app = make_app("9901000010", amount="4000000", revenue="60000000")
+
+    def cancel_then_fail(*args, **kwargs):
+        Application.objects.filter(pk=app.pk).update(status=S.CANCELLED)
+        raise RuntimeError("сбой")
+
+    monkeypatch.setattr(pipeline, "evaluate", cancel_then_fail)
+
+    app = run(app)
+
+    assert app.status == S.CANCELLED
+    assert not app.decisions.exists()
+
+
+def test_no_active_config_goes_to_underwriter(sources, make_app, config):
+    app = make_app("9901000010", amount="4000000", revenue="60000000")
+    ScoringConfig.objects.update(is_active=False)
+
+    app = run(app)
+
+    assert app.status == S.UNDERWRITING
+    assert not app.decisions.exists()  # решению не на что сослаться, но событие в журнале есть
+    assert app.events.get(action="DECIDED").reason_code == "PIPELINE_ERROR"
+
+
+def test_zero_revenue_of_ip_goes_to_underwriter_instead_of_crashing(sources, make_app):
+    # у ИП на патенте отчётности нет: выручку не с чем сверить, и до исправления здесь было деление на ноль
+    app = run(make_app("990100000285", product="EXPRESS", amount="1000000", revenue="0"))
+
+    assert app.status == S.UNDERWRITING
+    assert app.decisions.get().reason_codes == ["NO_REVENUE"]

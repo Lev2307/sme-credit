@@ -31,15 +31,15 @@ npm run dev
 
 ## Команды
 
-| Команда | Что делает |
-|---|---|
-| `npm run dev` | Dev-сервер на :5173 с прокси на бэкенд |
-| `npm run build` | Проверка типов и сборка в `dist/` |
-| `npm run api` | Перегенерировать клиент API после изменения `docs/api/openapi.yaml` |
-| `npm run typecheck` | Только проверка типов |
-| `npm run lint` | ESLint с правилами хуков и доступности |
-| `npm test` | Компонентные тесты (Vitest + Testing Library, HTTP замокан через MSW) |
-| `npm run e2e` | Сценарии Playwright против настоящего бэкенда на :8000. Перед первым запуском: `npx playwright install chromium` |
+| Команда             | Что делает                                                                                                       |
+| ------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| `npm run dev`       | Dev-сервер на :5173 с прокси на бэкенд                                                                           |
+| `npm run build`     | Проверка типов и сборка в `dist/`                                                                                |
+| `npm run api`       | Перегенерировать клиент API после изменения `docs/api/openapi.yaml`                                              |
+| `npm run typecheck` | Только проверка типов                                                                                            |
+| `npm run lint`      | ESLint с правилами хуков и доступности                                                                           |
+| `npm test`          | Компонентные тесты (Vitest + Testing Library, HTTP замокан через MSW)                                            |
+| `npm run e2e`       | Сценарии Playwright против настоящего бэкенда на :8000. Перед первым запуском: `npx playwright install chromium` |
 
 ## Как устроен вход
 

@@ -329,3 +329,33 @@ def test_events_of_other_clients_application_are_not_found(api, make_app):
     foreign = make_app(make_client("client2", "7700000002"))
 
     assert api.get(url(foreign, "events")).status_code == 404
+
+
+def test_submit_rejects_zero_revenue(api, client_user, make_app):
+    app = make_app(client_user, complete=True, annual_revenue=Decimal("0"))
+
+    r = api.post(url(app, "submit"))
+
+    assert r.status_code == 400
+    assert "annual_revenue" in r.data["details"]["errors"]
+
+
+def test_submit_checks_collateral_ltv(api, client_user, make_app):
+    # кредит под залог — не больше 70% его стоимости: 5 млн под залог в 6 млн нельзя (максимум 4,2 млн)
+    app = make_app(
+        client_user, product="INVESTMENT", complete=True, amount=Decimal("5000000"), term_months=36,
+        collateral_type=Application.CollateralType.EQUIPMENT, collateral_value=Decimal("6000000"),
+    )
+
+    r = api.post(url(app, "submit"))
+
+    assert r.status_code == 400
+    assert "4 200 000 ₽" in r.data["details"]["errors"]["collateral_value"]
+
+
+def test_limit_errors_show_readable_amounts(api, client_user, make_app):
+    app = make_app(client_user, complete=True, amount=Decimal("5000000"))
+
+    r = api.post(url(app, "submit"))
+
+    assert r.data["details"]["errors"]["amount"] == "Для этого продукта сумма от 300 000 ₽ до 3 000 000 ₽"

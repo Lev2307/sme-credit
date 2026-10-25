@@ -250,6 +250,7 @@ def test_consent_sets_and_clears_timestamp(api, client_user, make_app):
         ("amount", "-100"),
         ("term_months", 0),
         ("annual_revenue", "-1"),
+        ("annual_revenue", "0"),
         ("existing_monthly_payments", "-1"),
         ("collateral_value", "-1"),
         ("collateral_type", "SPACESHIP"),

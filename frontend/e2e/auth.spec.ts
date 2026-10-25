@@ -1,8 +1,11 @@
 import { expect, test } from '@playwright/test';
+import { ensureCompany } from './helpers';
 
 test('клиент входит, сессия переживает перезагрузку, выход возвращает на вход', async ({
   page,
+  request,
 }) => {
+  await ensureCompany(request, 'Reliable');
   await page.goto('/');
   await expect(page.getByRole('heading', { level: 1, name: 'Вход в кабинет' })).toBeVisible();
 
