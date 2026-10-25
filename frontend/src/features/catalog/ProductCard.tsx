@@ -13,6 +13,7 @@ import {
 import { FormError } from '@/shared/ui/FormError';
 import classes from './ProductCard.module.css';
 import { ProductDocuments } from './ProductDocuments';
+import { ProductIcon } from './ProductIcon';
 import { useCreateDraft } from './useCreateDraft';
 
 type Props = {
@@ -52,13 +53,18 @@ export function ProductCard({ product, company, draft, active }: Props) {
   return (
     <Card component="article" aria-labelledby={titleId}>
       <Stack gap="lg">
-        <div>
-          <Title order={2} size="h3" id={titleId} mb={4}>
-            {product.title}
-          </Title>
-          <Text c="dimmed" maw="65ch">
-            {product.description}
-          </Text>
+        <div className={classes.head}>
+          <span className={classes.icon} aria-hidden>
+            <ProductIcon code={product.code} size={24} stroke={1.8} />
+          </span>
+          <div className={classes.headText}>
+            <Title order={2} size="h3" id={titleId} mb={4}>
+              {product.title}
+            </Title>
+            <Text c="dimmed" maw="65ch">
+              {product.description}
+            </Text>
+          </div>
         </div>
 
         <dl className={classes.facts}>
@@ -70,7 +76,7 @@ export function ProductCard({ product, company, draft, active }: Props) {
                 </Text>
               </dt>
               <dd>
-                <Text fw={600}>{value}</Text>
+                <Text fw={750}>{value}</Text>
               </dd>
             </div>
           ))}

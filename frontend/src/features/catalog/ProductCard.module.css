@@ -1,8 +1,30 @@
+.head {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--mantine-spacing-md);
+}
+
+.headText {
+  min-width: 0;
+}
+
+/* Иконка продукта на лайме, как активный пункт навигации */
+.icon {
+  flex-shrink: 0;
+  width: 52px;
+  height: 52px;
+  display: grid;
+  place-items: center;
+  border-radius: 16px;
+  background-color: var(--app-accent);
+  color: var(--app-accent-ink);
+}
+
 /* Четыре параметра продукта: в строку на широком экране, по два на планшете, столбиком на телефоне */
 .facts {
   margin: 0;
   display: grid;
-  gap: var(--mantine-spacing-md);
+  gap: var(--mantine-spacing-sm);
   grid-template-columns: minmax(0, 1fr);
 
   @media (min-width: $mantine-breakpoint-xs) {
@@ -16,6 +38,9 @@
 
 .fact {
   min-width: 0;
+  padding: var(--mantine-spacing-md);
+  border-radius: var(--mantine-radius-lg);
+  background-color: var(--app-sunken);
 
   & dd {
     margin: 0;
@@ -24,7 +49,7 @@
 
 .okIcon {
   flex-shrink: 0;
-  color: var(--mantine-color-green-light-color);
+  color: var(--app-positive);
 }
 
 .warnIcon {

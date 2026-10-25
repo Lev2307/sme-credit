@@ -16,6 +16,7 @@
     "e2e": "playwright test"
   },
   "dependencies": {
+    "@fontsource-variable/manrope": "^5.3.0",
     "@hookform/resolvers": "^5.9.2",
     "@mantine/core": "^9.7.3",
     "@mantine/hooks": "^9.7.3",

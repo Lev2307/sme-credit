@@ -19,3 +19,7 @@
     margin: 0;
   }
 }
+
+.statusCard {
+  border-radius: 24px;
+}

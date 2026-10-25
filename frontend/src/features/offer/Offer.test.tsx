@@ -62,13 +62,12 @@ describe('Предложение, подписание и выдача', () => {
   it('сравнивает «просили» и «предлагаем» и объясняет, почему меньше', async () => {
     open(app({ status: 'COUNTER_OFFER', status_display: 'Контрпредложение' }));
 
-    const table = within(await screen.findByRole('table', { name: /Сравнение заявки/ }));
-    const amount = within(table.getByRole('row', { name: /Сумма/ }));
-    expect(amount.getByText(/1\s500\s000\s₽/)).toBeInTheDocument();
-    expect(amount.getByText(/1\s000\s000\s₽/)).toBeInTheDocument();
-    expect(amount.getByText('(изменено)')).toBeInTheDocument();
-    // Ставку и платёж клиент не указывал: они под таблицей, а не в сравнении
-    expect(table.queryByRole('row', { name: /Ставка/ })).not.toBeInTheDocument();
+    const compare = within(await screen.findByRole('group', { name: /Сравнение заявки/ }));
+    expect(compare.getByText(/^1\s500\s000\s₽$/)).toBeInTheDocument();
+    expect(compare.getByText(/^1\s000\s000\s₽$/)).toBeInTheDocument();
+    expect(compare.getByText('Сумма изменена')).toBeInTheDocument();
+    // Ставку и платёж клиент не указывал: они плитками ниже, а не в сравнении
+    expect(compare.queryByText(/годовых/)).not.toBeInTheDocument();
     const offer = within(screen.getByRole('region', { name: 'Предложение банка' }));
     expect(offer.getByText(/23\s% годовых/)).toBeInTheDocument();
     // 52 817 × 24 − 1 000 000 = 267 608
@@ -115,7 +114,7 @@ describe('Предложение, подписание и выдача', () => {
       agreement: { ...agreement, disbursed_at: '2026-10-25T11:00:05Z' },
     };
     expect(
-      await screen.findByRole('heading', { name: 'Деньги зачислены' }, { timeout: 6000 }),
+      await screen.findByRole('heading', { name: 'Деньги на счёте' }, { timeout: 6000 }),
     ).toBeInTheDocument();
     expect(screen.getByText('Деньги перечислены на счёт компании.')).toBeInTheDocument();
   }, 10_000);

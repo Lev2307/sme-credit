@@ -4,6 +4,7 @@ import { ApplicationsPage } from '@/features/applications/ApplicationsPage';
 import { LoginPage } from '@/features/auth/LoginPage';
 import { CatalogPage } from '@/features/catalog/CatalogPage';
 import { CompanyOnboardingPage } from '@/features/company/CompanyOnboardingPage';
+import { ProfilePage } from '@/features/profile/ProfilePage';
 import { CardPage } from '@/features/underwriter/CardPage';
 import { QueuePage } from '@/features/underwriter/QueuePage';
 import { NotFoundPage } from '@/pages/NotFoundPage';
@@ -23,6 +24,7 @@ export const routes: RouteObject[] = [
         element: <AppLayout />,
         children: [
           { path: 'company', element: <CompanyOnboardingPage /> },
+          { path: 'profile', element: <ProfilePage /> },
           {
             element: <RequireCompany />,
             children: [
@@ -44,6 +46,7 @@ export const routes: RouteObject[] = [
         children: [
           { index: true, element: <QueuePage /> },
           { path: 'applications/:id', element: <CardPage /> },
+          { path: 'profile', element: <ProfilePage /> },
         ],
       },
     ],

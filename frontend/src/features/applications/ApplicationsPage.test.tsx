@@ -47,15 +47,13 @@ describe('Мои заявки', () => {
     );
     renderApp('/cabinet');
 
-    const waiting = await screen.findByRole('region', { name: 'Ждут вашего действия' });
+    const waiting = await screen.findByRole('region', { name: 'Нужно ваше участие' });
     expect(within(waiting).getByRole('heading', { name: 'Экспресс-кредит' })).toBeInTheDocument();
     expect(within(waiting).getByText('Контрпредложение')).toBeInTheDocument();
     expect(within(waiting).getByText(/1\s500\s000\s₽ на 24 месяца/)).toBeInTheDocument();
-    expect(
-      within(waiting).getByText('Посмотрите предложение и примите его или откажитесь'),
-    ).toBeInTheDocument();
+    expect(within(waiting).getByText('Банк предлагает другие условия')).toBeInTheDocument();
 
-    const bank = screen.getByRole('region', { name: 'В работе у банка' });
+    const bank = screen.getByRole('region', { name: 'Сейчас у банка' });
     expect(
       within(bank).getByRole('heading', { name: 'Инвестиционный кредит' }),
     ).toBeInTheDocument();

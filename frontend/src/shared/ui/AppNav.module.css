@@ -1,0 +1,109 @@
+/* Телефон: таблетка внизу экрана поверх контента. Десктоп: колонка слева во всю высоту */
+.nav {
+  position: fixed;
+  z-index: var(--app-z-nav);
+  inset-inline: var(--mantine-spacing-md);
+  bottom: calc(var(--mantine-spacing-md) + env(safe-area-inset-bottom));
+  padding: 8px;
+  /* impulse-ok-next-line t12: таблетка (чип, кнопка, трек, нижняя навигация) */
+  border-radius: 999px;
+  background-color: var(--app-night);
+  color: var(--app-night-ink);
+
+  @media (min-width: $mantine-breakpoint-md) {
+    position: sticky;
+    top: var(--mantine-spacing-md);
+    bottom: auto;
+    inset-inline: auto;
+    height: calc(100dvh - 2 * var(--mantine-spacing-md));
+    display: flex;
+    flex-direction: column;
+    gap: var(--mantine-spacing-xl);
+    padding: var(--mantine-spacing-lg) var(--mantine-spacing-md);
+    border-radius: 24px;
+  }
+}
+
+.brand {
+  display: none;
+
+  @media (min-width: $mantine-breakpoint-md) {
+    display: block;
+    padding: 4px 12px;
+  }
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: space-around;
+  gap: 4px;
+
+  @media (min-width: $mantine-breakpoint-md) {
+    flex-direction: column;
+    justify-content: flex-start;
+  }
+}
+
+.link {
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 0 16px;
+  /* impulse-ok-next-line t12: таблетка (чип, кнопка, трек, нижняя навигация) */
+  border-radius: 999px;
+  color: var(--app-night-muted);
+  text-decoration: none;
+  font-weight: 650;
+  transition:
+    background-color 150ms ease-out,
+    color 150ms ease-out;
+
+  @mixin hover {
+    color: var(--app-night-ink);
+    background-color: rgb(255 255 255 / 6%);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--app-accent);
+    outline-offset: 2px;
+  }
+
+  &[aria-current='page'] {
+    background-color: var(--app-accent);
+    color: var(--app-accent-ink);
+  }
+
+  @media (min-width: $mantine-breakpoint-md) {
+    justify-content: flex-start;
+  }
+}
+
+.icon {
+  flex-shrink: 0;
+}
+
+/* На телефоне подпись видна только у активного пункта, как в референсе. У остальных она
+   остаётся для скринридера */
+.label {
+  @media (max-width: calc($mantine-breakpoint-md - 1px)) {
+    .link:not([aria-current='page']) & {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .link {
+    transition: none;
+  }
+}

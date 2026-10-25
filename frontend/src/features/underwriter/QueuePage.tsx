@@ -7,7 +7,7 @@ import { useSession } from '@/features/auth/session';
 import { formatDateTime, formatMoney, formatMonths } from '@/shared/lib/format';
 import { usePageTitle } from '@/shared/lib/usePageTitle';
 import { ErrorState } from '@/shared/ui/ErrorState';
-import { PageHeading } from '@/shared/ui/PageHeading';
+import { PageHeader } from '@/shared/ui/PageHeader';
 import { reasonLabel } from './copy';
 import classes from './QueuePage.module.css';
 
@@ -89,25 +89,24 @@ export function QueuePage() {
 
   return (
     <Stack gap="xl">
-      <div className={classes.header}>
-        <div>
-          <PageHeading>Очередь заявок</PageHeading>
-          <Text c="dimmed" mt={4} maw="65ch">
-            Заявки, которые система не решила сама. Сверху те, что ждут дольше всех.
-          </Text>
-        </div>
-        <SegmentedControl
-          value={scope}
-          onChange={(value) =>
-            setParams(value === 'all' ? {} : { scope: value }, { replace: true })
-          }
-          data={SCOPES.map((s) => ({
-            value: s.value,
-            label: `${s.label} ${all.filter((item) => inScope(item, s.value, me)).length}`,
-          }))}
-          aria-label="Какие заявки показать"
-        />
-      </div>
+      <PageHeader
+        eyebrow={session?.first_name ? `Здравствуйте, ${session.first_name}` : 'Здравствуйте'}
+        title="Очередь заявок"
+        subtitle="Здесь заявки, которые система не смогла решить сама. Сверху те, что ждут дольше всех."
+        actions={
+          <SegmentedControl
+            value={scope}
+            onChange={(value) =>
+              setParams(value === 'all' ? {} : { scope: value }, { replace: true })
+            }
+            data={SCOPES.map((s) => ({
+              value: s.value,
+              label: `${s.label} ${all.filter((item) => inScope(item, s.value, me)).length}`,
+            }))}
+            aria-label="Какие заявки показать"
+          />
+        }
+      />
 
       {queue.isPending && (
         <Stack gap="sm" aria-hidden>

@@ -1,5 +1,5 @@
-import { Anchor, Button, Group, Skeleton, Stack, Text } from '@mantine/core';
-import { IconArrowLeft, IconHandGrab } from '@tabler/icons-react';
+import { Button, Skeleton, Stack, Text } from '@mantine/core';
+import { IconHandGrab } from '@tabler/icons-react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Link, useParams } from 'react-router';
 import { useProductsList } from '@/api/products/products';
@@ -17,7 +17,7 @@ import { LEGAL_FORM_LABELS, TAX_REGIME_LABELS } from '@/shared/lib/dictionaries'
 import { usePageTitle } from '@/shared/lib/usePageTitle';
 import { ErrorState } from '@/shared/ui/ErrorState';
 import { FormError } from '@/shared/ui/FormError';
-import { PageHeading } from '@/shared/ui/PageHeading';
+import { PageHeader } from '@/shared/ui/PageHeader';
 import classes from './CardPage.module.css';
 import { reasonLabel, UNDERWRITER_ACTORS, underwriterEventTitle } from './copy';
 import { DecisionPanel } from './DecisionPanel';
@@ -26,16 +26,7 @@ import { FormSection } from './sections/FormSection';
 import { ScoringSection } from './sections/ScoringSection';
 import { SourcesSection } from './sections/SourcesSection';
 
-function BackLink() {
-  return (
-    <Anchor component={Link} to="/underwriting" size="sm" w="fit-content">
-      <Group gap={4} wrap="nowrap">
-        <IconArrowLeft size={16} aria-hidden />
-        Очередь заявок
-      </Group>
-    </Anchor>
-  );
-}
+const BACK = { to: '/underwriting', label: 'К очереди заявок' };
 
 // Полная карточка заявки для андеррайтера: всё, на чём основано решение, и форма решения
 export function CardPage() {
@@ -58,9 +49,8 @@ export function CardPage() {
   if (card.isPending) {
     return (
       <Stack gap="lg" aria-busy="true">
-        <BackLink />
-        <Skeleton height={40} width="50%" />
-        <Skeleton height={360} radius="lg" />
+        <Skeleton height={52} width="50%" radius="lg" />
+        <Skeleton height={360} radius={24} />
       </Stack>
     );
   }
@@ -69,8 +59,7 @@ export function CardPage() {
     const notFound = card.error instanceof ApiError && card.error.status === 404;
     return (
       <Stack gap="lg">
-        <BackLink />
-        <PageHeading>{notFound ? 'Заявка не найдена' : 'Заявка'}</PageHeading>
+        <PageHeader back={BACK} title={notFound ? 'Заявка не найдена' : 'Заявка'} />
         <ErrorState
           error={card.error}
           title="Не удалось загрузить заявку"
@@ -90,46 +79,44 @@ export function CardPage() {
 
   return (
     <Stack gap="lg">
-      <BackLink />
+      <PageHeader
+        back={BACK}
+        title={app.company.name}
+        subtitle={`${LEGAL_FORM_LABELS[app.company.legal_form]}, ИНН ${app.company.inn}, ${TAX_REGIME_LABELS[app.company.tax_regime]}. ${app.product_title}`}
+        actions={
+          waiting &&
+          !mine && (
+            <div>
+              <Button
+                onClick={() => take.mutate()}
+                loading={take.isPending}
+                disabled={app.assigned_to !== null}
+                leftSection={<IconHandGrab size={18} aria-hidden />}
+              >
+                Взять в работу
+              </Button>
+              <FormError message={take.isError ? errorMessage(take.error) : null} />
+            </div>
+          )
+        }
+      />
 
-      <div className={classes.header}>
-        <div className={classes.title}>
-          <PageHeading>{app.company.name}</PageHeading>
-          <Text c="dimmed" mt={4}>
-            {LEGAL_FORM_LABELS[app.company.legal_form]}, ИНН {app.company.inn},{' '}
-            {TAX_REGIME_LABELS[app.company.tax_regime]}. {app.product_title}
+      <div className={classes.status}>
+        <StatusLabel status={app.status} label={app.status_display} />
+        <Text size="sm" fw={600}>
+          {app.assigned_to === null
+            ? 'Никто не взял в работу'
+            : mine
+              ? 'В работе у вас'
+              : `Разбирает ${app.assigned_to}`}
+        </Text>
+        {waiting && whyHere.length > 0 && (
+          <Text size="sm">
+            <Text span fw={700}>
+              Почему у андеррайтера:
+            </Text>{' '}
+            {whyHere.map(reasonLabel).join(', ')}
           </Text>
-          <Group gap="md" mt="sm">
-            <StatusLabel status={app.status} label={app.status_display} />
-            <Text size="sm">
-              {app.assigned_to === null
-                ? 'Никто не взял в работу'
-                : mine
-                  ? 'В работе у вас'
-                  : `Разбирает ${app.assigned_to}`}
-            </Text>
-          </Group>
-          {waiting && whyHere.length > 0 && (
-            <Text size="sm" mt="xs">
-              <Text span fw={600}>
-                Почему у андеррайтера:
-              </Text>{' '}
-              {whyHere.map(reasonLabel).join(', ')}
-            </Text>
-          )}
-        </div>
-        {waiting && !mine && (
-          <div>
-            <Button
-              onClick={() => take.mutate()}
-              loading={take.isPending}
-              disabled={app.assigned_to !== null}
-              leftSection={<IconHandGrab size={18} aria-hidden />}
-            >
-              Взять в работу
-            </Button>
-            <FormError message={take.isError ? errorMessage(take.error) : null} />
-          </div>
         )}
       </div>
 

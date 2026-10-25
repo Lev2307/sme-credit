@@ -1,0 +1,22 @@
+/* Круглая кнопка-иконка на светлой подложке: «назад», тема, колокольчик в референсах */
+.round {
+  background-color: var(--app-surface);
+  color: var(--app-ink);
+  box-shadow: var(--app-shadow);
+  transition: background-color 150ms ease-out;
+
+  @mixin hover {
+    background-color: var(--app-sunken);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--app-accent-strong);
+    outline-offset: 2px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .round {
+    transition: none;
+  }
+}

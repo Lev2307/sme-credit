@@ -1,13 +1,96 @@
-.header {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  justify-content: space-between;
+/* Герой и сводка рядом на широком экране, друг под другом на телефоне */
+.top {
+  display: grid;
   gap: var(--mantine-spacing-md);
+
+  @media (min-width: $mantine-breakpoint-lg) {
+    grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+    align-items: stretch;
+  }
 }
 
-.headerText {
-  min-width: 0;
+/* Сводка на тёмной плашке, как блок «With» рядом с балансом в референсе */
+.summary {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mantine-spacing-md);
+  padding: var(--mantine-spacing-lg);
+  border-radius: 24px;
+  background-color: var(--app-night);
+  color: var(--app-night-ink);
+}
+
+.counts {
+  margin: 0;
+  display: grid;
+  gap: var(--mantine-spacing-sm);
+
+  & div {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--mantine-spacing-md);
+    padding-bottom: var(--mantine-spacing-sm);
+    border-bottom: 1px solid rgb(255 255 255 / 10%);
+  }
+
+  & dt {
+    color: var(--app-night-muted);
+    font-size: var(--mantine-font-size-sm);
+  }
+
+  & dd {
+    margin: 0;
+    font-size: 1.75rem;
+  }
+}
+
+.summaryNote {
+  margin-top: auto;
+  color: var(--app-night-muted);
+}
+
+.emptyHero {
+  display: grid;
+  gap: var(--mantine-spacing-md);
+  padding: 32px;
+  border-radius: 24px;
+  background: var(--app-hero);
+  color: #161c18;
+}
+
+.darkButton {
+  background-color: #1c241f;
+  color: #f0f3ef;
+
+  @mixin hover {
+    background-color: #2b332d;
+  }
+}
+
+.groupHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--mantine-spacing-sm);
+  margin-bottom: var(--mantine-spacing-sm);
+}
+
+.badge {
+  min-width: 26px;
+  height: 26px;
+  display: inline-grid;
+  place-items: center;
+  padding: 0 8px;
+  /* impulse-ok-next-line t12: таблетка (чип, кнопка, трек, нижняя навигация) */
+  border-radius: 999px;
+  background-color: var(--app-surface);
+  font-size: var(--mantine-font-size-sm);
+  font-weight: 700;
+}
+
+.groupHint {
+  margin-inline-start: auto;
 }
 
 .list {

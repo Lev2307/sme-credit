@@ -29,7 +29,7 @@
 
 .ok {
   flex-shrink: 0;
-  color: var(--mantine-color-green-light-color);
+  color: var(--app-positive);
 }
 
 .warn {

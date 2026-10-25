@@ -1,6 +1,6 @@
-import { Button, Card, Group, Stack, Table, Text, Title, VisuallyHidden } from '@mantine/core';
+import { Button, Card, Group, Stack, Text, Title } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { IconCheck } from '@tabler/icons-react';
+import { IconArrowsExchange, IconCheck } from '@tabler/icons-react';
 import {
   applicationsOfferAcceptCreate,
   applicationsOfferDeclineCreate,
@@ -20,10 +20,8 @@ type Props = {
   offer: Offer;
 };
 
-const NOT_APPLICABLE = 'не указывали';
-
-// Предложение банка: сумма и срок «просили / предлагаем» рядом, чтобы контрпредложение было
-// с чем сравнить. Ставку и платёж клиент не указывал, они идут списком под сравнением
+// Предложение банка как обмен во втором референсе: «Вы просили» и «Банк предлагает» двумя
+// карточками со стрелкой между ними. Ставку и платёж клиент не указывал, они плитками ниже
 // (docs/01-research.md, этап 7)
 export function OfferPanel({ application, offer }: Props) {
   const [declineOpened, decline] = useDisclosure(false);
@@ -32,21 +30,8 @@ export function OfferPanel({ application, offer }: Props) {
 
   const isCounter = application.status === 'COUNTER_OFFER';
   const limits = offer.reason_codes.map((code) => LIMIT_TEXT[code]).filter(Boolean);
-
-  const rows: { label: string; asked: string; offered: string; changed: boolean }[] = [
-    {
-      label: 'Сумма',
-      asked: application.amount ? formatMoney(application.amount) : NOT_APPLICABLE,
-      offered: formatMoney(offer.amount),
-      changed: Number(application.amount) !== Number(offer.amount),
-    },
-    {
-      label: 'Срок',
-      asked: application.term_months ? formatMonths(application.term_months) : NOT_APPLICABLE,
-      offered: formatMonths(offer.term_months),
-      changed: application.term_months !== offer.term_months,
-    },
-  ];
+  const amountChanged = Number(application.amount) !== Number(offer.amount);
+  const termChanged = application.term_months !== offer.term_months;
 
   const error = accept.isError
     ? errorMessage(accept.error)
@@ -59,49 +44,50 @@ export function OfferPanel({ application, offer }: Props) {
       <Stack gap="lg">
         <div>
           <Title order={2} size="h3" id="offer-title" mb={4}>
-            {isCounter ? 'Предложение банка' : 'Условия кредита'}
+            {isCounter ? 'Предложение банка' : 'Ваши условия'}
           </Title>
           {isCounter && limits.length > 0 && (
-            <Text maw="65ch">
-              Почему меньше, чем вы просили: {limits.join('; ').toLowerCase()}.
-            </Text>
+            <Text maw="65ch">Почему меньше: {limits.join('; ').toLowerCase()}.</Text>
           )}
         </div>
 
-        <Table className={classes.table} verticalSpacing="sm" withRowBorders>
-          <VisuallyHidden component="caption">Сравнение заявки и предложения</VisuallyHidden>
-          <Table.Thead>
-            <Table.Tr>
-              <Table.Th scope="col">Условие</Table.Th>
-              <Table.Th scope="col">Вы просили</Table.Th>
-              <Table.Th scope="col">Банк предлагает</Table.Th>
-            </Table.Tr>
-          </Table.Thead>
-          <Table.Tbody>
-            {rows.map((row) => (
-              <Table.Tr key={row.label}>
-                <Table.Th scope="row" fw={400} c="dimmed">
-                  {row.label}
-                </Table.Th>
-                <Table.Td c={row.asked === NOT_APPLICABLE ? 'dimmed' : undefined}>
-                  {row.asked}
-                </Table.Td>
-                <Table.Td fw={row.changed ? 700 : 600}>
-                  {row.offered}
-                  {row.changed && (
-                    <Text span size="sm" c="dimmed" fw={400}>
-                      {' '}
-                      (изменено)
-                    </Text>
-                  )}
-                </Table.Td>
-              </Table.Tr>
-            ))}
-          </Table.Tbody>
-        </Table>
+        <div className={classes.swap} role="group" aria-label="Сравнение заявки и предложения">
+          <div className={classes.side} data-kind="asked">
+            <Text size="sm" className={classes.sideLabel}>
+              Вы просили
+            </Text>
+            <p className={`app-amount ${classes.sideAmount}`}>
+              {application.amount ? formatMoney(application.amount) : 'не указывали'}
+            </p>
+            <Text size="sm" fw={600}>
+              {application.term_months ? `на ${formatMonths(application.term_months)}` : ''}
+            </Text>
+          </div>
+          <span className={classes.arrow} aria-hidden>
+            <IconArrowsExchange size={20} />
+          </span>
+          <div className={classes.side} data-kind="offered">
+            <Text size="sm" className={classes.sideLabel}>
+              Банк предлагает
+            </Text>
+            <p className={`app-amount ${classes.sideAmount}`}>{formatMoney(offer.amount)}</p>
+            <Text size="sm" fw={600}>
+              на {formatMonths(offer.term_months)}
+            </Text>
+            {(amountChanged || termChanged) && (
+              <Text size="xs" fw={700} className={classes.changed}>
+                {amountChanged && termChanged
+                  ? 'Изменены сумма и срок'
+                  : amountChanged
+                    ? 'Сумма изменена'
+                    : 'Срок изменён'}
+              </Text>
+            )}
+          </div>
+        </div>
 
         <div>
-          <Title order={3} size="h4" mb="xs">
+          <Title order={3} size="h4" mb="sm">
             Что ещё входит в предложение
           </Title>
           <TermsList terms={offer} withAmountAndTerm={false} />

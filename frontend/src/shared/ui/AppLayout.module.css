@@ -1,24 +1,110 @@
-.user {
+/* Телефон: одна колонка, навигация висит внизу. Десктоп: колонка навигации слева и контент */
+.shell {
+  min-height: 100dvh;
+  display: grid;
+  background-color: var(--app-canvas);
+
+  @media (min-width: $mantine-breakpoint-md) {
+    grid-template-columns: 248px minmax(0, 1fr);
+    gap: var(--mantine-spacing-lg);
+    padding-inline-start: var(--mantine-spacing-md);
+  }
+}
+
+.column {
   min-width: 0;
-  padding: 4px 8px 4px 4px;
-  border-radius: var(--mantine-radius-xl);
+  width: 100%;
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 0 var(--mantine-spacing-md);
+  /* Снизу место под навигацию-таблетку, чтобы она не закрывала последнюю карточку */
+  padding-bottom: calc(96px + env(safe-area-inset-bottom));
+
+  @media (min-width: $mantine-breakpoint-md) {
+    padding: 0 var(--mantine-spacing-xl) 64px var(--mantine-spacing-md);
+  }
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--mantine-spacing-md);
+  padding: var(--mantine-spacing-md) 0;
+
+  @media (min-width: $mantine-breakpoint-md) {
+    justify-content: flex-end;
+    padding-top: var(--mantine-spacing-lg);
+  }
+}
+
+.mobileBrand {
+  min-width: 0;
+
+  @media (min-width: $mantine-breakpoint-md) {
+    display: none;
+  }
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--mantine-spacing-sm);
+}
+
+.user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  padding: 4px;
+  /* impulse-ok-next-line t12: таблетка (чип, кнопка, трек, нижняя навигация) */
+  border-radius: 999px;
   transition: background-color 150ms ease-out;
 
   @mixin hover {
-    background-color: light-dark(var(--mantine-color-gray-1), var(--mantine-color-dark-6));
+    background-color: var(--app-sunken);
   }
 
   &:focus-visible {
-    outline: 2px solid var(--mantine-primary-color-filled);
+    outline: 2px solid var(--app-accent-strong);
     outline-offset: 2px;
+  }
+
+  @media (min-width: $mantine-breakpoint-sm) {
+    padding-inline-end: 12px;
+    background-color: var(--app-surface);
+    box-shadow: var(--app-shadow);
   }
 }
 
 .userText {
+  display: none;
   min-width: 0;
-  max-width: 200px;
+  max-width: 220px;
+  text-align: start;
 
-  @media (max-width: $mantine-breakpoint-sm) {
-    display: none;
+  @media (min-width: $mantine-breakpoint-sm) {
+    display: block;
+  }
+}
+
+.chevron {
+  display: none;
+  color: var(--app-muted);
+
+  @media (min-width: $mantine-breakpoint-sm) {
+    display: block;
+  }
+}
+
+.main {
+  min-width: 0;
+  padding-top: var(--mantine-spacing-xs);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .user {
+    transition: none;
   }
 }

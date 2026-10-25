@@ -48,9 +48,9 @@ describe('Статус заявки', () => {
     ]);
 
     expect(
-      await screen.findByRole('heading', { name: 'Банк проверяет заявку' }),
+      await screen.findByRole('heading', { name: 'Проверяем вашу заявку' }),
     ).toBeInTheDocument();
-    expect(screen.getByText(/Обычно это занимает пару минут/)).toBeInTheDocument();
+    expect(screen.getByText(/Обычно это пара минут/)).toBeInTheDocument();
     expect(screen.getByText(/1\s500\s000\s₽ на 24 месяца/)).toBeInTheDocument();
 
     const history = within(screen.getByRole('region', { name: 'История заявки' }));
@@ -63,7 +63,7 @@ describe('Статус заявки', () => {
   it('сам замечает, что банк принял решение', async () => {
     const { state } = open(submittedApp(), [event({})]);
 
-    await screen.findByRole('heading', { name: 'Банк проверяет заявку' });
+    await screen.findByRole('heading', { name: 'Проверяем вашу заявку' });
     state.app = { ...state.app, status: 'APPROVED', status_display: 'Одобрено' };
     state.events = [
       event({}),
@@ -77,7 +77,7 @@ describe('Статус заявки', () => {
     ];
 
     expect(
-      await screen.findByRole('heading', { name: 'Заявка одобрена' }, { timeout: 6000 }),
+      await screen.findByRole('heading', { name: 'Кредит одобрен' }, { timeout: 6000 }),
     ).toBeInTheDocument();
     // История перечиталась вместе со сменой статуса
     expect(
@@ -100,9 +100,9 @@ describe('Статус заявки', () => {
     ]);
 
     expect(
-      await screen.findByRole('heading', { name: 'Банк не одобрил заявку' }),
+      await screen.findByRole('heading', { name: 'В этот раз не получилось' }),
     ).toBeInTheDocument();
-    const status = within(screen.getByRole('region', { name: 'Банк не одобрил заявку' }));
+    const status = within(screen.getByRole('region', { name: 'В этот раз не получилось' }));
     expect(
       await status.findByText(/компания ликвидируется или ликвидирована/i),
     ).toBeInTheDocument();
@@ -181,7 +181,7 @@ describe('Статус заявки', () => {
     await user.click(screen.getByRole('button', { name: 'Отправить ответ' }));
 
     expect(
-      await screen.findByRole('heading', { name: 'Банк проверяет заявку' }),
+      await screen.findByRole('heading', { name: 'Проверяем вашу заявку' }),
     ).toBeInTheDocument();
     expect(sent).toEqual({
       answer: 'Ошибся в анкете, прикладываю отчётность',

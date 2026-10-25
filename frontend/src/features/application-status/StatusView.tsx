@@ -16,7 +16,7 @@ import { CancelApplication } from './CancelApplication';
 import { canCancel, REASON_TEXT, STATUS_COPY } from './copy';
 import { EventsTimeline } from './EventsTimeline';
 import { InfoRequestForm } from './InfoRequestForm';
-import { Journey } from './Journey';
+import { JourneyBar } from './JourneyBar';
 import classes from './StatusView.module.css';
 
 type Props = {
@@ -46,13 +46,11 @@ export function StatusView({ application, company }: Props) {
 
   return (
     <Stack gap="xl">
-      <Card component="section" aria-labelledby="status-title">
+      <Card component="section" aria-labelledby="status-title" className={classes.statusCard}>
         <Stack gap="lg">
-          <Journey status={status} />
-
           <div aria-live="polite">
             <StatusLabel status={status} label={application.status_display} />
-            <Title order={2} size="h3" id="status-title" mt="xs" mb={4}>
+            <Title order={2} size="h2" id="status-title" mt="sm" mb={6}>
               {copy.title}
             </Title>
             <Text maw="65ch">{copy.text}</Text>
@@ -74,6 +72,8 @@ export function StatusView({ application, company }: Props) {
             )}
           </div>
 
+          <JourneyBar status={status} />
+
           <dl className={classes.terms}>
             <div>
               <dt>
@@ -82,7 +82,7 @@ export function StatusView({ application, company }: Props) {
                 </Text>
               </dt>
               <dd>
-                <Text fw={600}>
+                <Text fw={800} size="lg">
                   {application.amount ? formatMoney(application.amount) : 'Сумма не указана'}
                   {application.term_months ? ` на ${formatMonths(application.term_months)}` : ''}
                 </Text>
@@ -95,7 +95,9 @@ export function StatusView({ application, company }: Props) {
                 </Text>
               </dt>
               <dd>
-                <Text fw={600}>{application.documents.length}</Text>
+                <Text fw={800} size="lg">
+                  {application.documents.length}
+                </Text>
               </dd>
             </div>
           </dl>

@@ -1,5 +1,6 @@
-import { Anchor, Paper, Stack, Text, Title, UnstyledButton } from '@mantine/core';
-import { IconChevronRight } from '@tabler/icons-react';
+import { Text, Title, UnstyledButton } from '@mantine/core';
+import { IconArrowUpRight } from '@tabler/icons-react';
+import { UserAvatar } from '@/shared/ui/UserAvatar';
 import { DEMO_CLIENTS, DEMO_PASSWORD, DEMO_UNDERWRITER, type DemoAccount } from './demoCredentials';
 import classes from './DemoAccounts.module.css';
 
@@ -15,37 +16,34 @@ function AccountButton({ account, onPick, disabled }: Props & { account: DemoAcc
       onClick={() => onPick(account.username)}
       disabled={disabled}
     >
+      <UserAvatar name={account.title} size={40} className={classes.avatar} />
       <span className={classes.accountText}>
-        <Text component="span" fw={600} size="sm" display="block">
-          {account.username}
-        </Text>
-        <Text component="span" size="sm" c="dimmed" display="block">
-          {account.title}
-        </Text>
+        <span className={classes.username}>{account.username}</span>
+        <span className={classes.title}>{account.title}</span>
       </span>
-      <Text component="span" size="sm" className={classes.outcome}>
-        {account.outcome}
-      </Text>
-      <IconChevronRight size={16} aria-hidden className={classes.chevron} />
+      <span className={classes.outcome}>{account.outcome}</span>
+      <IconArrowUpRight size={18} aria-hidden className={classes.arrow} />
     </UnstyledButton>
   );
 }
 
-// Подсказка для проверки: учётки из сида, у каждой свой исход заявки
+// Подсказка для проверки: учётки из сида, у каждой свой исход заявки. Тёмная плашка,
+// как контрастный блок в референсе
 export function DemoAccounts({ onPick, disabled }: Props) {
   return (
-    <Paper component="aside" className={classes.panel} aria-labelledby="demo-title">
-      <Stack gap={4} mb="md">
-        <Title order={2} size="h4" id="demo-title">
+    <aside className={classes.panel} aria-labelledby="demo-title">
+      <div className={classes.head}>
+        <Title order={2} size="h3" id="demo-title" className={classes.heading}>
           Тестовые учётки
         </Title>
-        <Text size="sm" c="dimmed">
-          Нажмите на учётку, чтобы войти. Пароль у всех <code>{DEMO_PASSWORD}</code>
+        <Text size="sm" className={classes.note}>
+          Нажмите на любую, и мы сразу войдём. Пароль у всех{' '}
+          <code className={classes.code}>{DEMO_PASSWORD}</code>
         </Text>
-      </Stack>
+      </div>
 
-      <Text size="xs" fw={600} c="dimmed" mb={4} id="demo-clients">
-        Клиенты и ожидаемый исход заявки
+      <Text size="xs" fw={700} className={classes.group} id="demo-clients">
+        Клиенты и чем закончится их заявка
       </Text>
       <ul className={classes.list} aria-labelledby="demo-clients">
         {DEMO_CLIENTS.map((account) => (
@@ -55,7 +53,7 @@ export function DemoAccounts({ onPick, disabled }: Props) {
         ))}
       </ul>
 
-      <Text size="xs" fw={600} c="dimmed" mt="md" mb={4} id="demo-bank">
+      <Text size="xs" fw={700} className={classes.group} id="demo-bank">
         Банк
       </Text>
       <ul className={classes.list} aria-labelledby="demo-bank">
@@ -64,13 +62,13 @@ export function DemoAccounts({ onPick, disabled }: Props) {
         </li>
       </ul>
 
-      <Text size="sm" c="dimmed" mt="md">
+      <Text size="sm" className={classes.note}>
         Справочники и параметры модели в{' '}
-        <Anchor href="/admin/" target="_blank" rel="noopener">
+        <a href="/admin/" target="_blank" rel="noopener" className={classes.link}>
           админке
-        </Anchor>
+        </a>
         , логин admin
       </Text>
-    </Paper>
+    </aside>
   );
 }

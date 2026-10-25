@@ -1,0 +1,73 @@
+/* Единственный градиент на странице: главная карточка, как «баланс» в референсе.
+   Текст на лайме всегда тёмный в обеих темах */
+.hero {
+  display: grid;
+  gap: var(--mantine-spacing-lg);
+  padding: var(--mantine-spacing-lg);
+  border-radius: 24px;
+  background: var(--app-hero);
+  color: #161c18;
+
+  @media (min-width: $mantine-breakpoint-md) {
+    padding: 32px;
+  }
+}
+
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--mantine-spacing-sm);
+  flex-wrap: wrap;
+}
+
+/* Тёмная «таблетка» с названием продукта, как «Tour to Mecca» в референсе */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px 6px 10px;
+  /* impulse-ok-next-line t12: таблетка (чип, кнопка, трек, нижняя навигация) */
+  border-radius: 999px;
+  background-color: #1c241f;
+  color: #f0f3ef;
+  font-size: var(--mantine-font-size-sm);
+  font-weight: 700;
+}
+
+.date {
+  color: #29302a;
+}
+
+.caption {
+  color: #29302a;
+}
+
+.amount {
+  margin: 4px 0 2px;
+  font-size: clamp(2.25rem, 6vw, 3.25rem);
+}
+
+.title {
+  color: #161c18;
+  margin-bottom: 4px;
+}
+
+.text {
+  color: #29302a;
+  max-width: 60ch;
+}
+
+.cta {
+  background-color: #1c241f;
+  color: #f0f3ef;
+
+  @mixin hover {
+    background-color: #2b332d;
+  }
+
+  &:focus-visible {
+    outline: 2px solid #161c18;
+    outline-offset: 2px;
+  }
+}

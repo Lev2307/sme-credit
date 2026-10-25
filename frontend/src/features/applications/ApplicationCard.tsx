@@ -1,7 +1,8 @@
 import { Text } from '@mantine/core';
-import { IconChevronRight } from '@tabler/icons-react';
 import { Link } from 'react-router';
 import type { ApplicationRetrieve } from '@/api/model';
+import { STATUS_COPY } from '@/features/application-status/copy';
+import { ProductIcon } from '@/features/catalog/ProductIcon';
 import { formatDateTime, formatMoney, formatMonths } from '@/shared/lib/format';
 import classes from './ApplicationCard.module.css';
 import { StatusLabel } from './StatusLabel';
@@ -17,20 +18,24 @@ const termsText = ({ amount, term_months }: ApplicationRetrieve) => {
   return 'Сумма и срок ещё не указаны';
 };
 
-// Вся карточка ведёт на страницу заявки: одна цель клика, без вложенных кнопок
+// Строка заявки, как «последние операции» в референсе: иконка продукта, что это и что с ней.
+// Вся строка ведёт на страницу заявки: одна цель клика, без вложенных кнопок
 export function ApplicationCard({ application, productTitle }: Props) {
+  const copy = STATUS_COPY[application.status];
+
   return (
     <Link to={`/cabinet/applications/${application.id}`} className={classes.card}>
+      <span className={classes.icon} aria-hidden>
+        <ProductIcon code={application.product} size={22} stroke={1.8} />
+      </span>
       <div className={classes.main}>
-        <Text fw={600} size="lg" component="h3" className={classes.title}>
+        <Text fw={700} component="h3" className={classes.title}>
           {productTitle}
         </Text>
         <Text size="sm">{termsText(application)}</Text>
-        {application.next_action && (
-          <Text size="sm" c="dimmed" mt={4}>
-            {application.next_action}
-          </Text>
-        )}
+        <Text size="sm" c="dimmed">
+          {copy.hint}
+        </Text>
       </div>
       <div className={classes.side}>
         <StatusLabel status={application.status} label={application.status_display} />
@@ -38,7 +43,6 @@ export function ApplicationCard({ application, productTitle }: Props) {
           Обновлена {formatDateTime(application.updated_at)}
         </Text>
       </div>
-      <IconChevronRight size={20} aria-hidden className={classes.chevron} />
     </Link>
   );
 }

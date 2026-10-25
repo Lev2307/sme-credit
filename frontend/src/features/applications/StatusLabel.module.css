@@ -1,0 +1,36 @@
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px 4px 8px;
+  /* impulse-ok-next-line t12: таблетка (чип, кнопка, трек, нижняя навигация) */
+  border-radius: 999px;
+  background-color: var(--app-sunken);
+  color: var(--app-ink);
+  font-size: var(--mantine-font-size-sm);
+  font-weight: 700;
+  white-space: nowrap;
+
+  /* Ход за клиентом: лаймовая подложка, как у активного пункта навигации */
+  &[data-tone='action'] {
+    background-color: var(--app-accent);
+    color: var(--app-accent-ink);
+  }
+}
+
+.icon {
+  flex-shrink: 0;
+  color: var(--app-muted);
+
+  .chip[data-tone='action'] & {
+    color: var(--app-accent-ink);
+  }
+
+  .chip[data-tone='success'] & {
+    color: var(--app-positive);
+  }
+
+  .chip[data-tone='failure'] & {
+    color: var(--app-danger);
+  }
+}

@@ -1,23 +1,20 @@
 .card {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: auto minmax(0, 1fr);
   grid-template-areas:
-    'main chevron'
-    'side chevron';
+    'icon main'
+    'icon side';
   align-items: center;
-  gap: var(--mantine-spacing-sm) var(--mantine-spacing-md);
-  padding: var(--mantine-spacing-md) var(--mantine-spacing-lg);
-  border: 1px solid var(--mantine-color-default-border);
+  gap: var(--mantine-spacing-xs) var(--mantine-spacing-md);
+  padding: var(--mantine-spacing-md);
   border-radius: var(--mantine-radius-lg);
-  background-color: var(--mantine-color-body);
+  background-color: var(--app-surface);
+  box-shadow: var(--app-shadow);
   color: inherit;
   text-decoration: none;
-  transition:
-    background-color 150ms ease-out,
-    border-color 150ms ease-out;
+  transition: background-color 150ms ease-out;
 
   @mixin hover {
-    border-color: light-dark(var(--mantine-color-gray-4), var(--mantine-color-dark-3));
     background-color: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-6));
   }
 
@@ -26,13 +23,32 @@
   }
 
   &:focus-visible {
-    outline: 2px solid var(--mantine-primary-color-filled);
+    outline: 2px solid var(--app-accent-strong);
     outline-offset: 2px;
   }
 
   @media (min-width: $mantine-breakpoint-sm) {
-    grid-template-columns: minmax(0, 1fr) auto auto;
-    grid-template-areas: 'main side chevron';
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-areas: 'icon main side';
+    padding: var(--mantine-spacing-md) var(--mantine-spacing-lg) var(--mantine-spacing-md)
+      var(--mantine-spacing-md);
+  }
+}
+
+/* Иконка в квадрате с мягким скруглением, как аватар операции в референсе */
+.icon {
+  grid-area: icon;
+  align-self: start;
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  border-radius: 14px;
+  background-color: var(--app-sunken);
+  color: var(--app-ink);
+
+  @media (min-width: $mantine-breakpoint-sm) {
+    align-self: center;
   }
 }
 
@@ -43,6 +59,7 @@
 
 .title {
   margin: 0 0 2px;
+  font-size: var(--mantine-font-size-md);
   overflow-wrap: anywhere;
 }
 
@@ -56,11 +73,6 @@
     justify-items: end;
     text-align: end;
   }
-}
-
-.chevron {
-  grid-area: chevron;
-  color: var(--mantine-color-dimmed);
 }
 
 @media (prefers-reduced-motion: reduce) {

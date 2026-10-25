@@ -39,7 +39,11 @@
 | react-hook-form | Формы | MIT |
 | zod | Проверка данных форм | MIT |
 | orval | Генерация клиента API из OpenAPI | MIT |
-| UI-библиотека (Mantine или MUI, уточняется) | Компоненты интерфейса | MIT |
+| Mantine | Компоненты интерфейса | MIT |
+| Tabler Icons | Иконки | MIT |
+| Manrope (через @fontsource-variable/manrope) | Шрифт интерфейса, подключается локально | SIL Open Font License 1.1 |
+| axios | HTTP-клиент | MIT |
+| Vitest, Testing Library, MSW, Playwright | Тесты | MIT, Apache-2.0 (Playwright) |
 | ESLint, Prettier | Линтер и форматтер | MIT |
 
 ## Инфраструктура (Docker-образы)

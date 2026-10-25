@@ -1,0 +1,11 @@
+.grid {
+  display: grid;
+  gap: var(--mantine-spacing-md);
+  max-width: 760px;
+}
+
+.person {
+  display: flex;
+  align-items: center;
+  gap: var(--mantine-spacing-lg);
+}

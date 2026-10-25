@@ -1,5 +1,6 @@
 import { ActionIcon, useComputedColorScheme, useMantineColorScheme } from '@mantine/core';
 import { IconMoon, IconSun } from '@tabler/icons-react';
+import classes from './RoundButton.module.css';
 
 export function ColorSchemeToggle() {
   const { setColorScheme } = useMantineColorScheme();
@@ -9,8 +10,8 @@ export function ColorSchemeToggle() {
 
   return (
     <ActionIcon
-      variant="default"
-      size="lg"
+      className={classes.round}
+      size={44}
       onClick={() => setColorScheme(isDark ? 'light' : 'dark')}
       aria-label={label}
       title={label}

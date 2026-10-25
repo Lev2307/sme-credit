@@ -11,7 +11,7 @@ import { ApiError } from '@/shared/api/errors';
 import { isInnChecksumValid, isInnFormat } from '@/shared/lib/inn';
 import { usePageTitle } from '@/shared/lib/usePageTitle';
 import { ErrorState } from '@/shared/ui/ErrorState';
-import { PageHeading } from '@/shared/ui/PageHeading';
+import { PageHeader } from '@/shared/ui/PageHeader';
 import classes from './CompanyOnboardingPage.module.css';
 import { CompanyPreview } from './CompanyPreview';
 import { LinkCompanyForm } from './LinkCompanyForm';
@@ -75,15 +75,14 @@ export function CompanyOnboardingPage() {
   };
 
   return (
-    <Stack gap="xl" maw={720}>
-      <Stack gap="xs">
-        <PageHeading>Ваша компания</PageHeading>
-        <Text c="dimmed">
-          Введите ИНН, остальное подтянем из ЕГРЮЛ и ФНС. Вам останется проверить данные.
-        </Text>
-      </Stack>
+    <Stack gap="xl" maw={760}>
+      <PageHeader
+        eyebrow={me?.first_name ? `Добро пожаловать, ${me.first_name}` : 'Добро пожаловать'}
+        title="Ваша компания"
+        subtitle="Начнём со знакомства. Введите ИНН, а название, адрес и остальное мы подтянем из ЕГРЮЛ и ФНС сами. Вам останется только проверить."
+      />
 
-      <form onSubmit={onSubmit} noValidate>
+      <form onSubmit={onSubmit} noValidate className={classes.searchCard}>
         <Text component="label" htmlFor="company-inn" fw={500} size="md" display="block">
           ИНН компании или ИП
         </Text>

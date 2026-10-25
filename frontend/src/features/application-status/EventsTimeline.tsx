@@ -3,6 +3,7 @@ import type { ApplicationEvent } from '@/api/model';
 import { formatDateTime } from '@/shared/lib/format';
 import { ErrorState } from '@/shared/ui/ErrorState';
 import { ACTOR_LABEL, eventTitle, REASON_TEXT } from './copy';
+import classes from './EventsTimeline.module.css';
 
 type Props = {
   events: ApplicationEvent[] | undefined;
@@ -26,7 +27,7 @@ export function EventsTimeline({
   reasonFor = (code) => REASON_TEXT[code],
 }: Props) {
   return (
-    <section aria-labelledby="timeline-title">
+    <section aria-labelledby="timeline-title" className={classes.card}>
       <Title order={2} size="h4" id="timeline-title" mb="md">
         История заявки
       </Title>
@@ -49,7 +50,7 @@ export function EventsTimeline({
       )}
 
       {events && events.length > 0 && (
-        <Timeline active={0} bulletSize={14} lineWidth={2}>
+        <Timeline active={0} bulletSize={14} lineWidth={2} color="lime">
           {events.toReversed().map((event) => {
             const reason = event.reason_code ? reasonFor(event.reason_code) : undefined;
             return (

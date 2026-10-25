@@ -1,0 +1,33 @@
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--mantine-spacing-md);
+  margin-bottom: var(--mantine-spacing-xl);
+}
+
+.titleRow {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--mantine-spacing-md);
+  min-width: 0;
+}
+
+.text {
+  min-width: 0;
+}
+
+.title {
+  overflow-wrap: anywhere;
+}
+
+.subtitle {
+  max-width: 65ch;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--mantine-spacing-sm);
+}

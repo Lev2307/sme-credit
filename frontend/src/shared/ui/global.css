@@ -1,13 +1,80 @@
-/* Глобальные правила поверх Mantine. Токены живут в src/app/theme.ts и DESIGN.md */
+/* Семантические токены приложения поверх темы Mantine. Значения и роли в DESIGN.md */
+
+:root {
+  /* Слои по возрастанию: навигация, шапки, затемнение, модалки, уведомления, подсказки */
+  --app-z-nav: 150;
+}
+
+:root,
+:root[data-mantine-color-scheme='light'] {
+  --app-canvas: #eef1ef;
+  --app-surface: #fdfefc;
+  --app-sunken: #e7ebe7;
+  --app-ink: #161c18;
+  --app-muted: #58605a;
+  --app-border: #d8dcd9;
+  /* Тёмные плашки: навигация и контрастные блоки, как в первом референсе */
+  --app-night: #1c241f;
+  --app-night-2: #2b332d;
+  --app-night-ink: #f0f3ef;
+  --app-night-muted: #a6ada7;
+  --app-accent: #ace35a;
+  --app-accent-strong: #8bce46;
+  --app-accent-soft: #def5c3;
+  --app-accent-ink: #161c18;
+  /* Зелёный для текста: суммы «плюс», ссылки. Лайм на белом не читается */
+  --app-positive: #30752a;
+  --app-danger: #b02a2d;
+  --app-hero: linear-gradient(135deg, #c4ee99 0%, #ace35a 45%, #8bce46 100%);
+  --app-shadow: 0 1px 2px rgb(22 28 24 / 6%), 0 4px 12px rgb(22 28 24 / 5%);
+}
+
+:root[data-mantine-color-scheme='dark'] {
+  --app-canvas: #1b1d1c;
+  --app-surface: #252827;
+  --app-sunken: #303332;
+  --app-ink: #eceeed;
+  --app-muted: #a5aaa7;
+  --app-border: #3a3e3c;
+  --app-night: #131514;
+  --app-night-2: #252827;
+  --app-night-ink: #eceeed;
+  --app-night-muted: #a5aaa7;
+  --app-accent: #ace35a;
+  --app-accent-strong: #8bce46;
+  --app-accent-soft: #333b2a;
+  --app-accent-ink: #161c18;
+  --app-positive: #ace35a;
+  --app-danger: #f7857d;
+  --app-hero: linear-gradient(135deg, #c4ee99 0%, #ace35a 45%, #8bce46 100%);
+  --app-shadow: none;
+}
 
 body {
+  background-color: var(--app-canvas);
+  color: var(--app-ink);
   font-variant-numeric: tabular-nums;
   -webkit-font-smoothing: antialiased;
 }
 
+/* Карточки Mantine на поверхности приложения, а не на фоне страницы */
+.mantine-Card-root,
+.mantine-Paper-root:not(.mantine-Menu-dropdown):not(.mantine-Popover-dropdown) {
+  background-color: var(--app-surface);
+  box-shadow: var(--app-shadow);
+}
+
 /* Заголовок страницы получает фокус после перехода (для скринридеров), рамка ему не нужна:
    это не интерактивный элемент */
-h1[tabindex='-1']:focus {
+h1[tabindex='-1']:focus,
+h2[tabindex='-1']:focus {
   /* impulse-ok-next-line 7 */
   outline: none;
+}
+
+/* Крупные суммы: плотнее и жирнее, как баланс в референсе */
+.app-amount {
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
 }

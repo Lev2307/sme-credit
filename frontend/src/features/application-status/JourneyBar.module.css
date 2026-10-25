@@ -1,0 +1,73 @@
+.box {
+  display: grid;
+  gap: 8px;
+  padding: 12px 16px;
+  border-radius: var(--mantine-radius-lg);
+  background-color: var(--app-sunken);
+
+  &[data-on-accent] {
+    background-color: rgb(253 254 252 / 85%);
+    color: #161c18;
+  }
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 4px var(--mantine-spacing-md);
+}
+
+.label {
+  font-weight: 750;
+  font-size: var(--mantine-font-size-sm);
+}
+
+.steps {
+  font-size: var(--mantine-font-size-xs);
+  color: var(--app-muted);
+
+  .box[data-on-accent] & {
+    color: #3e443f;
+  }
+
+  @media (max-width: $mantine-breakpoint-xs) {
+    display: none;
+  }
+}
+
+.track {
+  height: 8px;
+  /* impulse-ok-next-line t12: таблетка (чип, кнопка, трек, нижняя навигация) */
+  border-radius: 999px;
+  overflow: hidden;
+  background-color: var(--app-border);
+
+  .box[data-on-accent] & {
+    background-color: #e6ebe7;
+  }
+}
+
+.fill {
+  height: 100%;
+  /* impulse-ok-next-line t12: таблетка (чип, кнопка, трек, нижняя навигация) */
+  border-radius: 999px;
+  background-color: var(--app-accent-strong);
+  transform-origin: left center;
+  transition: transform 600ms cubic-bezier(0.16, 1, 0.3, 1);
+
+  .box[data-on-accent] & {
+    background-color: #161c18;
+  }
+
+  &[data-stopped] {
+    background-color: var(--app-muted);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fill {
+    transition: none;
+  }
+}

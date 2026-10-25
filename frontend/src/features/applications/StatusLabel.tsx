@@ -1,4 +1,3 @@
-import { Group, Text } from '@mantine/core';
 import {
   IconCircleCheck,
   IconCircleDashed,
@@ -9,13 +8,14 @@ import {
 } from '@tabler/icons-react';
 import type { ApplicationStatusEnum } from '@/api/model';
 import { STATUS_META, type StatusTone } from './status';
+import classes from './StatusLabel.module.css';
 
-const TONE: Record<StatusTone, { icon: Icon; color: string }> = {
-  action: { icon: IconPointFilled, color: 'var(--mantine-primary-color-filled)' },
-  waiting: { icon: IconClockHour4, color: 'var(--mantine-color-dimmed)' },
-  success: { icon: IconCircleCheck, color: 'var(--mantine-color-green-light-color)' },
-  failure: { icon: IconCircleX, color: 'var(--mantine-color-error)' },
-  neutral: { icon: IconCircleDashed, color: 'var(--mantine-color-dimmed)' },
+const ICON: Record<StatusTone, Icon> = {
+  action: IconPointFilled,
+  waiting: IconClockHour4,
+  success: IconCircleCheck,
+  failure: IconCircleX,
+  neutral: IconCircleDashed,
 };
 
 type Props = {
@@ -23,15 +23,14 @@ type Props = {
   label: string;
 };
 
-// Статус словом с иконкой. Цвет только у иконки: текст читается одинаково в обеих темах
+// Статус словом в «таблетке». Цвет только у иконки, смысл несёт подпись
 export function StatusLabel({ status, label }: Props) {
-  const { icon: StatusIcon, color } = TONE[STATUS_META[status].tone];
+  const tone = STATUS_META[status].tone;
+  const StatusIcon = ICON[tone];
   return (
-    <Group gap={6} wrap="nowrap">
-      <StatusIcon size={18} color={color} aria-hidden />
-      <Text size="sm" fw={600}>
-        {label}
-      </Text>
-    </Group>
+    <span className={classes.chip} data-tone={tone}>
+      <StatusIcon size={16} aria-hidden className={classes.icon} />
+      {label}
+    </span>
   );
 }

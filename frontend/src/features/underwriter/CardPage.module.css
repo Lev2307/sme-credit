@@ -1,14 +1,12 @@
-.header {
+.status {
   display: flex;
   flex-wrap: wrap;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: var(--mantine-spacing-md);
-}
-
-.title {
-  min-width: 0;
-  overflow-wrap: anywhere;
+  align-items: center;
+  gap: var(--mantine-spacing-sm) var(--mantine-spacing-md);
+  padding: var(--mantine-spacing-md) var(--mantine-spacing-lg);
+  border-radius: var(--mantine-radius-lg);
+  background-color: var(--app-surface);
+  box-shadow: var(--app-shadow);
 }
 
 /* Данные слева, решение справа. До lg решение уходит под данные: сначала читаем, потом решаем */

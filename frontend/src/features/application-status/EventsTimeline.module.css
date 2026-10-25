@@ -1,0 +1,6 @@
+.card {
+  padding: var(--mantine-spacing-lg);
+  border-radius: 24px;
+  background-color: var(--app-surface);
+  box-shadow: var(--app-shadow);
+}

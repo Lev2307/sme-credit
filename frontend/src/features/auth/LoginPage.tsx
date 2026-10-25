@@ -63,45 +63,51 @@ export function LoginPage() {
 
   return (
     <div className={classes.page}>
-      <header className={classes.header}>
-        <Wordmark to="/login" />
-        <ColorSchemeToggle />
-      </header>
-
       <main className={classes.main}>
-        <section className={classes.formColumn} aria-labelledby="login-title">
-          <Stack gap="xs" mb="xl">
-            <PageHeading id="login-title">Вход в кабинет</PageHeading>
-            <Text c="dimmed">
-              Подача и статус кредитной заявки для бизнеса. Сотрудники банка входят здесь же.
-            </Text>
-          </Stack>
+        <section className={classes.formCard} aria-labelledby="login-title">
+          <div className={classes.formTop}>
+            <Wordmark to="/login" />
+            <ColorSchemeToggle />
+          </div>
 
-          <form onSubmit={onSubmit} noValidate>
-            <Stack gap="md">
-              <TextInput
-                label="Логин"
-                autoComplete="username"
-                autoCapitalize="none"
-                spellCheck={false}
-                error={errors.username?.message}
-                {...register('username')}
-              />
-              <PasswordInput
-                label="Пароль"
-                autoComplete="current-password"
-                error={errors.password?.message}
-                visibilityToggleButtonProps={{ 'aria-label': 'Показать или скрыть пароль' }}
-                {...register('password')}
-              />
-
-              <FormError message={login.isError ? errorMessage(login.error) : null} />
-
-              <Button type="submit" loading={login.isPending} fullWidth>
-                Войти
-              </Button>
+          <div className={classes.formBody}>
+            <Stack gap={6} mb="xl">
+              <Text size="sm" c="dimmed" fw={600}>
+                Кредит для бизнеса без визита в банк
+              </Text>
+              <PageHeading id="login-title">Вход в кабинет</PageHeading>
+              <Text c="dimmed">
+                Здесь подают заявку и следят, что с ней происходит. Сотрудники банка входят через
+                эту же форму.
+              </Text>
             </Stack>
-          </form>
+
+            <form onSubmit={onSubmit} noValidate>
+              <Stack gap="md">
+                <TextInput
+                  label="Логин"
+                  autoComplete="username"
+                  autoCapitalize="none"
+                  spellCheck={false}
+                  error={errors.username?.message}
+                  {...register('username')}
+                />
+                <PasswordInput
+                  label="Пароль"
+                  autoComplete="current-password"
+                  error={errors.password?.message}
+                  visibilityToggleButtonProps={{ 'aria-label': 'Показать или скрыть пароль' }}
+                  {...register('password')}
+                />
+
+                <FormError message={login.isError ? errorMessage(login.error) : null} />
+
+                <Button type="submit" loading={login.isPending} fullWidth size="lg">
+                  Войти
+                </Button>
+              </Stack>
+            </form>
+          </div>
         </section>
 
         <DemoAccounts onPick={signInAs} disabled={login.isPending} />

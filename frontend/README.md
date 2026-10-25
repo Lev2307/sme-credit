@@ -1,6 +1,6 @@
 # frontend
 
-React 19 + TypeScript на Vite, UI на Mantine 9. Одно приложение на две роли: кабинет клиента и кабинет андеррайтера. В Docker собирается и раздаётся через nginx, который заодно проксирует `/api` и `/admin` на бэкенд.
+React 19 + TypeScript на Vite, UI на Mantine 9, шрифт Manrope. Одно приложение на две роли: кабинет клиента и кабинет андеррайтера. В Docker собирается и раздаётся через nginx, который заодно проксирует `/api` и `/admin` на бэкенд.
 
 Клиент API (`src/api/`) генерируется orval из `docs/api/openapi.yaml`, руками его не правим. Токены и правила интерфейса описаны в [DESIGN.md](DESIGN.md).
 
@@ -77,11 +77,11 @@ npm run dev
 src/
 ├── api/            # сгенерировано orval
 ├── app/            # провайдеры, тема, маршруты, проверка роли
-├── features/       # экраны по сценариям: auth, company, applications, catalog, application-form, application-status, offer, underwriter
+├── features/       # экраны по сценариям: auth, company, applications, catalog, application-form, application-status, offer, profile, underwriter
 ├── pages/          # простые страницы без своей логики
 ├── shared/
 │   ├── api/        # axios с токеном и refresh, единый формат ошибок
 │   ├── lib/        # хуки и форматирование
-│   └── ui/         # каркас кабинета, общие компоненты
+│   └── ui/         # каркас кабинета (навигация-таблетка, шапка страницы), общие компоненты, токены --app-*
 └── test/           # MSW-сервер и renderApp для тестов
 ```

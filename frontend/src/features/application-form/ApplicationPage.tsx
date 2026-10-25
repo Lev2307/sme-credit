@@ -1,6 +1,5 @@
-import { Anchor, Group, Skeleton, Stack, Text } from '@mantine/core';
-import { IconArrowLeft } from '@tabler/icons-react';
-import { Link, useParams } from 'react-router';
+import { Skeleton, Stack, Text } from '@mantine/core';
+import { useParams } from 'react-router';
 import { useApplicationsRetrieve } from '@/api/applications/applications';
 import { useProductsList } from '@/api/products/products';
 import { CancelApplication } from '@/features/application-status/CancelApplication';
@@ -11,19 +10,10 @@ import { ApiError } from '@/shared/api/errors';
 import { formatDate } from '@/shared/lib/format';
 import { usePageTitle } from '@/shared/lib/usePageTitle';
 import { ErrorState } from '@/shared/ui/ErrorState';
-import { PageHeading } from '@/shared/ui/PageHeading';
+import { PageHeader } from '@/shared/ui/PageHeader';
 import { DraftWizard } from './DraftWizard';
 
-function BackLink() {
-  return (
-    <Anchor component={Link} to="/cabinet" size="sm" w="fit-content">
-      <Group gap={4} wrap="nowrap">
-        <IconArrowLeft size={16} aria-hidden />
-        Мои заявки
-      </Group>
-    </Anchor>
-  );
-}
+const BACK = { to: '/cabinet', label: 'К моим заявкам' };
 
 // Страница одной заявки. Черновик открывается анкетой-мастером, отправленная заявка
 // показывает статус, историю и то, что нужно от клиента
@@ -44,9 +34,8 @@ export function ApplicationPage() {
   if (application.isPending || products.isPending) {
     return (
       <Stack gap="lg" aria-busy="true">
-        <BackLink />
-        <Skeleton height={40} width="50%" />
-        <Skeleton height={320} radius="lg" />
+        <Skeleton height={52} width="50%" radius="lg" />
+        <Skeleton height={320} radius={24} />
       </Stack>
     );
   }
@@ -56,8 +45,7 @@ export function ApplicationPage() {
     const notFound = error instanceof ApiError && error.status === 404;
     return (
       <Stack gap="lg">
-        <BackLink />
-        <PageHeading>{notFound ? 'Заявка не найдена' : 'Заявка'}</PageHeading>
+        <PageHeader back={BACK} title={notFound ? 'Заявка не найдена' : 'Заявка'} />
         {notFound ? (
           <Text c="dimmed">Возможно, ссылка устарела. Все ваши заявки есть в списке.</Text>
         ) : (
@@ -76,13 +64,11 @@ export function ApplicationPage() {
 
   return (
     <Stack gap="lg">
-      <BackLink />
-      <div>
-        <PageHeading>{product?.title ?? app.product}</PageHeading>
-        <Text c="dimmed" mt={4}>
-          Заявка от {formatDate(app.created_at)}
-        </Text>
-      </div>
+      <PageHeader
+        back={BACK}
+        title={product?.title ?? app.product}
+        subtitle={`Заявка от ${formatDate(app.created_at)}`}
+      />
 
       {company && app.status === 'DRAFT' && product && (
         <>
