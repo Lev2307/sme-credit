@@ -1,0 +1,15 @@
+/* Три колонки и две строки: помещается и на телефоне, без горизонтальной прокрутки */
+.table {
+  max-width: 720px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Подпись таблицы нужна скринридеру, визуально её заменяет заголовок карточки */
+.caption {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

@@ -8,6 +8,9 @@ import {
 import type { ApplicationRetrieve, Company } from '@/api/model';
 import { isBankSide, POLL_INTERVAL_MS } from '@/features/applications/status';
 import { StatusLabel } from '@/features/applications/StatusLabel';
+import { AgreementPanel } from '@/features/offer/AgreementPanel';
+import { OfferPanel } from '@/features/offer/OfferPanel';
+import { SignPanel } from '@/features/offer/SignPanel';
 import { formatMoney, formatMonths } from '@/shared/lib/format';
 import { CancelApplication } from './CancelApplication';
 import { canCancel, REASON_TEXT, STATUS_COPY } from './copy';
@@ -97,15 +100,6 @@ export function StatusView({ application, company }: Props) {
             </div>
           </dl>
 
-          {(status === 'APPROVED' ||
-            status === 'COUNTER_OFFER' ||
-            status === 'AWAITING_SIGNATURE' ||
-            status === 'DISBURSED') && (
-            <Text size="sm" c="dimmed">
-              Условия предложения и подписание договора появятся в следующей части.
-            </Text>
-          )}
-
           {(status === 'REJECTED' || status === 'CANCELLED') && (
             <div>
               <Button component={Link} to="/cabinet/products" leftSection={<IconPlus size={18} />}>
@@ -115,6 +109,18 @@ export function StatusView({ application, company }: Props) {
           )}
         </Stack>
       </Card>
+
+      {(status === 'APPROVED' || status === 'COUNTER_OFFER') && application.offer && (
+        <OfferPanel application={application} offer={application.offer} />
+      )}
+
+      {status === 'AWAITING_SIGNATURE' && application.offer && (
+        <SignPanel application={application} offer={application.offer} company={company} />
+      )}
+
+      {(status === 'DISBURSING' || status === 'DISBURSED') && application.agreement && (
+        <AgreementPanel agreement={application.agreement} />
+      )}
 
       {status === 'INFO_REQUESTED' && application.open_info_request && (
         <InfoRequestForm
