@@ -2,10 +2,7 @@ import { screen, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { describe, expect, it } from 'vitest';
 import { renderApp } from '@/test/render';
-import { API, meHandler, server } from '@/test/server';
-
-const withRefreshCookie = (username: string) =>
-  http.post(`${API}/auth/refresh`, () => HttpResponse.json({ access: `token-${username}` }));
+import { API, meHandler, server, signedInAs } from '@/test/server';
 
 describe('Доступ к кабинетам', () => {
   it('гостя отправляет на вход', async () => {
@@ -18,7 +15,7 @@ describe('Доступ к кабинетам', () => {
   });
 
   it('после перезагрузки восстанавливает сессию по refresh-cookie', async () => {
-    server.use(withRefreshCookie('Reliable'));
+    server.use(signedInAs('Reliable'));
     renderApp('/cabinet');
 
     expect(
@@ -28,7 +25,7 @@ describe('Доступ к кабинетам', () => {
   });
 
   it('клиента не пускает в кабинет андеррайтера', async () => {
-    server.use(withRefreshCookie('Reliable'));
+    server.use(signedInAs('Reliable'));
     const { router } = renderApp('/underwriting');
 
     await screen.findByRole('heading', { level: 1, name: 'Мои заявки' });
@@ -36,7 +33,7 @@ describe('Доступ к кабинетам', () => {
   });
 
   it('корень ведёт андеррайтера в очередь', async () => {
-    server.use(withRefreshCookie('underWriter'));
+    server.use(signedInAs('underWriter'));
     const { router } = renderApp('/');
 
     await screen.findByRole('heading', { level: 1, name: 'Очередь заявок' });
@@ -45,7 +42,7 @@ describe('Доступ к кабинетам', () => {
 
   it('если сервер лежит, предлагает повторить, а не выкидывает на вход', async () => {
     server.use(
-      withRefreshCookie('Reliable'),
+      signedInAs('Reliable'),
       http.get(`${API}/me`, () => HttpResponse.error()),
     );
     const { user } = renderApp('/cabinet');
@@ -60,7 +57,7 @@ describe('Доступ к кабинетам', () => {
   });
 
   it('выход через меню пользователя возвращает на вход', async () => {
-    server.use(withRefreshCookie('Reliable'));
+    server.use(signedInAs('Reliable'));
     const { user, router } = renderApp('/cabinet');
 
     await user.click(await screen.findByRole('button', { name: /Меню пользователя/ }));

@@ -1,0 +1,74 @@
+.card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    'main chevron'
+    'side chevron';
+  align-items: center;
+  gap: var(--mantine-spacing-sm) var(--mantine-spacing-md);
+  padding: var(--mantine-spacing-md) var(--mantine-spacing-lg);
+  border: 1px solid var(--mantine-color-default-border);
+  border-radius: var(--mantine-radius-lg);
+  background-color: var(--mantine-color-body);
+  color: inherit;
+  text-decoration: none;
+  transition:
+    background-color 150ms ease-out,
+    border-color 150ms ease-out;
+
+  @mixin hover {
+    border-color: light-dark(var(--mantine-color-gray-4), var(--mantine-color-dark-3));
+    background-color: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-6));
+  }
+
+  &:active {
+    transform: scale(0.995);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--mantine-primary-color-filled);
+    outline-offset: 2px;
+  }
+
+  @media (min-width: $mantine-breakpoint-sm) {
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    grid-template-areas: 'main side chevron';
+  }
+}
+
+.main {
+  grid-area: main;
+  min-width: 0;
+}
+
+.title {
+  margin: 0 0 2px;
+  overflow-wrap: anywhere;
+}
+
+.side {
+  grid-area: side;
+  display: grid;
+  gap: 4px;
+  justify-items: start;
+
+  @media (min-width: $mantine-breakpoint-sm) {
+    justify-items: end;
+    text-align: end;
+  }
+}
+
+.chevron {
+  grid-area: chevron;
+  color: var(--mantine-color-dimmed);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card {
+    transition: none;
+  }
+
+  .card:active {
+    transform: none;
+  }
+}

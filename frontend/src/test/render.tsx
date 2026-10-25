@@ -15,7 +15,7 @@ export function renderApp(path: string) {
   const user = userEvent.setup();
 
   render(
-    <AppProviders queryClient={queryClient}>
+    <AppProviders queryClient={queryClient} env="test">
       <RouterProvider router={router} />
     </AppProviders>,
   );

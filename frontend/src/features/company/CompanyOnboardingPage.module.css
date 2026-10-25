@@ -1,0 +1,16 @@
+/* Поле и кнопка в одну строку от sm, на телефоне кнопка под полем на всю ширину.
+   Метка вынесена над сеткой, поэтому верх поля и кнопки совпадает и при ошибке под полем */
+.search {
+  display: grid;
+  gap: var(--mantine-spacing-sm);
+
+  @media (min-width: $mantine-breakpoint-sm) {
+    grid-template-columns: minmax(0, 360px) max-content;
+    justify-content: start;
+    align-items: start;
+  }
+}
+
+.input {
+  min-width: 0;
+}

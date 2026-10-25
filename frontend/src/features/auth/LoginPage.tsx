@@ -1,6 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Box, Button, Group, PasswordInput, Stack, Text, TextInput } from '@mantine/core';
-import { IconAlertCircle } from '@tabler/icons-react';
+import { Button, PasswordInput, Stack, Text, TextInput } from '@mantine/core';
 import { useForm } from 'react-hook-form';
 import { Navigate, useLocation } from 'react-router';
 import { z } from 'zod';
@@ -8,6 +7,7 @@ import { errorMessage } from '@/shared/api/errors';
 import { usePageTitle } from '@/shared/lib/usePageTitle';
 import { BootScreen } from '@/shared/ui/BootScreen';
 import { ColorSchemeToggle } from '@/shared/ui/ColorSchemeToggle';
+import { FormError } from '@/shared/ui/FormError';
 import { PageHeading } from '@/shared/ui/PageHeading';
 import { Wordmark } from '@/shared/ui/Wordmark';
 import { DemoAccounts } from './DemoAccounts';
@@ -95,21 +95,7 @@ export function LoginPage() {
                 {...register('password')}
               />
 
-              <Box aria-live="polite" mih={0}>
-                {login.isError && (
-                  <Group gap="xs" wrap="nowrap" align="flex-start">
-                    <IconAlertCircle
-                      size={20}
-                      aria-hidden
-                      color="var(--mantine-color-error)"
-                      className={classes.errorIcon}
-                    />
-                    <Text size="sm" c="var(--mantine-color-error)">
-                      {errorMessage(login.error)}
-                    </Text>
-                  </Group>
-                )}
-              </Box>
+              <FormError message={login.isError ? errorMessage(login.error) : null} />
 
               <Button type="submit" loading={login.isPending} fullWidth>
                 Войти

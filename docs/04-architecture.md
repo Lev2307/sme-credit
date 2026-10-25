@@ -109,7 +109,9 @@ flowchart LR
         ├── api/                  # сгенерировано orval, руками не правим
         ├── app/                  # роутер, провайдеры, тема, проверка роли
         ├── features/
-        │   ├── auth/
+        │   ├── auth/             # вход, сессия, тестовые учётки
+        │   ├── company/          # привязка компании по ИНН
+        │   ├── applications/     # список заявок клиента, статусы
         │   ├── catalog/
         │   ├── application-form/
         │   ├── application-status/
