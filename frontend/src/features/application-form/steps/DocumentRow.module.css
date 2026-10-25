@@ -1,0 +1,59 @@
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--mantine-spacing-sm);
+  padding: var(--mantine-spacing-md) 0;
+  border-bottom: 1px solid var(--mantine-color-default-border);
+
+  &:last-child {
+    border-bottom: 0;
+  }
+}
+
+.done {
+  color: var(--mantine-color-green-light-color);
+}
+
+.todo {
+  color: var(--mantine-color-dimmed);
+}
+
+.body {
+  min-width: 0;
+}
+
+.files {
+  list-style: none;
+  margin: var(--mantine-spacing-sm) 0 0;
+  padding: 0;
+  display: grid;
+  gap: 4px;
+}
+
+.file {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: var(--mantine-spacing-xs);
+}
+
+.clip {
+  color: var(--mantine-color-dimmed);
+}
+
+.fileName {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fileSize {
+  white-space: nowrap;
+}

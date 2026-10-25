@@ -113,7 +113,7 @@ flowchart LR
         │   ├── company/          # привязка компании по ИНН
         │   ├── applications/     # список заявок клиента, статусы
         │   ├── catalog/          # продукты, условия и документы под компанию
-        │   ├── application-form/
+        │   ├── application-form/ # анкета-мастер: автосохранение, документы, отправка
         │   ├── application-status/
         │   ├── offer/
         │   └── underwriter/

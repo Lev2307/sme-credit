@@ -26,6 +26,11 @@ class ResizeObserverStub {
 }
 window.ResizeObserver = ResizeObserverStub;
 window.HTMLElement.prototype.scrollIntoView = () => {};
+window.scrollTo = () => {};
+// Textarea autosize в Mantine подписывается на загрузку шрифтов
+Object.defineProperty(document, 'fonts', {
+  value: { addEventListener: () => {}, removeEventListener: () => {}, ready: Promise.resolve() },
+});
 
 beforeAll(() => server.listen({ onUnhandledFrame: 'error' }));
 afterEach(() => {

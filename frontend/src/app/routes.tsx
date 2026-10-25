@@ -1,9 +1,9 @@
 import type { RouteObject } from 'react-router';
+import { ApplicationPage } from '@/features/application-form/ApplicationPage';
 import { ApplicationsPage } from '@/features/applications/ApplicationsPage';
 import { LoginPage } from '@/features/auth/LoginPage';
 import { CatalogPage } from '@/features/catalog/CatalogPage';
 import { CompanyOnboardingPage } from '@/features/company/CompanyOnboardingPage';
-import { ComingSoonPage } from '@/pages/ComingSoonPage';
 import { NotFoundPage } from '@/pages/NotFoundPage';
 import { UnderwritingQueuePage } from '@/pages/UnderwritingQueuePage';
 import { AppLayout } from '@/shared/ui/AppLayout';
@@ -27,15 +27,7 @@ export const routes: RouteObject[] = [
             children: [
               { index: true, element: <ApplicationsPage /> },
               { path: 'products', element: <CatalogPage /> },
-              {
-                path: 'applications/:id',
-                element: (
-                  <ComingSoonPage
-                    title="Заявка"
-                    text="Страница заявки со статусом и таймлайном появится в одной из следующих частей."
-                  />
-                ),
-              },
+              { path: 'applications/:id', element: <ApplicationPage /> },
             ],
           },
         ],

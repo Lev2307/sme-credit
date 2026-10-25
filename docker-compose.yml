@@ -50,6 +50,13 @@ services:
       interval: 5s
       retries: 30
 
+  frontend:
+    build: ./frontend
+    ports:
+      - "${FRONTEND_PORT:-8080}:80"
+    depends_on:
+      backend: { condition: service_healthy }  # nginx проксирует на backend, имя должно резолвиться при старте
+
   worker:
     build: ./backend
     command: worker

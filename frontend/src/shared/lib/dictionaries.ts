@@ -1,4 +1,10 @@
-import type { LegalFormEnum, TaxRegimeEnum } from '@/api/model';
+import type { CollateralTypeEnum, LegalFormEnum, TaxRegimeEnum } from '@/api/model';
+
+export const COLLATERAL_TYPE_LABELS: Record<CollateralTypeEnum, string> = {
+  REAL_ESTATE: 'Недвижимость',
+  VEHICLE: 'Транспорт',
+  EQUIPMENT: 'Оборудование',
+};
 
 // Подписи справочников бэкенда (choices из Django) для интерфейса
 export const LEGAL_FORM_LABELS: Record<LegalFormEnum, string> = {
