@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
+    <title>Кредитный кабинет</title>
+    <script>
+      // Тема до загрузки React, чтобы страница не мигала светлой. Ключ тот же, что у Mantine
+      try {
+        var saved = localStorage.getItem('mantine-color-scheme-value');
+        var scheme = saved === 'light' || saved === 'dark' ? saved
+          : window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-mantine-color-scheme', scheme);
+      } catch (e) {}
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

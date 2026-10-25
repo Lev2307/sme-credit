@@ -1,0 +1,13 @@
+/* Глобальные правила поверх Mantine. Токены живут в src/app/theme.ts и DESIGN.md */
+
+body {
+  font-variant-numeric: tabular-nums;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Заголовок страницы получает фокус после перехода (для скринридеров), рамка ему не нужна:
+   это не интерактивный элемент */
+h1[tabindex='-1']:focus {
+  /* impulse-ok-next-line 7 */
+  outline: none;
+}

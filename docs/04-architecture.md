@@ -12,11 +12,11 @@
 | База | PostgreSQL 16 | Транзакции, `JSONB` для сырых ответов внешних сервисов и снимков решений |
 | Фоновые задачи | Celery + Redis | Конвейер не блокирует запрос клиента, а сбой внешнего сервиса ведёт к повтору, а не к ошибке |
 | Моки | Django + DRF, drf-spectacular | Отдельный маленький сервис со своей OpenAPI-схемой. Тот же стек, что у бэкенда, поэтому второй фреймворк учить не нужно. Базы у него нет, данные лежат в JSON |
-| Фронтенд | React 18, TypeScript, Vite, React Router, TanStack Query, react-hook-form + zod | TanStack Query закрывает опрос статуса, zod — проверку полей анкеты |
-| UI-библиотека | Mantine или MUI | Выберем по опыту команды |
+| Фронтенд | React 19, TypeScript, Vite, React Router 7, TanStack Query 5, react-hook-form + zod 4 | TanStack Query закрывает опрос статуса, zod — проверку полей анкеты |
+| UI-библиотека | Mantine 9, иконки Tabler | Формы, загрузка файлов, таймлайн, таблицы и уведомления есть из коробки. Светлая и тёмная тема без своей дизайн-системы. Токены в [frontend/DESIGN.md](../frontend/DESIGN.md) |
 | Клиент API на фронте | orval | Типы и функции запросов генерируются из OpenAPI бэкенда |
 | Зависимости | uv (`uv.lock`), npm (`package-lock.json`) | Кейс требует lock-файлы |
-| Качество | pytest, pytest-django, ruff, eslint, prettier | |
+| Качество | pytest, pytest-django, ruff, eslint, prettier, Vitest + Testing Library + MSW, Playwright | Фронт: компонентные тесты против замоканного HTTP, E2E против настоящего бэкенда |
 | Запуск | Docker Compose | Жюри поднимает всё одной командой |
 
 Ни один компонент не требует платных подписок или внешних API.
@@ -100,11 +100,14 @@ flowchart LR
 └── frontend/
     ├── Dockerfile                # сборка + nginx
     ├── nginx.conf
+    ├── DESIGN.md                 # токены и правила интерфейса
     ├── package.json
     ├── package-lock.json
+    ├── orval.config.ts           # генерация клиента API из docs/api/openapi.yaml
+    ├── e2e/                      # сценарии Playwright
     └── src/
         ├── api/                  # сгенерировано orval, руками не правим
-        ├── app/                  # роутер, провайдеры, проверка роли
+        ├── app/                  # роутер, провайдеры, тема, проверка роли
         ├── features/
         │   ├── auth/
         │   ├── catalog/
@@ -112,7 +115,8 @@ flowchart LR
         │   ├── application-status/
         │   ├── offer/
         │   └── underwriter/
-        └── shared/               # общие компоненты, форматирование денег и дат
+        ├── shared/               # HTTP-клиент с refresh, общие компоненты, форматирование денег и дат
+        └── test/                 # MSW-сервер и обёртка для компонентных тестов
 ```
 
 ### Django-приложения

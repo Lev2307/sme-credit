@@ -1,0 +1,56 @@
+.panel {
+  min-width: 0;
+  padding: var(--mantine-spacing-lg);
+  background-color: light-dark(var(--mantine-color-gray-1), var(--mantine-color-dark-6));
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 4px;
+}
+
+.account {
+  width: 100%;
+  min-height: 44px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: var(--mantine-spacing-sm);
+  padding: 8px 12px;
+  border-radius: var(--mantine-radius-md);
+  transition: background-color 150ms ease-out;
+
+  @mixin hover {
+    background-color: light-dark(var(--mantine-color-white), var(--mantine-color-dark-5));
+  }
+
+  &:active:not(:disabled) {
+    transform: scale(0.99);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--mantine-primary-color-filled);
+    outline-offset: 2px;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+}
+
+.accountText {
+  min-width: 0;
+}
+
+.outcome {
+  white-space: nowrap;
+  color: light-dark(var(--mantine-color-gray-8), var(--mantine-color-dark-0));
+}
+
+.chevron {
+  color: var(--mantine-color-dimmed);
+}
