@@ -20,6 +20,16 @@ test('клиент без компании попадает на привязк�
   await expect(page.getByRole('button', { name: 'Это моя компания, привязать' })).toBeEnabled();
 });
 
+test('каталог показывает продукты и документы под компанию клиента', async ({ page }) => {
+  await signIn(page, 'Reliable');
+  await page.getByRole('link', { name: /Новая заявка|Выбрать кредит/ }).click();
+
+  await expect(page.getByRole('heading', { level: 1, name: 'Выбор кредита' })).toBeVisible();
+  const express = page.getByRole('article', { name: 'Экспресс-кредит' });
+  await expect(express.getByText('Выписка по расчётному счёту за 12 месяцев')).toBeVisible();
+  await expect(page.getByRole('article', { name: 'Инвестиционный кредит' })).toBeVisible();
+});
+
 test('стоп-факторы видны сразу после поиска по ИНН', async ({ page }) => {
   await signIn(page, 'Problematic');
 

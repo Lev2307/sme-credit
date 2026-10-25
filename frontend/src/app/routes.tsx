@@ -1,6 +1,7 @@
 import type { RouteObject } from 'react-router';
 import { ApplicationsPage } from '@/features/applications/ApplicationsPage';
 import { LoginPage } from '@/features/auth/LoginPage';
+import { CatalogPage } from '@/features/catalog/CatalogPage';
 import { CompanyOnboardingPage } from '@/features/company/CompanyOnboardingPage';
 import { ComingSoonPage } from '@/pages/ComingSoonPage';
 import { NotFoundPage } from '@/pages/NotFoundPage';
@@ -25,15 +26,7 @@ export const routes: RouteObject[] = [
             element: <RequireCompany />,
             children: [
               { index: true, element: <ApplicationsPage /> },
-              {
-                path: 'products',
-                element: (
-                  <ComingSoonPage
-                    title="Выбор кредита"
-                    text="Каталог продуктов появится в следующей части."
-                  />
-                ),
-              },
+              { path: 'products', element: <CatalogPage /> },
               {
                 path: 'applications/:id',
                 element: (

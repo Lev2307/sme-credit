@@ -43,7 +43,7 @@ npm run dev
 src/
 ├── api/            # сгенерировано orval
 ├── app/            # провайдеры, тема, маршруты, проверка роли
-├── features/       # экраны по сценариям: auth, company, applications, дальше catalog и т. д.
+├── features/       # экраны по сценариям: auth, company, applications, catalog, дальше application-form и т. д.
 ├── pages/          # простые страницы без своей логики
 ├── shared/
 │   ├── api/        # axios с токеном и refresh, единый формат ошибок

@@ -45,7 +45,6 @@ export const formatDateTime = (iso: string) => dateTime.format(new Date(iso));
 // Полных месяцев с даты до сегодня: по ним считается возраст бизнеса
 export const monthsSince = (iso: string, now: Date = new Date()) => {
   const from = new Date(iso);
-  const months =
-    (now.getFullYear() - from.getFullYear()) * 12 + (now.getMonth() - from.getMonth());
+  const months = (now.getFullYear() - from.getFullYear()) * 12 + (now.getMonth() - from.getMonth());
   return now.getDate() < from.getDate() ? months - 1 : months;
 };

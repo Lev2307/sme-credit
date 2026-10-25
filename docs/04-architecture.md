@@ -112,7 +112,7 @@ flowchart LR
         │   ├── auth/             # вход, сессия, тестовые учётки
         │   ├── company/          # привязка компании по ИНН
         │   ├── applications/     # список заявок клиента, статусы
-        │   ├── catalog/
+        │   ├── catalog/          # продукты, условия и документы под компанию
         │   ├── application-form/
         │   ├── application-status/
         │   ├── offer/
