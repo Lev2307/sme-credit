@@ -1,0 +1,35 @@
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--mantine-spacing-md);
+}
+
+.title {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+/* Данные слева, решение справа. До lg решение уходит под данные: сначала читаем, потом решаем */
+.layout {
+  display: grid;
+  gap: var(--mantine-spacing-lg);
+  align-items: start;
+
+  @media (min-width: $mantine-breakpoint-lg) {
+    grid-template-columns: minmax(0, 1fr) 380px;
+  }
+}
+
+.main {
+  min-width: 0;
+  display: grid;
+  gap: var(--mantine-spacing-lg);
+}
+
+.side {
+  min-width: 0;
+  /* Колонка на всю высоту сетки, иначе sticky-панели некуда «ехать» */
+  align-self: stretch;
+}

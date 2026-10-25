@@ -82,3 +82,23 @@ export const UNDERWRITER_ACTORS: Record<ApplicationEvent['actor_type'], string> 
   SYSTEM: 'Система',
   UNDERWRITER: 'Андеррайтер',
 };
+
+const EVENT_TITLE: Record<string, string> = {
+  SUBMITTED: 'Клиент отправил заявку',
+  ENRICHED: 'Собраны данные из ЕГРЮЛ, ФНС и БКИ',
+  SCORED: 'Посчитан скоринг',
+  TAKEN: 'Взята в работу',
+  INFO_ANSWERED: 'Клиент ответил на дозапрос',
+  OFFER_ACCEPTED: 'Клиент принял предложение',
+  OFFER_DECLINED: 'Клиент отказался от предложения',
+  OFFER_SIGNED: 'Договор подписан',
+  DISBURSED: 'Деньги зачислены',
+  CANCELLED: 'Клиент отменил заявку',
+};
+
+export const underwriterEventTitle = (event: ApplicationEvent) => {
+  if (event.action === 'DECIDED') return `Решение системы: ${event.to_status_display}`;
+  if (event.action === 'UNDERWRITER_DECIDED')
+    return `Решение андеррайтера: ${event.to_status_display}`;
+  return EVENT_TITLE[event.action] ?? (event.to_status_display || event.action);
+};

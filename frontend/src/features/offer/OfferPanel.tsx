@@ -1,4 +1,4 @@
-import { Button, Card, Group, Stack, Table, Text, Title } from '@mantine/core';
+import { Button, Card, Group, Stack, Table, Text, Title, VisuallyHidden } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconCheck } from '@tabler/icons-react';
 import {
@@ -69,7 +69,7 @@ export function OfferPanel({ application, offer }: Props) {
         </div>
 
         <Table className={classes.table} verticalSpacing="sm" withRowBorders>
-          <caption className={classes.caption}>Сравнение заявки и предложения</caption>
+          <VisuallyHidden component="caption">Сравнение заявки и предложения</VisuallyHidden>
           <Table.Thead>
             <Table.Tr>
               <Table.Th scope="col">Условие</Table.Th>

@@ -1,0 +1,39 @@
+.summary {
+  display: grid;
+  gap: var(--mantine-spacing-md);
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+}
+
+.reasons {
+  margin: 0;
+  padding-inline-start: 1.25rem;
+}
+
+.table {
+  font-variant-numeric: tabular-nums;
+}
+
+.points {
+  white-space: nowrap;
+}
+
+.limits {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 4px;
+  max-width: 480px;
+  font-variant-numeric: tabular-nums;
+
+  & li {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--mantine-spacing-md);
+  }
+}
+
+.manual {
+  padding: var(--mantine-spacing-sm) 0;
+  border-top: 1px solid var(--mantine-color-default-border);
+}

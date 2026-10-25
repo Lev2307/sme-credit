@@ -4,8 +4,9 @@ import { ApplicationsPage } from '@/features/applications/ApplicationsPage';
 import { LoginPage } from '@/features/auth/LoginPage';
 import { CatalogPage } from '@/features/catalog/CatalogPage';
 import { CompanyOnboardingPage } from '@/features/company/CompanyOnboardingPage';
+import { CardPage } from '@/features/underwriter/CardPage';
+import { QueuePage } from '@/features/underwriter/QueuePage';
 import { NotFoundPage } from '@/pages/NotFoundPage';
-import { UnderwritingQueuePage } from '@/pages/UnderwritingQueuePage';
 import { AppLayout } from '@/shared/ui/AppLayout';
 import { RequireCompany } from './RequireCompany';
 import { RequireRole } from './RequireRole';
@@ -38,7 +39,13 @@ export const routes: RouteObject[] = [
     path: '/underwriting',
     element: <RequireRole allow="UNDERWRITER" />,
     children: [
-      { element: <AppLayout />, children: [{ index: true, element: <UnderwritingQueuePage /> }] },
+      {
+        element: <AppLayout />,
+        children: [
+          { index: true, element: <QueuePage /> },
+          { path: 'applications/:id', element: <CardPage /> },
+        ],
+      },
     ],
   },
   { path: '*', element: <NotFoundPage /> },

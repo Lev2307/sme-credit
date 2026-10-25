@@ -2,7 +2,6 @@
   margin: 0;
   display: grid;
   gap: var(--mantine-spacing-sm);
-  max-width: 560px;
   font-variant-numeric: tabular-nums;
 }
 
@@ -20,5 +19,11 @@
     margin: 0;
     min-width: 0;
     overflow-wrap: anywhere;
+  }
+}
+
+.list[data-label='sm'] .row {
+  @media (min-width: $mantine-breakpoint-sm) {
+    grid-template-columns: 160px minmax(0, 1fr);
   }
 }

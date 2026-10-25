@@ -9,10 +9,22 @@ type Props = {
   isPending: boolean;
   error: unknown;
   onRetry: () => void;
+  // Кабинет андеррайтера показывает тот же журнал, но от третьего лица
+  actorLabels?: Record<ApplicationEvent['actor_type'], string>;
+  titleFor?: (event: ApplicationEvent) => string;
+  reasonFor?: (code: string) => string | undefined;
 };
 
 // Журнал заявки для клиента: что и когда происходило. Новые события сверху
-export function EventsTimeline({ events, isPending, error, onRetry }: Props) {
+export function EventsTimeline({
+  events,
+  isPending,
+  error,
+  onRetry,
+  actorLabels = ACTOR_LABEL,
+  titleFor = eventTitle,
+  reasonFor = (code) => REASON_TEXT[code],
+}: Props) {
   return (
     <section aria-labelledby="timeline-title">
       <Title order={2} size="h4" id="timeline-title" mb="md">
@@ -39,16 +51,16 @@ export function EventsTimeline({ events, isPending, error, onRetry }: Props) {
       {events && events.length > 0 && (
         <Timeline active={0} bulletSize={14} lineWidth={2}>
           {events.toReversed().map((event) => {
-            const reason = REASON_TEXT[event.reason_code];
+            const reason = event.reason_code ? reasonFor(event.reason_code) : undefined;
             return (
-              <Timeline.Item key={event.id} title={eventTitle(event)}>
+              <Timeline.Item key={event.id} title={titleFor(event)}>
                 {reason && (
                   <Text size="sm" mt={2}>
                     {reason}
                   </Text>
                 )}
                 <Text size="xs" c="dimmed" mt={2}>
-                  {formatDateTime(event.created_at)} · {ACTOR_LABEL[event.actor_type]}
+                  {formatDateTime(event.created_at)} · {actorLabels[event.actor_type]}
                 </Text>
               </Timeline.Item>
             );

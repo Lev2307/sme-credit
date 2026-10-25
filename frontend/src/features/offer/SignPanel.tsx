@@ -37,8 +37,8 @@ export function SignPanel({ application, offer, company }: Props) {
         <TermsList
           terms={offer}
           extra={[
-            ['Заёмщик', `${company.name}, ИНН ${company.inn}`],
-            ['Подписывает', me ? displayName(me) : ''],
+            { label: 'Заёмщик', value: `${company.name}, ИНН ${company.inn}` },
+            { label: 'Подписывает', value: me ? displayName(me) : '' },
           ]}
         />
 

@@ -1,4 +1,4 @@
-import { Anchor, Group, SegmentedControl, Skeleton, Stack, Text } from '@mantine/core';
+import { Anchor, SegmentedControl, Skeleton, Stack, Text } from '@mantine/core';
 import { IconChevronRight } from '@tabler/icons-react';
 import { Link, useSearchParams } from 'react-router';
 import type { QueueItem } from '@/api/model';
@@ -128,9 +128,7 @@ export function QueuePage() {
 
       {queue.isSuccess && items.length === 0 && (
         <Stack gap={4}>
-          <Text fw={600}>
-            {all.length === 0 ? 'Очередь пуста' : 'В этом разделе заявок нет'}
-          </Text>
+          <Text fw={600}>{all.length === 0 ? 'Очередь пуста' : 'В этом разделе заявок нет'}</Text>
           <Text c="dimmed" maw="65ch">
             Сюда попадают заявки с классом риска C, суммой выше 5 млн ₽, тревожными флагами или
             недоступным источником данных. Очередь обновляется сама.

@@ -1,0 +1,20 @@
+/* На широком экране панель решения едет вместе со страницей, пока андеррайтер читает карточку */
+.panel {
+  @media (min-width: $mantine-breakpoint-lg) {
+    position: sticky;
+    top: calc(64px + var(--mantine-spacing-md));
+  }
+}
+
+.outcomes {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--mantine-spacing-sm);
+  margin-top: var(--mantine-spacing-xs);
+}
+
+.pair {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--mantine-spacing-sm);
+}

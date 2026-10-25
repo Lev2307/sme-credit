@@ -138,4 +138,5 @@ export const server = setupServer(
   applicationsHandler([]),
   http.get(`${API}/products`, () => HttpResponse.json(products)),
   http.get(`${API}/applications/:id/events`, () => HttpResponse.json([])),
+  http.get(`${API}/underwriting/queue`, () => HttpResponse.json([])),
 );

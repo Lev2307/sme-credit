@@ -1,0 +1,17 @@
+.raw summary {
+  cursor: pointer;
+  font-size: var(--mantine-font-size-sm);
+  color: var(--mantine-color-anchor);
+  border-radius: var(--mantine-radius-sm);
+
+  &:focus-visible {
+    outline: 2px solid var(--mantine-primary-color-filled);
+    outline-offset: 2px;
+  }
+}
+
+.code {
+  margin-top: var(--mantine-spacing-xs);
+  max-height: 320px;
+  overflow: auto;
+}

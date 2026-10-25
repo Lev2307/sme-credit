@@ -1,19 +1,20 @@
 import { Card, Stack, Text, Title } from '@mantine/core';
 import type { Agreement } from '@/api/model';
 import { formatDateTime } from '@/shared/lib/format';
+import type { Fact } from '@/shared/ui/FactList';
 import { TermsList } from './TermsList';
 
 type Props = { agreement: Agreement };
 
 // Договор после подписания: номер, даты и условия. Пока идёт выдача, даты зачисления ещё нет
 export function AgreementPanel({ agreement }: Props) {
-  const extra: [string, string][] = [
-    ['Номер договора', agreement.number],
-    ['Подписан', formatDateTime(agreement.signed_at)],
-    [
-      'Деньги зачислены',
-      agreement.disbursed_at ? formatDateTime(agreement.disbursed_at) : 'В процессе',
-    ],
+  const extra: Fact[] = [
+    { label: 'Номер договора', value: agreement.number },
+    { label: 'Подписан', value: formatDateTime(agreement.signed_at) },
+    {
+      label: 'Деньги зачислены',
+      value: agreement.disbursed_at ? formatDateTime(agreement.disbursed_at) : 'В процессе',
+    },
   ];
 
   return (
