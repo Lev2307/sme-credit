@@ -20,6 +20,7 @@ export function saveStep(applicationId: string, step: StepKey) {
   try {
     localStorage.setItem(storageKey(applicationId), step);
   } catch {
+    // анкета откроется с начала
   }
 }
 
@@ -27,5 +28,6 @@ export function forgetStep(applicationId: string) {
   try {
     localStorage.removeItem(storageKey(applicationId));
   } catch {
+    // См. saveStep
   }
 }
